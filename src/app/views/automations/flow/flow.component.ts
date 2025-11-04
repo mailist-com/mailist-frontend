@@ -247,6 +247,9 @@ export class FlowComponent implements OnInit {
 
     if (currentId) {
       // Update existing automation
+      // Save flow to localStorage with automation ID
+      this._apiService.saveFlow(currentState, currentId);
+
       this._automationService.updateAutomation(currentId, {
         flowData: currentState,
         name: currentState.name || 'Automatyzacja'
@@ -267,8 +270,10 @@ export class FlowComponent implements OnInit {
         type: 'custom',
         flowData: currentState
       }).subscribe({
-        next: () => {
-          console.log('Automation created successfully');
+        next: (automation) => {
+          console.log('Automation created successfully with ID:', automation.id);
+          // Save flow to localStorage with the new automation ID
+          this._apiService.saveFlow(currentState, automation.id);
           this._router.navigate(['/automations']);
         },
         error: (error) => {
