@@ -12,9 +12,7 @@ import {generateGuid} from "@foblex/utils";
 import {IPoint, PointExtensions} from "@foblex/2d";
 import {NodeType} from "../enums/node-type";
 import {IFlowStateNode} from "../models/i-flow-state-node";
-import {createSendEmailNode} from "./create-send-email-node";
-import {createWaitNode} from "./create-wait-node";
-import {createConditionNode} from "./create-condition-node";
+import {createGenericNode} from "./create-generic-node";
 import {IFlowStateConnection} from "../models/i-flow-state-connection";
 
 @Injectable({
@@ -50,20 +48,9 @@ export class FlowApiService {
   }
 
   public createNode(event: FCreateNodeEvent): void {
-    let node: IFlowStateNode | undefined;
-    switch (event.data) {
-      case NodeType.SendEmail:
-        node = createSendEmailNode(event.rect);
-        break;
-      case NodeType.Wait:
-        node = createWaitNode(event.rect);
-        break;
-      case NodeType.Condition:
-        node = createConditionNode(event.rect);
-        break;
-      default:
-        throw new Error('Unknown node type');
-    }
+    // Use generic node creator that supports all node types
+    const node = createGenericNode(event.data as NodeType, event.rect);
+
     this._state.create({
       nodes: {
         [node.id]: node
