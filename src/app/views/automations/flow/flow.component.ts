@@ -25,7 +25,7 @@ import { generateGuid } from '@foblex/utils';
 import { FlowNodeSettingsComponent } from './components/flow-node-settings/flow-node-settings.component';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX } from '@ng-icons/lucide';
+import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucideEdit, lucideCheck } from '@ng-icons/lucide';
 import { Router } from '@angular/router';
 import { AutomationService } from '../../../services/automation.service';
 
@@ -44,7 +44,7 @@ import { AutomationService } from '../../../services/automation.service';
     PageTitle,
     NgIcon,
   ],
-  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX })],
+  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucideEdit, lucideCheck })],
   styles: [`
     :host ::ng-deep .f-flow-background {
       background-color: #f9fafb;
@@ -73,6 +73,8 @@ export class FlowComponent implements OnInit {
   protected readonly viewModel = signal<IFlowState | undefined>(undefined);
   protected readonly selectedNode = signal<IFlowStateNode | undefined>(undefined);
   protected readonly isLeftSidebarMinimized = signal(false);
+  protected readonly isEditingName = signal(false);
+  protected readonly editingNameValue = signal('');
 
   protected readonly nodes = computed(() => {
     return Object.values(this.viewModel()?.nodes || {});
@@ -293,5 +295,33 @@ export class FlowComponent implements OnInit {
 
   protected cancel(): void {
     this._router.navigate(['/automations']);
+  }
+
+  protected startEditingName(): void {
+    const currentName = this.viewModel()?.name || 'Nowa automatyzacja';
+    this.editingNameValue.set(currentName);
+    this.isEditingName.set(true);
+  }
+
+  protected saveName(): void {
+    const newName = this.editingNameValue().trim();
+    if (newName) {
+      this._state.update({
+        name: newName
+      }, 'updateName');
+    }
+    this.isEditingName.set(false);
+  }
+
+  protected cancelEditingName(): void {
+    this.isEditingName.set(false);
+  }
+
+  protected onNameKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.saveName();
+    } else if (event.key === 'Escape') {
+      this.cancelEditingName();
+    }
   }
 }
