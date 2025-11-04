@@ -1,0 +1,38 @@
+@if (isMinimized()) {
+  <div class="flex flex-col gap-2">
+    @for (category of categories(); track category) {
+      @for (item of groupedNodes()[category]; track item.type) {
+        <button fExternalItem
+                [fData]="item.type"
+                [fDisabled]="item.disabled"
+                [disabled]="item.disabled"
+                class="btn btn-sm w-full justify-center"
+                [title]="item.name">
+          <div class="item-icon" [style.color]="item.color">
+            <ng-icon [name]="item.icon"></ng-icon>
+          </div>
+        </button>
+      }
+    }
+  </div>
+} @else {
+  @for (category of categories(); track category) {
+    <div class="mb-4">
+      <h4 class="text-sm font-semibold text-default-600 mb-2">{{ category }}</h4>
+      <div class="flex flex-col gap-2">
+        @for (item of groupedNodes()[category]; track item.type) {
+          <button fExternalItem
+                  [fData]="item.type"
+                  [fDisabled]="item.disabled"
+                  [disabled]="item.disabled"
+                  class="btn bg-default-100 text-default-700 w-full justify-start">
+            <div class="item-icon me-2" [style.color]="item.color">
+              <ng-icon [name]="item.icon"></ng-icon>
+            </div>
+            <div class="item-name">{{ item.name }}</div>
+          </button>
+        }
+      </div>
+    </div>
+  }
+}

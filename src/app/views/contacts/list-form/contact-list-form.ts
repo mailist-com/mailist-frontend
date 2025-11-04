@@ -1,0 +1,236 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
+import { Observable } from 'rxjs';
+
+import { PageTitle } from '../../../components/page-title/page-title';
+import { ContactListService } from '../../../services/contact-list.service';
+import { ContactList, ListType, ListStatus } from '../../../models/contact-list.model';
+
+@Component({
+  selector: 'app-contact-list-form',
+  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle],
+  templateUrl: './contact-list-form.html'
+})
+export class ContactListFormComponent implements OnInit {
+  listForm!: FormGroup;
+  isEditing = false;
+  isLoading = false;
+  listId?: string;
+
+  listTypes = [
+    { value: 'regular', label: 'Regular List', description: 'Standard mailing list for manual contact management' },
+    { value: 'smart', label: 'Smart List', description: 'Automatically updates based on contact criteria' },
+    { value: 'static', label: 'Static List', description: 'Fixed list that doesn\'t change automatically' }
+  ];
+
+  listStatuses = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'archived', label: 'Archived' }
+  ];
+
+  customFieldTypes = [
+    { value: 'text', label: 'Text' },
+    { value: 'number', label: 'Number' },
+    { value: 'date', label: 'Date' },
+    { value: 'boolean', label: 'Boolean' },
+    { value: 'dropdown', label: 'Dropdown' }
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private contactListService: ContactListService
+  ) {
+    this.initializeForm();
+  }
+
+  ngOnInit() {
+    this.listId = this.route.snapshot.paramMap.get('id') || undefined;
+    this.isEditing = !!this.listId;
+
+    if (this.isEditing && this.listId) {
+      this.loadList(this.listId);
+    }
+  }
+
+  private initializeForm() {
+    this.listForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: [''],
+      type: ['regular', Validators.required],
+      status: ['active', Validators.required],
+      tags: this.fb.array([]),
+      settings: this.fb.group({
+        doubleOptIn: [true],
+        sendWelcomeEmail: [true],
+        welcomeEmailSubject: ['Welcome to our mailing list!'],
+        welcomeEmailContent: ['Thank you for subscribing to our mailing list.'],
+        respectUnsubscribes: [true],
+        respectBounces: [true],
+        allowPublicSubscription: [false],
+        requireConfirmation: [true],
+        autoResponderEnabled: [false],
+        autoResponderDelay: [0]
+      }),
+      customFields: this.fb.array([])
+    });
+  }
+
+  private loadList(id: string) {
+    this.isLoading = true;
+    this.contactListService.getList(id).subscribe({
+      next: (list) => {
+        if (list) {
+          this.populateForm(list);
+        } else {
+          this.router.navigate(['/contacts/lists']);
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.router.navigate(['/contacts/lists']);
+      }
+    });
+  }
+
+  private populateForm(list: ContactList) {
+    this.listForm.patchValue({
+      name: list.name,
+      description: list.description,
+      type: list.type,
+      status: list.status,
+      settings: list.settings
+    });
+
+    // Populate tags
+    const tagsArray = this.listForm.get('tags') as FormArray;
+    list.tags.forEach(tag => {
+      tagsArray.push(this.fb.control(tag));
+    });
+
+    // Populate custom fields
+    const customFieldsArray = this.listForm.get('customFields') as FormArray;
+    list.customFields.forEach(field => {
+      customFieldsArray.push(this.fb.group({
+        name: [field.name, Validators.required],
+        type: [field.type, Validators.required],
+        required: [field.required],
+        defaultValue: [field.defaultValue],
+        options: [field.options?.join(', ') || '']
+      }));
+    });
+  }
+
+  get tags() {
+    return this.listForm.get('tags') as FormArray;
+  }
+
+  get customFields() {
+    return this.listForm.get('customFields') as FormArray;
+  }
+
+  addTag() {
+    this.tags.push(this.fb.control(''));
+  }
+
+  removeTag(index: number) {
+    this.tags.removeAt(index);
+  }
+
+  addCustomField() {
+    this.customFields.push(this.fb.group({
+      name: ['', Validators.required],
+      type: ['text', Validators.required],
+      required: [false],
+      defaultValue: [''],
+      options: ['']
+    }));
+  }
+
+  removeCustomField(index: number) {
+    this.customFields.removeAt(index);
+  }
+
+  onSubmit() {
+    if (this.listForm.invalid) {
+      this.markFormGroupTouched(this.listForm);
+      return;
+    }
+
+    this.isLoading = true;
+    const formValue = this.listForm.value;
+
+    // Process custom fields
+    const customFields = formValue.customFields.map((field: any) => ({
+      ...field,
+      options: field.type === 'dropdown' && field.options 
+        ? field.options.split(',').map((opt: string) => opt.trim()).filter((opt: string) => opt)
+        : undefined
+    }));
+
+    const listData = {
+      ...formValue,
+      customFields,
+      tags: formValue.tags.filter((tag: string) => tag.trim())
+    };
+
+    const request$ = this.isEditing && this.listId
+      ? this.contactListService.updateList(this.listId, listData)
+      : this.contactListService.createList(listData);
+
+    request$.subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/contacts/lists']);
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onCancel() {
+    this.router.navigate(['/contacts/lists']);
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup | FormArray) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.markFormGroupTouched(control);
+      } else {
+        control?.markAsTouched();
+      }
+    });
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const field = this.listForm.get(fieldName);
+    if (field?.invalid && field?.touched) {
+      if (field.errors?.['required']) return `${fieldName} is required`;
+      if (field.errors?.['minlength']) return `${fieldName} must be at least ${field.errors['minlength'].requiredLength} characters`;
+      if (field.errors?.['email']) return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  getTypeIcon(type: string): string {
+    const typeIcons = {
+      'regular': 'lucideList',
+      'smart': 'lucideZap',
+      'static': 'lucideDatabase'
+    };
+    return typeIcons[type as keyof typeof typeIcons] || 'lucideList';
+  }
+
+  getTypeDescription(type: string): string {
+    const typeDesc = this.listTypes.find(t => t.value === type);
+    return typeDesc?.description || '';
+  }
+}

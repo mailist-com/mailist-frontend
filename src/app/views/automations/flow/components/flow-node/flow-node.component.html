@@ -1,0 +1,6 @@
+<div class="node-wrapper">
+  @let model = viewModel();
+
+  <app-flow-node-header [type]="model.type" [description]="model.description" fDragHandle/>
+  <app-flow-node-footer-outputs [outputs]="model.outputs" (removeConnection)="removeConnection.emit($event)"/>
+</div>

@@ -1,0 +1,301 @@
+<main>
+  <app-page-title 
+    [title]="isEditing ? 'Edit Contact' : 'Create Contact'" 
+    [subtitle]="isEditing ? 'Update contact information' : 'Add a new contact to your database'" />
+
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Basic Information -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title">Basic Information</h6>
+            <div class="flex items-center gap-3">
+              <button type="button" (click)="onCancel()" class="btn btn-sm bg-default-100 text-default-600">
+                Cancel
+              </button>
+              <button type="submit" 
+                      [disabled]="isLoading || contactForm.invalid" 
+                      class="btn btn-sm bg-primary text-white">
+                <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
+                  <ng-icon name="lucideLoader"></ng-icon>
+                </div>
+                <div *ngIf="!isLoading" class="size-4 me-1">
+                  <ng-icon name="lucideSave"></ng-icon>
+                </div>
+                {{ isEditing ? 'Update' : 'Create' }} Contact
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">
+                  First Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" 
+                       formControlName="firstName" 
+                       class="form-input"
+                       [class.border-danger]="contactForm.get('firstName')?.invalid && contactForm.get('firstName')?.touched">
+                <div *ngIf="getFieldError('firstName')" class="text-sm text-danger mt-1">
+                  {{ getFieldError('firstName') }}
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">
+                  Last Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" 
+                       formControlName="lastName" 
+                       class="form-input"
+                       [class.border-danger]="contactForm.get('lastName')?.invalid && contactForm.get('lastName')?.touched">
+                <div *ngIf="getFieldError('lastName')" class="text-sm text-danger mt-1">
+                  {{ getFieldError('lastName') }}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Email Address <span class="text-danger">*</span>
+              </label>
+              <input type="email" 
+                     formControlName="email" 
+                     class="form-input"
+                     [class.border-danger]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+              <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
+                {{ getFieldError('email') }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Phone</label>
+                <input type="tel" formControlName="phone" class="form-input">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Organization</label>
+                <input type="text" formControlName="organization" class="form-input">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Status</label>
+                <select formControlName="status" class="form-input">
+                  <option value="active">Active</option>
+                  <option value="unconfirmed">Unconfirmed</option>
+                  <option value="unsubscribed">Unsubscribed</option>
+                  <option value="bounced">Bounced</option>
+                  <option value="blocked">Blocked</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Subscription Status</label>
+                <select formControlName="subscriptionStatus" class="form-input">
+                  <option value="subscribed">Subscribed</option>
+                  <option value="unsubscribed">Unsubscribed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cleaned">Cleaned</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location Information -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <h6 class="card-title">Location Information</h6>
+          </div>
+          <div class="card-body space-y-4" formGroupName="location">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Country</label>
+                <input type="text" formControlName="country" class="form-input">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">State/Province</label>
+                <input type="text" formControlName="state" class="form-input">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">City</label>
+                <input type="text" formControlName="city" class="form-input">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">ZIP Code</label>
+                <input type="text" formControlName="zipCode" class="form-input">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">Timezone</label>
+                <select formControlName="timezone" class="form-input">
+                  <option value="">Select timezone</option>
+                  <option value="America/New_York">Eastern Time</option>
+                  <option value="America/Chicago">Central Time</option>
+                  <option value="America/Denver">Mountain Time</option>
+                  <option value="America/Los_Angeles">Pacific Time</option>
+                  <option value="Europe/London">London</option>
+                  <option value="Europe/Paris">Paris</option>
+                  <option value="Asia/Tokyo">Tokyo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Fields -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <h6 class="card-title">Custom Fields</h6>
+            <button type="button" (click)="addCustomField()" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
+              <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+              Add Field
+            </button>
+          </div>
+          <div class="card-body" formArrayName="customFields">
+            <div *ngFor="let field of customFields.controls; let i = index" 
+                 [formGroupName]="i" 
+                 class="flex items-end gap-4 p-4 border border-default-200 rounded-lg mb-4">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-default-700 mb-2">Field Name</label>
+                <input type="text" formControlName="name" class="form-input">
+              </div>
+
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-default-700 mb-2">Value</label>
+                <input type="text" formControlName="value" class="form-input">
+              </div>
+
+              <div class="w-32">
+                <label class="block text-sm font-medium text-default-700 mb-2">Type</label>
+                <select formControlName="type" class="form-input">
+                  <option value="text">Text</option>
+                  <option value="number">Number</option>
+                  <option value="date">Date</option>
+                  <option value="boolean">Boolean</option>
+                  <option value="textarea">Textarea</option>
+                  <option value="dropdown">Dropdown</option>
+                </select>
+              </div>
+
+              <button type="button" 
+                      (click)="removeCustomField(i)" 
+                      class="btn size-7.5 bg-danger/10 text-danger hover:bg-danger hover:text-white">
+                <div class="size-4"><ng-icon name="lucideTrash2"></ng-icon></div>
+              </button>
+            </div>
+
+            <div *ngIf="customFields.length === 0" class="text-center text-default-500 py-8 border border-dashed border-default-200 rounded-lg">
+              <div class="size-12 mx-auto mb-4 text-default-300">
+                <ng-icon name="lucidePlus"></ng-icon>
+              </div>
+              <p>No custom fields added yet</p>
+              <p class="text-sm">Click "Add Field" to create custom fields for this contact</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Lists -->
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title">Contact Lists</h6>
+            <span class="text-xs text-default-500">{{ lists.length }} selected</span>
+          </div>
+          <div class="card-body">
+            <div class="space-y-3 max-h-64 overflow-y-auto">
+              <div *ngFor="let list of availableLists" class="flex items-center">
+                <input type="checkbox" 
+                       [id]="'list-' + list.id"
+                       [checked]="isListSelected(list.id)"
+                       (change)="toggleList(list.id)"
+                       class="form-checkbox me-3">
+                <label [for]="'list-' + list.id" class="flex-1 cursor-pointer">
+                  <div class="font-medium text-sm">{{ list.name }}</div>
+                  <div class="text-xs text-default-600">{{ list.subscriberCount }} subscribers</div>
+                </label>
+              </div>
+
+              <div *ngIf="availableLists.length === 0" class="text-center text-default-500 py-4">
+                <div class="size-8 mx-auto mb-2 text-default-300">
+                  <ng-icon name="lucideList"></ng-icon>
+                </div>
+                <p class="text-sm">No lists available</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <h6 class="card-title">Tags</h6>
+            <span class="text-xs text-default-500">{{ tags.length }} selected</span>
+          </div>
+          <div class="card-body">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button *ngFor="let tag of availableTags" 
+                      type="button"
+                      (click)="toggleTag(tag)"
+                      class="py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded cursor-pointer"
+                      [class]="isTagSelected(tag) ? 'bg-primary/10 text-primary border border-primary' : 'bg-default-100 text-default-600 hover:bg-default-200'">
+                {{ tag }}
+              </button>
+            </div>
+
+            <div class="mt-4" *ngIf="tags.length > 0">
+              <h6 class="text-sm font-medium text-default-700 mb-2">Selected Tags:</h6>
+              <div class="space-y-2" formArrayName="tags">
+                <div *ngFor="let tag of tags.controls; let i = index" class="flex items-center justify-between py-1.5 px-3 bg-secondary/10 rounded">
+                  <span class="text-sm font-medium text-secondary">{{ tag.value }}</span>
+                  <button type="button" 
+                          (click)="removeTag(i)" 
+                          class="size-5 text-default-400 hover:text-danger">
+                    <ng-icon name="lucideX"></ng-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Actions -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <h6 class="card-title">Actions</h6>
+          </div>
+          <div class="card-body space-y-3">
+            <button type="submit" 
+                    [disabled]="isLoading || contactForm.invalid" 
+                    class="btn bg-primary text-white w-full">
+              <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
+                <ng-icon name="lucideLoader"></ng-icon>
+              </div>
+              <div *ngIf="!isLoading" class="size-4 me-1">
+                <ng-icon name="lucideSave"></ng-icon>
+              </div>
+              {{ isEditing ? 'Update Contact' : 'Create Contact' }}
+            </button>
+            
+            <button type="button" (click)="onCancel()" class="btn bg-default-100 text-default-600 w-full">
+              <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</main>

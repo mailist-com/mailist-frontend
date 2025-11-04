@@ -1,0 +1,119 @@
+<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] min-h-screen flex justify-center items-center">
+  <div class="relative">
+    <div class="bg-card/70 rounded-lg w-2/3 mx-auto">
+      <div class="grid lg:grid-cols-12 grid-cols-1 items-center gap-0">
+        <div class="lg:col-span-5">
+          <div class="text-center px-10 py-12">
+            <div class="text-center">
+              <h4 class="mb-3 text-xl font-semibold text-purple-500">Welcome Back!</h4>
+              <p class="text-base text-default-500">Sign in to continue to Email Marketing Platform</p>
+            </div>
+
+            <!-- Demo Users Info -->
+            <div class="mt-6 p-4 bg-info/10 border border-info/20 rounded-lg">
+              <h6 class="text-sm font-medium text-info mb-2">Demo Accounts</h6>
+              <div class="space-y-2 text-sm">
+                <div *ngFor="let user of demoUsers" class="flex items-center justify-between">
+                  <span class="text-default-600">{{ user.email }} ({{ user.role }})</span>
+                  <button type="button" 
+                          (click)="loginWithDemo(user.email, user.password)"
+                          class="text-primary hover:text-primary-600 underline text-xs">
+                    Use
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
+              <p class="text-sm text-danger">{{ error }}</p>
+            </div>
+
+            <!-- Login Form -->
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-6">
+              <div class="mb-4">
+                <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
+                <input type="email" 
+                       id="email" 
+                       formControlName="email"
+                       class="form-input" 
+                       [class.border-danger]="getFieldError('email')"
+                       placeholder="Enter your email" />
+                <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
+                  {{ getFieldError('email') }}
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                  <label for="password" class="block font-medium text-default-900 text-sm">Password</label>
+                  <a routerLink="/auth/reset-password" class="text-primary font-medium text-sm">Forgot Password?</a>
+                </div>
+                <div class="relative">
+                  <input [type]="showPassword ? 'text' : 'password'" 
+                         id="password" 
+                         formControlName="password"
+                         class="form-input pr-12" 
+                         [class.border-danger]="getFieldError('password')"
+                         placeholder="Enter your password" />
+                  <button type="button" 
+                          (click)="togglePassword()"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <iconify-icon [icon]="showPassword ? 'lucide:eye-off' : 'lucide:eye'" 
+                                  class="h-5 w-5 text-default-400"></iconify-icon>
+                  </button>
+                </div>
+                <div *ngIf="getFieldError('password')" class="text-sm text-danger mt-1">
+                  {{ getFieldError('password') }}
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 mb-6">
+                <input id="rememberMe" 
+                       type="checkbox" 
+                       formControlName="rememberMe"
+                       class="form-checkbox">
+                <label class="text-default-900 text-sm font-medium" for="rememberMe">Remember Me</label>
+              </div>
+
+              <div class="text-center">
+                <button type="submit" 
+                        [disabled]="isLoading || loginForm.invalid" 
+                        class="btn bg-primary text-white w-full">
+                  <span *ngIf="isLoading" class="animate-spin mr-2">
+                    <iconify-icon icon="lucide:loader-2"></iconify-icon>
+                  </span>
+                  <span *ngIf="!isLoading">Sign In</span>
+                  <span *ngIf="isLoading">Signing In...</span>
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-8 text-center">
+              <p class="text-default-600 text-sm">
+                Don't have an account? 
+                <a routerLink="/auth/register" class="text-primary font-medium">Create account</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="lg:ms-10 py-12 h-full flex justify-center items-center">
+            <div class="text-center">
+              <img src="/assets/images/auth-img.png" alt="" class="block mx-auto dark:hidden" />
+              <img src="/assets/images/auth-img-dark.png" alt="" class="hidden mx-auto dark:block" />
+              <div class="mt-10">
+                <h4 class="text-white mb-3 text-xl font-semibold">Manage Your Email Marketing</h4>
+                <p class="text-white/70 mx-auto text-base leading-6">
+                  Create, manage, and analyze your email campaigns with our powerful platform.
+                  Track contacts, build lists, and grow your business.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

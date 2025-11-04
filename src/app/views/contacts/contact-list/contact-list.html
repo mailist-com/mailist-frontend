@@ -1,0 +1,272 @@
+<main>
+  <app-page-title title="Contact Management" subtitle="Contacts" />
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6" *ngIf="statistics$ | async as stats">
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Total Contacts</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.total | number }}</p>
+          </div>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary"><ng-icon name="lucideUsers"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Active</p>
+            <p class="text-2xl font-semibold text-success">{{ stats.active | number }}</p>
+          </div>
+          <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success"><ng-icon name="lucideCircleCheck"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Unsubscribed</p>
+            <p class="text-2xl font-semibold text-danger">{{ stats.unsubscribed | number }}</p>
+          </div>
+          <div class="w-12 h-12 bg-danger/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-danger"><ng-icon name="lucideCircleX"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Tagged</p>
+            <p class="text-2xl font-semibold text-info">{{ stats.tagged | number }}</p>
+          </div>
+          <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-info"><ng-icon name="lucideTag"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card">
+    <div class="card-header">
+      <h6 class="card-title">Contacts List</h6>
+      <div class="flex items-center gap-3">
+        <a routerLink="/contacts/lists" class="btn btn-sm bg-default-100 text-default-600">
+          <div class="size-4 me-1"><ng-icon name="lucideList"></ng-icon></div>
+          Manage Lists
+        </a>
+        <a routerLink="/contacts/import" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
+          <div class="size-4 me-1"><ng-icon name="lucideUpload"></ng-icon></div>
+          Import Contacts
+        </a>
+        <a routerLink="/contacts/create" class="btn btn-sm bg-primary text-white">
+          <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+          Add Contact
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-header">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
+        <!-- Search -->
+        <div class="relative">
+          <input type="text" 
+                 [(ngModel)]="searchTerm" 
+                 (input)="onSearch()"
+                 class="form-input form-input-sm ps-9" 
+                 placeholder="Search contacts...">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="unconfirmed">Unconfirmed</option>
+          <option value="unsubscribed">Unsubscribed</option>
+          <option value="bounced">Bounced</option>
+          <option value="blocked">Blocked</option>
+        </select>
+
+        <!-- List Filter -->
+        <select [(ngModel)]="selectedList" (change)="onFilterChange()" class="form-input form-input-sm">
+          <option value="">All Lists</option>
+          <option *ngFor="let list of lists$ | async" [value]="list.id">{{ list.name }}</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2 items-center flex-wrap">
+        <a routerLink="/contacts/import" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
+          <div class="size-4"><ng-icon name="lucideUpload"></ng-icon></div>
+          Import
+        </a>
+
+        <button type="button" (click)="clearFilters()" class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-1500 hover:text-white">
+          <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tags Filter -->
+    <div class="card-header border-t">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-default-700">Tags:</span>
+        <div class="flex flex-wrap gap-2">
+          <button *ngFor="let tag of availableTags" 
+                  (click)="onTagToggle(tag)"
+                  [class]="selectedTags.includes(tag) ? 
+                    'py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded bg-primary/10 text-primary' : 
+                    'py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded bg-default-100 text-default-600 hover:bg-default-200'">
+            {{ tag }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="flex flex-col">
+      <div class="overflow-x-auto">
+        <div class="min-w-full inline-block align-middle">
+          <div class="overflow-hidden">
+            <table class="min-w-full divide-y divide-default-200">
+              <thead class="bg-default-150">
+                <tr class="text-sm font-normal text-default-700 whitespace-nowrap">
+                  <th class="ps-4 text-start">
+                    <input id="checkbox-all" type="checkbox" class="form-checkbox">
+                  </th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Contact</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Status</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Lists</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Tags</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Added</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let contact of contacts$ | async; trackBy: trackByContactId" 
+                    class="text-default-800 font-normal text-sm whitespace-nowrap">
+                  <td class="py-3 ps-4">
+                    <input type="checkbox" class="form-checkbox">
+                  </td>
+                  
+                  <!-- Contact Info -->
+                  <td class="flex py-3 px-3.5 items-center gap-3">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
+                      {{ getInitials(contact) }}
+                    </div>
+                    <div>
+                      <h6 class="mb-1.5 font-semibold">
+                        <a [routerLink]="['/contacts/view', contact.id]" class="text-default-800 hover:text-primary">
+                          {{ contact.firstName }} {{ contact.lastName }}
+                        </a>
+                      </h6>
+                      <p class="text-default-500">{{ contact.email }}</p>
+                      <p *ngIf="contact.organization" class="text-xs text-default-400">{{ contact.organization }}</p>
+                    </div>
+                  </td>
+
+                  <!-- Status -->
+                  <td class="px-3.5 py-3">
+                    <span class="py-0.5 px-2.5 inline-flex items-center gap-x-1 text-xs font-medium rounded" 
+                          [class]="getStatusClass(contact.status)">
+                      <div class="size-3"><ng-icon [name]="getStatusIcon(contact.status)"></ng-icon></div>
+                      {{ contact.status | titlecase }}
+                    </span>
+                  </td>
+
+                  <!-- Lists -->
+                  <td class="px-3.5 py-3">
+                    <div class="flex flex-wrap gap-1">
+                      <span *ngFor="let listId of contact.lists.slice(0, 2)" 
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-default-100 text-default-600">
+                        List {{ listId.slice(-3) }}
+                      </span>
+                      <span *ngIf="contact.lists.length > 2" 
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-default-100 text-default-600">
+                        +{{ contact.lists.length - 2 }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Tags -->
+                  <td class="px-3.5 py-3">
+                    <div class="flex flex-wrap gap-1">
+                      <span *ngFor="let tag of contact.tags.slice(0, 2)" 
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                        {{ tag }}
+                      </span>
+                      <span *ngIf="contact.tags.length > 2" 
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                        +{{ contact.tags.length - 2 }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Date -->
+                  <td class="px-3.5 py-3">
+                    <div class="text-sm">{{ contact.createdAt | date:'MMM d, y' }}</div>
+                    <div class="text-xs text-default-500">{{ contact.createdAt | date:'h:mm a' }}</div>
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="px-3.5 py-3">
+                    <div class="hs-dropdown relative inline-flex">
+                      <button type="button" class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500" 
+                              aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                        <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>
+                      </button>
+                      <div class="hs-dropdown-menu" role="menu">
+                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded" 
+                           [routerLink]="['/contacts/view', contact.id]">
+                          <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
+                          View
+                        </a>
+                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded" 
+                           [routerLink]="['/contacts/edit', contact.id]">
+                          <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>
+                          Edit
+                        </a>
+                        <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left" 
+                                (click)="deleteContact(contact)">
+                          <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="card-footer">
+        <p class="text-default-500 text-sm">
+          Showing <b>{{ (contacts$ | async)?.length || 0 }}</b> contacts
+        </p>
+      </div>
+    </div>
+  </div>
+</main>

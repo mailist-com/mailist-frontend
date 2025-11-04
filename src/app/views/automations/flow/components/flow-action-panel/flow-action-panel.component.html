@@ -1,0 +1,36 @@
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="state.undo()" [disabled]="!state.canUndo()" title="Undo">
+  <div class="size-4"><ng-icon name="lucideUndo"></ng-icon></div>
+</button>
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="state.redo()" [disabled]="!state.canRedo()" title="Redo">
+  <div class="size-4"><ng-icon name="lucideRedo"></ng-icon></div>
+</button>
+
+<div class="divider"></div>
+
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="removeSelected()" [disabled]="!canRemove()" title="Delete">
+  <div class="size-4"><ng-icon name="lucideTrash2"></ng-icon></div>
+</button>
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="processAction.emit(action.SELECT_ALL)" title="Select All">
+  <div class="size-4"><ng-icon name="lucideLassoSelect"></ng-icon></div>
+</button>
+
+<div class="divider"></div>
+
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="processAction.emit(action.ZOOM_IN)" title="Zoom In">
+  <div class="size-4"><ng-icon name="lucideZoomIn"></ng-icon></div>
+</button>
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="processAction.emit(action.ZOOM_OUT)" title="Zoom Out">
+  <div class="size-4"><ng-icon name="lucideZoomOut"></ng-icon></div>
+</button>
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="processAction.emit(action.FIT_TO_SCREEN)" title="Fit to Screen">
+  <div class="size-4"><ng-icon name="lucideExpand"></ng-icon></div>
+</button>
+<button class="btn btn-sm bg-default-100 text-default-600" (click)="processAction.emit(action.ONE_TO_ONE)" title="1:1">
+  <div class="size-4"><ng-icon name="lucideFocus"></ng-icon></div>
+</button>
+
+<div class="divider"></div>
+
+<button class="btn btn-sm bg-danger/10 text-danger" (click)="reset()" title="Reset">
+  <div class="size-4"><ng-icon name="lucideRotateCcw"></ng-icon></div>
+</button>

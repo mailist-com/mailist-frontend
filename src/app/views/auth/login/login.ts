@@ -1,0 +1,78 @@
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  imports: [ RouterLink, ReactiveFormsModule, CommonModule ],
+  templateUrl: './login.html',
+  styles: ``,
+  schemas:[CUSTOM_ELEMENTS_SCHEMA]
+})
+export class Login {
+  loginForm: FormGroup;
+  isLoading = false;
+  error = '';
+  returnUrl = '';
+  showPassword = false;
+  demoUsers: { email: string; password: string; role: string }[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.demoUsers = this.authService.getDemoUsers();
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
+    });
+
+    // Get return url from route parameters or default to '/'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
+  }
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.error = '';
+
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (user) => {
+          this.router.navigate([this.returnUrl]);
+        },
+        error: (error) => {
+          this.error = error;
+          this.isLoading = false;
+        }
+      });
+    } else {
+      Object.keys(this.loginForm.controls).forEach(key => {
+        this.loginForm.get(key)?.markAsTouched();
+      });
+    }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  loginWithDemo(email: string, password: string) {
+    this.loginForm.patchValue({ email, password });
+    this.onSubmit();
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const field = this.loginForm.get(fieldName);
+    if (field?.invalid && field?.touched) {
+      if (field.errors?.['required']) return `${fieldName} is required`;
+      if (field.errors?.['email']) return 'Please enter a valid email address';
+      if (field.errors?.['minlength']) return `${fieldName} must be at least ${field.errors['minlength'].requiredLength} characters`;
+    }
+    return null;
+  }
+}

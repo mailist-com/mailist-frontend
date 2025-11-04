@@ -1,0 +1,16 @@
+@let params = defaultParams[type()];
+
+<div class="node-icon" [style.color]="params.color">
+  <ng-icon [name]="params.icon"></ng-icon>
+</div>
+
+<div class="node-header-text">
+  <div class="node-header-title">{{ params.name }}</div>
+  <div class="node-header-subtitle">{{ description() }}</div>
+</div>
+
+<div class="flex-grow"></div>
+
+<button class="btn btn-sm btn-ghost" (click)="deleteNode.emit()" title="Usuń węzeł">
+  <ng-icon name="lucideTrash2"></ng-icon>
+</button>
