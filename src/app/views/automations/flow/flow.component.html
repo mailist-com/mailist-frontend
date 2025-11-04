@@ -26,9 +26,9 @@
       </div>
 
       <!-- Main Content -->
-      <div class="flex flex-grow-1 overflow-hidden" style="height: 70vh;">
+      <div class="flex overflow-hidden" style="height: 70vh;">
         <!-- Left Sidebar (Node Library) -->
-        <div class="flow-sidebar-left border-e border-default-200 overflow-y-auto transition-all duration-300 bg-white" [class.w-80]="!isLeftSidebarMinimized()" [class.w-16]="isLeftSidebarMinimized()">
+        <div class="flow-sidebar-left border-e border-default-200 overflow-y-auto" [class.w-80]="!isLeftSidebarMinimized()" [class.w-16]="isLeftSidebarMinimized()" style="transition: width 0.2s ease;">
           <div class="p-4">
             @if (isLeftSidebarMinimized()) {
               <button class="btn btn-sm w-full justify-center" (click)="isLeftSidebarMinimized.set(false)" title="Rozwiń panel">
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Center (Canvas) -->
-        <div class="flex-grow relative bg-default-50">
+        <div class="flex-1 relative bg-default-50">
           <f-flow fDraggable
                   (fLoaded)="editorLoaded()"
                   (fMoveNodes)="moveNodes($event)"

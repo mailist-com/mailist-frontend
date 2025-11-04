@@ -1,16 +1,10 @@
-/* Ensure the main content area fills the available space */
-.flex-grow-1 {
-  flex-grow: 1;
-}
-
-/* Ensure the flow workspace fills the available space */
-.relative {
-  position: relative;
-}
-
+/* Sidebar without z-index to prevent blocking interactions */
 .flow-sidebar-left {
-  position: relative; /* Create a new stacking context */
-  z-index: 20; /* Lift the sidebar above the canvas */
+  flex-shrink: 0;
+  /* Remove transitions during drag for better performance */
+  &:has(.f-external-item:active) {
+    transition: none;
+  }
 }
 
 :host ::ng-deep .f-flow-background {
@@ -19,11 +13,29 @@
   background-size: 20px 20px;
 }
 
-.material-icons.text-sm {
-  font-size: 1.125rem; /* 18px */
-  line-height: 1.25rem; /* 20px */
+/* Performance optimizations for drag & drop */
+:host ::ng-deep .f-canvas {
+  will-change: transform;
 }
 
-.leading-none {
-  line-height: 1;
+:host ::ng-deep .f-flow {
+  /* Disable animations during drag */
+  * {
+    transition-duration: 0.1s !important;
+  }
+}
+
+/* External items (draggable nodes from palette) */
+:host ::ng-deep .f-external-item {
+  cursor: grab !important;
+  will-change: transform;
+}
+
+:host ::ng-deep .f-external-item:active {
+  cursor: grabbing !important;
+}
+
+:host ::ng-deep .f-external-item-dragging {
+  opacity: 0.8;
+  transition: none !important;
 }
