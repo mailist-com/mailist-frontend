@@ -19,7 +19,7 @@ import { FlowState } from '../../flow-state';
   ],
   styles: [`
     :host {
-      min-width: 220px; /* Set a min-width for the host for positioning */
+      min-width: 220px;
     }
     .node-wrapper {
       background: white;
@@ -27,7 +27,33 @@ import { FlowState } from '../../flow-state';
       border-radius: 0.5rem;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      overflow: hidden; /* To contain the rounded corners of the header */
+      overflow: visible;
+      position: relative;
+    }
+    .node-body {
+      padding: 12px 16px;
+      min-height: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+    .node-data-item {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .data-label {
+      color: #6b7280;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .data-value {
+      color: #111827;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     :host(.f-dragging) .node-wrapper {
       pointer-events: none;

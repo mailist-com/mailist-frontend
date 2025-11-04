@@ -1,6 +1,53 @@
 <div class="node-wrapper">
   @let model = viewModel();
 
-  <app-flow-node-header [type]="model.type" [description]="model.description" fDragHandle/>
+  <app-flow-node-header
+    [type]="model.type"
+    [description]="model.description"
+    (deleteNode)="deleteNode()"
+    fDragHandle/>
+
+  <!-- Node Body - Display configured values -->
+  <div class="node-body">
+    @if (model.data) {
+      @if (model.data.emailSubject) {
+        <div class="node-data-item">
+          <span class="data-label">Temat:</span>
+          <span class="data-value">{{ model.data.emailSubject }}</span>
+        </div>
+      }
+      @if (model.data.waitDuration) {
+        <div class="node-data-item">
+          <span class="data-label">Czas:</span>
+          <span class="data-value">{{ model.data.waitDuration }} {{ model.data.waitUnit || 'dni' }}</span>
+        </div>
+      }
+      @if (model.data.groupName) {
+        <div class="node-data-item">
+          <span class="data-label">Grupa:</span>
+          <span class="data-value">{{ model.data.groupName }}</span>
+        </div>
+      }
+      @if (model.data.tagName) {
+        <div class="node-data-item">
+          <span class="data-label">Tag:</span>
+          <span class="data-value">{{ model.data.tagName }}</span>
+        </div>
+      }
+      @if (model.data.fieldName) {
+        <div class="node-data-item">
+          <span class="data-label">Pole:</span>
+          <span class="data-value">{{ model.data.fieldName }}</span>
+        </div>
+      }
+      @if (model.data.conditionField) {
+        <div class="node-data-item">
+          <span class="data-label">Warunek:</span>
+          <span class="data-value">{{ model.data.conditionField }} {{ model.data.conditionOperator }} {{ model.data.conditionValue }}</span>
+        </div>
+      }
+    }
+  </div>
+
   <app-flow-node-footer-outputs [outputs]="model.outputs" (removeConnection)="removeConnection.emit($event)"/>
 </div>

@@ -4,14 +4,14 @@ import { NODE_PARAMS_MAP } from '../../constants/node-params-map';
 import { NodeType } from '../../enums/node-type';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideInfo } from '@ng-icons/lucide';
+import { lucideInfo, lucideSave } from '@ng-icons/lucide';
 import { FlowState } from '../../flow-state';
 
 @Component({
   selector: 'app-flow-node-settings',
   standalone: true,
   imports: [FormsModule, NgIcon],
-  providers: [provideIcons({ lucideInfo })],
+  providers: [provideIcons({ lucideInfo, lucideSave })],
   templateUrl: './flow-node-settings.component.html',
   styleUrls: ['./flow-node-settings.component.scss']
 })

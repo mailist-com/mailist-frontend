@@ -1,16 +1,17 @@
 :host {
-  background: #f9fafb; /* bg-default-50 */
-  border-bottom: 1px solid #e5e7eb; /* border-default-200 */
-  border-radius: 0.5rem 0.5rem 0 0; /* rounded-t-lg */
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0.5rem 0.5rem 0 0;
   padding: 12px 16px;
-  font-weight: 500; /* font-medium */
-  font-size: 14px; /* text-sm */
-  color: #111827; /* text-default-900 */
+  font-weight: 500;
+  font-size: 14px;
+  color: #111827;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 12px;
   cursor: move;
+  overflow: hidden; /* Clip header content to maintain rounded corners */
 }
 
 .node-icon {
