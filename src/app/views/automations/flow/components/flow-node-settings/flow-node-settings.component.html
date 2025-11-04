@@ -14,12 +14,14 @@
     <!-- General Settings -->
     <div class="settings-section">
       <label class="settings-label">Nazwa elementu</label>
-      <input type="text" class="form-input form-input-sm" placeholder="Wprowadź nazwę..." />
+      <input type="text" class="form-input form-input-sm" placeholder="Wprowadź nazwę..."
+             [ngModel]="nodeName()" (ngModelChange)="nodeName.set($event); updateNodeData()" />
     </div>
 
     <div class="settings-section">
       <label class="settings-label">Opis</label>
-      <textarea class="form-textarea form-input-sm" rows="2" placeholder="Dodaj opis (opcjonalnie)..."></textarea>
+      <textarea class="form-textarea form-input-sm" rows="2" placeholder="Dodaj opis (opcjonalnie)..."
+                [ngModel]="nodeDescription()" (ngModelChange)="nodeDescription.set($event); updateNodeData()"></textarea>
     </div>
 
     <!-- Type-specific settings -->
@@ -29,7 +31,7 @@
     @if (n.type === NodeType.SendEmail) {
       <div class="settings-section">
         <label class="settings-label">Szablon email</label>
-        <select class="form-input form-input-sm" [(ngModel)]="emailTemplate">
+        <select class="form-input form-input-sm" [ngModel]="emailTemplate()" (ngModelChange)="emailTemplate.set($event); updateNodeData()">
           <option value="">Wybierz szablon...</option>
           <option value="welcome">Email powitalny</option>
           <option value="newsletter">Newsletter</option>
@@ -39,12 +41,14 @@
 
       <div class="settings-section">
         <label class="settings-label">Temat</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="emailSubject" placeholder="Temat emaila..." />
+        <input type="text" class="form-input form-input-sm" placeholder="Temat emaila..."
+               [ngModel]="emailSubject()" (ngModelChange)="emailSubject.set($event); updateNodeData()" />
       </div>
 
       <div class="settings-section">
         <label class="settings-label">Treść</label>
-        <textarea class="form-textarea form-input-sm" rows="4" [(ngModel)]="emailContent" placeholder="Treść wiadomości..."></textarea>
+        <textarea class="form-textarea form-input-sm" rows="4" placeholder="Treść wiadomości..."
+                  [ngModel]="emailContent()" (ngModelChange)="emailContent.set($event); updateNodeData()"></textarea>
       </div>
 
       <div class="settings-info">
@@ -58,8 +62,8 @@
       <div class="settings-section">
         <label class="settings-label">Czas oczekiwania</label>
         <div class="flex gap-2">
-          <input type="number" class="form-input form-input-sm flex-1" [(ngModel)]="waitDuration" min="1" />
-          <select class="form-input form-input-sm" [(ngModel)]="waitUnit">
+          <input type="number" class="form-input form-input-sm flex-1" [ngModel]="waitDuration()" (ngModelChange)="waitDuration.set($event); updateNodeData()" min="1" />
+          <select class="form-input form-input-sm" [ngModel]="waitUnit()" (ngModelChange)="waitUnit.set($event); updateNodeData()">
             <option value="minutes">Minut</option>
             <option value="hours">Godzin</option>
             <option value="days">Dni</option>
@@ -78,7 +82,7 @@
     @if (n.type === NodeType.AddToGroup) {
       <div class="settings-section">
         <label class="settings-label">Grupa</label>
-        <select class="form-input form-input-sm" [(ngModel)]="groupName">
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
           <option value="">Wybierz grupę...</option>
           <option value="newsletter">Newsletter</option>
           <option value="customers">Klienci</option>
@@ -96,7 +100,7 @@
     @if (n.type === NodeType.RemoveFromGroup) {
       <div class="settings-section">
         <label class="settings-label">Grupa</label>
-        <select class="form-input form-input-sm" [(ngModel)]="groupName">
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
           <option value="">Wybierz grupę...</option>
           <option value="newsletter">Newsletter</option>
           <option value="customers">Klienci</option>
@@ -114,7 +118,7 @@
     @if (n.type === NodeType.AddTag) {
       <div class="settings-section">
         <label class="settings-label">Tag</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="tagName" placeholder="Nazwa tagu..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
       </div>
 
       <div class="settings-info">
@@ -127,7 +131,7 @@
     @if (n.type === NodeType.RemoveTag) {
       <div class="settings-section">
         <label class="settings-label">Tag</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="tagName" placeholder="Nazwa tagu..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
       </div>
 
       <div class="settings-info">
@@ -140,7 +144,7 @@
     @if (n.type === NodeType.UpdateField) {
       <div class="settings-section">
         <label class="settings-label">Pole</label>
-        <select class="form-input form-input-sm" [(ngModel)]="fieldName">
+        <select class="form-input form-input-sm" [ngModel]="fieldName()" (ngModelChange)="fieldName.set($event); updateNodeData()">
           <option value="">Wybierz pole...</option>
           <option value="first_name">Imię</option>
           <option value="last_name">Nazwisko</option>
@@ -151,7 +155,7 @@
 
       <div class="settings-section">
         <label class="settings-label">Wartość</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="fieldValue" placeholder="Nowa wartość..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="fieldValue()" (ngModelChange)="fieldValue.set($event); updateNodeData()" placeholder="Nowa wartość..." />
       </div>
 
       <div class="settings-info">
@@ -164,7 +168,7 @@
     @if (n.type === NodeType.SendWebhook) {
       <div class="settings-section">
         <label class="settings-label">URL Webhooka</label>
-        <input type="url" class="form-input form-input-sm" [(ngModel)]="webhookUrl" placeholder="https://example.com/webhook" />
+        <input type="url" class="form-input form-input-sm" [ngModel]="webhookUrl()" (ngModelChange)="webhookUrl.set($event); updateNodeData()" placeholder="https://example.com/webhook" />
       </div>
 
       <div class="settings-section">
@@ -186,7 +190,7 @@
     @if (n.type === NodeType.SendNotification) {
       <div class="settings-section">
         <label class="settings-label">Wiadomość</label>
-        <textarea class="form-textarea form-input-sm" rows="3" [(ngModel)]="notificationMessage" placeholder="Treść powiadomienia..."></textarea>
+        <textarea class="form-textarea form-input-sm" rows="3" [ngModel]="notificationMessage()" (ngModelChange)="notificationMessage.set($event); updateNodeData()" placeholder="Treść powiadomienia..."></textarea>
       </div>
 
       <div class="settings-info">
@@ -199,7 +203,7 @@
     @if (n.type === NodeType.Condition || n.type === NodeType.IfElse) {
       <div class="settings-section">
         <label class="settings-label">Pole do sprawdzenia</label>
-        <select class="form-input form-input-sm" [(ngModel)]="conditionField">
+        <select class="form-input form-input-sm" [ngModel]="conditionField()" (ngModelChange)="conditionField.set($event); updateNodeData()">
           <option value="">Wybierz pole...</option>
           <option value="first_name">Imię</option>
           <option value="last_name">Nazwisko</option>
@@ -211,7 +215,7 @@
 
       <div class="settings-section">
         <label class="settings-label">Operator</label>
-        <select class="form-input form-input-sm" [(ngModel)]="conditionOperator">
+        <select class="form-input form-input-sm" [ngModel]="conditionOperator()" (ngModelChange)="conditionOperator.set($event); updateNodeData()">
           <option value="equals">Równa się</option>
           <option value="not_equals">Nie równa się</option>
           <option value="contains">Zawiera</option>
@@ -225,7 +229,7 @@
 
       <div class="settings-section">
         <label class="settings-label">Wartość</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="conditionValue" placeholder="Wartość do porównania..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="conditionValue()" (ngModelChange)="conditionValue.set($event); updateNodeData()" placeholder="Wartość do porównania..." />
       </div>
 
       <div class="settings-info">
@@ -246,12 +250,12 @@
 
       <div class="settings-section">
         <label class="settings-label">Ścieżka A (%)</label>
-        <input type="number" class="form-input form-input-sm" [(ngModel)]="splitPercentageA" min="0" max="100" />
+        <input type="number" class="form-input form-input-sm" [ngModel]="splitPercentageA()" (ngModelChange)="splitPercentageA.set($event); updateNodeData()" min="0" max="100" />
       </div>
 
       <div class="settings-section">
         <label class="settings-label">Ścieżka B (%)</label>
-        <input type="number" class="form-input form-input-sm" [(ngModel)]="splitPercentageB" min="0" max="100" />
+        <input type="number" class="form-input form-input-sm" [ngModel]="splitPercentageB()" (ngModelChange)="splitPercentageB.set($event); updateNodeData()" min="0" max="100" />
       </div>
 
       <div class="settings-info">
@@ -264,7 +268,7 @@
     @if (n.type === NodeType.SubscriberJoinsGroup) {
       <div class="settings-section">
         <label class="settings-label">Grupa</label>
-        <select class="form-input form-input-sm" [(ngModel)]="groupName">
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
           <option value="">Wybierz grupę...</option>
           <option value="newsletter">Newsletter</option>
           <option value="customers">Klienci</option>
@@ -282,7 +286,7 @@
     @if (n.type === NodeType.FormSubmitted) {
       <div class="settings-section">
         <label class="settings-label">Formularz</label>
-        <select class="form-input form-input-sm" [(ngModel)]="formId">
+        <select class="form-input form-input-sm" [ngModel]="formId()" (ngModelChange)="formId.set($event); updateNodeData()">
           <option value="">Wybierz formularz...</option>
           <option value="contact">Formularz kontaktowy</option>
           <option value="newsletter">Formularz newslettera</option>
@@ -300,7 +304,7 @@
     @if (n.type === NodeType.LinkClicked) {
       <div class="settings-section">
         <label class="settings-label">URL linku</label>
-        <input type="url" class="form-input form-input-sm" [(ngModel)]="linkUrl" placeholder="https://example.com/page" />
+        <input type="url" class="form-input form-input-sm" [ngModel]="linkUrl()" (ngModelChange)="linkUrl.set($event); updateNodeData()" placeholder="https://example.com/page" />
       </div>
 
       <div class="settings-info">
@@ -313,7 +317,7 @@
     @if (n.type === NodeType.FieldUpdated) {
       <div class="settings-section">
         <label class="settings-label">Pole</label>
-        <select class="form-input form-input-sm" [(ngModel)]="fieldName">
+        <select class="form-input form-input-sm" [ngModel]="fieldName()" (ngModelChange)="fieldName.set($event); updateNodeData()">
           <option value="">Wybierz pole...</option>
           <option value="first_name">Imię</option>
           <option value="last_name">Nazwisko</option>
@@ -332,7 +336,7 @@
     @if (n.type === NodeType.TagAdded) {
       <div class="settings-section">
         <label class="settings-label">Tag</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="tagName" placeholder="Nazwa tagu..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
       </div>
 
       <div class="settings-info">
@@ -345,7 +349,7 @@
     @if (n.type === NodeType.TagRemoved) {
       <div class="settings-section">
         <label class="settings-label">Tag</label>
-        <input type="text" class="form-input form-input-sm" [(ngModel)]="tagName" placeholder="Nazwa tagu..." />
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
       </div>
 
       <div class="settings-info">
@@ -375,7 +379,7 @@
     @if (n.type === NodeType.DateBased) {
       <div class="settings-section">
         <label class="settings-label">Pole daty</label>
-        <select class="form-input form-input-sm" [(ngModel)]="dateField">
+        <select class="form-input form-input-sm" [ngModel]="dateField()" (ngModelChange)="dateField.set($event); updateNodeData()">
           <option value="">Wybierz pole...</option>
           <option value="birthday">Data urodzenia</option>
           <option value="signup_date">Data rejestracji</option>

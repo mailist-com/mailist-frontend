@@ -126,10 +126,14 @@ export class FlowComponent implements OnInit {
     const selectedNodeId = model.selection?.nodes[0];
     if (selectedNodeId) {
       this.selectedNode.set(model.nodes[selectedNodeId]);
-      this.isLeftSidebarMinimized.set(true);
+      // Don't auto-minimize the palette when selecting a node
     } else {
       this.selectedNode.set(undefined);
     }
+  }
+
+  protected toggleLeftSidebar(): void {
+    this.isLeftSidebarMinimized.set(!this.isLeftSidebarMinimized());
   }
 
   protected closeSettings(): void {

@@ -22,3 +22,25 @@
 :host ::ng-deep .f-external-item:active {
   cursor: grabbing !important;
 }
+
+/* Input socket styling - positioned on top edge */
+:host ::ng-deep .f-node-input {
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s ease;
+}
+
+:host ::ng-deep .f-node-input:hover {
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+}

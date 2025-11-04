@@ -31,13 +31,13 @@
         <div class="flow-sidebar-left border-e border-default-200 overflow-y-auto" [class.w-80]="!isLeftSidebarMinimized()" [class.w-16]="isLeftSidebarMinimized()" style="transition: width 0.2s ease;">
           <div class="p-4">
             @if (isLeftSidebarMinimized()) {
-              <button class="btn btn-sm w-full justify-center" (click)="isLeftSidebarMinimized.set(false)" title="Rozwiń panel">
+              <button class="btn btn-sm w-full justify-center" (click)="toggleLeftSidebar()" title="Rozwiń panel">
                 <ng-icon name="lucidePanelRight"></ng-icon>
               </button>
             } @else {
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-semibold text-default-900">Elementy</h3>
-                <button class="btn btn-sm btn-ghost" (click)="isLeftSidebarMinimized.set(true)" title="Zwiń panel">
+                <button class="btn btn-sm btn-ghost" (click)="toggleLeftSidebar()" title="Zwiń panel">
                   <ng-icon name="lucidePanelLeft"></ng-icon>
                 </button>
               </div>
