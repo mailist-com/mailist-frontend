@@ -3,7 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { NgIcon } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  lucideActivity,
+  lucidePlay,
+  lucidePause,
+  lucideFileText,
+  lucideRefreshCw,
+  lucidePlus,
+  lucideSearch,
+  lucideZap,
+  lucideWorkflow,
+  lucideEdit,
+  lucideCopy,
+  lucideTrash2
+} from '@ng-icons/lucide';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 
@@ -14,6 +28,20 @@ import { Automation, AutomationStatus, AutomationType } from '../../../models/au
   selector: 'app-automation-list',
   standalone: true,
   imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  providers: [provideIcons({
+    lucideActivity,
+    lucidePlay,
+    lucidePause,
+    lucideFileText,
+    lucideRefreshCw,
+    lucidePlus,
+    lucideSearch,
+    lucideZap,
+    lucideWorkflow,
+    lucideEdit,
+    lucideCopy,
+    lucideTrash2
+  })],
   templateUrl: './automation-list.html'
 })
 export class AutomationList implements OnInit, OnDestroy {

@@ -14,6 +14,7 @@ import {NodeType} from "../enums/node-type";
 import {IFlowStateNode} from "../models/i-flow-state-node";
 import {createGenericNode} from "./create-generic-node";
 import {IFlowStateConnection} from "../models/i-flow-state-connection";
+import {AutomationService} from "../../../../services/automation.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,24 +22,48 @@ import {IFlowStateConnection} from "../models/i-flow-state-connection";
 export class FlowApiService {
 
   private readonly _state = inject(FlowState);
+  private readonly _automationService = inject(AutomationService);
+
+  private _currentAutomationId: string | null = null;
 
   public getFlowById(flowId: string): IFlowState {
-    // For now, always return an empty flow. In a real application, you would load from a backend.
+    this._currentAutomationId = flowId;
+
+    // Try to load from localStorage first
+    const storageKey = `automation_flow_${flowId}`;
+    const savedFlow = localStorage.getItem(storageKey);
+
+    if (savedFlow) {
+      try {
+        const parsedFlow = JSON.parse(savedFlow);
+        return parsedFlow;
+      } catch (e) {
+        console.error('Error parsing saved flow:', e);
+      }
+    }
+
+    // Return empty flow for new automations
     return {
       nodes: {},
       connections: {},
       name: 'Nowa automatyzacja'
-    }
+    };
   }
 
   public saveFlow(flow: IFlowState, flowId: string): void {
-    // In a real application, you would save to a backend.
-    console.log(`Saving flow ${flowId}:`, flow);
+    // Save flow data to localStorage for persistence
+    const storageKey = `automation_flow_${flowId}`;
+    localStorage.setItem(storageKey, JSON.stringify(flow));
   }
 
   public resetFlow(flowId: string): void {
-    // In a real application, you would reset or delete the flow on the backend.
-    console.log(`Resetting flow ${flowId}`);
+    // Clear from localStorage
+    const storageKey = `automation_flow_${flowId}`;
+    localStorage.removeItem(storageKey);
+  }
+
+  public getCurrentAutomationId(): string | null {
+    return this._currentAutomationId;
   }
 
   public transformCanvas(event: FCanvasChangeEvent): void {

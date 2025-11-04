@@ -12,6 +12,7 @@ export interface Automation {
   createdAt: Date;
   updatedAt: Date;
   lastRunAt?: Date;
+  flowData?: any; // Flow editor data (IFlowState)
 }
 
 export type AutomationStatus = 'active' | 'inactive' | 'draft' | 'paused';

@@ -26,6 +26,8 @@ import { FlowNodeSettingsComponent } from './components/flow-node-settings/flow-
 import { PageTitle } from '../../../components/page-title/page-title';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX } from '@ng-icons/lucide';
+import { Router } from '@angular/router';
+import { AutomationService } from '../../../services/automation.service';
 
 @Component({
   selector: 'app-flow',
@@ -59,6 +61,8 @@ export class FlowComponent implements OnInit {
   private readonly _apiService = inject(FlowApiService);
   private readonly _injector = inject(Injector);
   private readonly _platform = inject(PlatformService);
+  private readonly _automationService = inject(AutomationService);
+  private readonly _router = inject(Router);
 
   private readonly _flow = viewChild(FFlowComponent);
   private readonly _canvas = viewChild(FCanvasComponent);
@@ -235,5 +239,46 @@ export class FlowComponent implements OnInit {
 
   private _isCommandButton(event: { metaKey: boolean, ctrlKey: boolean }): boolean {
     return this._platform.getOS() === EOperationSystem.MAC_OS ? event.metaKey : event.ctrlKey;
+  }
+
+  protected saveAutomation(): void {
+    const currentState = this._state.getSnapshot();
+    const currentId = this.id();
+
+    if (currentId) {
+      // Update existing automation
+      this._automationService.updateAutomation(currentId, {
+        flowData: currentState,
+        name: currentState.name || 'Automatyzacja'
+      }).subscribe({
+        next: () => {
+          console.log('Automation updated successfully');
+          this._router.navigate(['/automations']);
+        },
+        error: (error) => {
+          console.error('Error updating automation:', error);
+        }
+      });
+    } else {
+      // Create new automation
+      this._automationService.createAutomation({
+        name: currentState.name || 'Nowa automatyzacja',
+        description: 'Automatyzacja stworzona w edytorze flow',
+        type: 'custom',
+        flowData: currentState
+      }).subscribe({
+        next: () => {
+          console.log('Automation created successfully');
+          this._router.navigate(['/automations']);
+        },
+        error: (error) => {
+          console.error('Error creating automation:', error);
+        }
+      });
+    }
+  }
+
+  protected cancel(): void {
+    this._router.navigate(['/automations']);
   }
 }
