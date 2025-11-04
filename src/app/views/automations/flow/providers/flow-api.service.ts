@@ -28,21 +28,31 @@ export class FlowApiService {
 
   public getFlowById(flowId: string): IFlowState {
     this._currentAutomationId = flowId;
+    console.log('[FlowApiService] Loading flow for ID:', flowId);
 
     // Try to load from localStorage first
     const storageKey = `automation_flow_${flowId}`;
     const savedFlow = localStorage.getItem(storageKey);
 
+    console.log('[FlowApiService] Storage key:', storageKey);
+    console.log('[FlowApiService] Found saved flow:', !!savedFlow);
+
     if (savedFlow) {
       try {
         const parsedFlow = JSON.parse(savedFlow);
+        console.log('[FlowApiService] Parsed flow:', {
+          nodeCount: Object.keys(parsedFlow.nodes || {}).length,
+          connectionCount: Object.keys(parsedFlow.connections || {}).length,
+          name: parsedFlow.name
+        });
         return parsedFlow;
       } catch (e) {
-        console.error('Error parsing saved flow:', e);
+        console.error('[FlowApiService] Error parsing saved flow:', e);
       }
     }
 
     // Return empty flow for new automations
+    console.log('[FlowApiService] Returning empty flow');
     return {
       nodes: {},
       connections: {},
@@ -53,7 +63,15 @@ export class FlowApiService {
   public saveFlow(flow: IFlowState, flowId: string): void {
     // Save flow data to localStorage for persistence
     const storageKey = `automation_flow_${flowId}`;
+    console.log('[FlowApiService] Saving flow for ID:', flowId);
+    console.log('[FlowApiService] Storage key:', storageKey);
+    console.log('[FlowApiService] Flow data:', {
+      nodeCount: Object.keys(flow.nodes || {}).length,
+      connectionCount: Object.keys(flow.connections || {}).length,
+      name: flow.name
+    });
     localStorage.setItem(storageKey, JSON.stringify(flow));
+    console.log('[FlowApiService] Flow saved successfully');
   }
 
   public resetFlow(flowId: string): void {

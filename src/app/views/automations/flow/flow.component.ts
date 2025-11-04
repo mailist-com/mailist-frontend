@@ -92,6 +92,8 @@ export class FlowComponent implements OnInit {
   private _initializeState(): void {
     effect(() => {
       const id = this.id() || generateGuid();
+      console.log('[FlowComponent] Initializing state with ID:', id);
+      console.log('[FlowComponent] ID from input:', this.id());
       untracked(() => {
         this._state.initialize(this._apiService.getFlowById(id))
       });
@@ -245,8 +247,13 @@ export class FlowComponent implements OnInit {
     const currentState = this._state.getSnapshot();
     const currentId = this.id();
 
+    console.log('[FlowComponent] Saving automation');
+    console.log('[FlowComponent] Current ID:', currentId);
+    console.log('[FlowComponent] Current state nodes:', Object.keys(currentState.nodes || {}).length);
+
     if (currentId) {
       // Update existing automation
+      console.log('[FlowComponent] Updating existing automation:', currentId);
       // Save flow to localStorage with automation ID
       this._apiService.saveFlow(currentState, currentId);
 
@@ -255,15 +262,16 @@ export class FlowComponent implements OnInit {
         name: currentState.name || 'Automatyzacja'
       }).subscribe({
         next: () => {
-          console.log('Automation updated successfully');
+          console.log('[FlowComponent] Automation updated successfully');
           this._router.navigate(['/automations']);
         },
         error: (error) => {
-          console.error('Error updating automation:', error);
+          console.error('[FlowComponent] Error updating automation:', error);
         }
       });
     } else {
       // Create new automation
+      console.log('[FlowComponent] Creating new automation');
       this._automationService.createAutomation({
         name: currentState.name || 'Nowa automatyzacja',
         description: 'Automatyzacja stworzona w edytorze flow',
@@ -271,13 +279,13 @@ export class FlowComponent implements OnInit {
         flowData: currentState
       }).subscribe({
         next: (automation) => {
-          console.log('Automation created successfully with ID:', automation.id);
+          console.log('[FlowComponent] Automation created successfully with ID:', automation.id);
           // Save flow to localStorage with the new automation ID
           this._apiService.saveFlow(currentState, automation.id);
           this._router.navigate(['/automations']);
         },
         error: (error) => {
-          console.error('Error creating automation:', error);
+          console.error('[FlowComponent] Error creating automation:', error);
         }
       });
     }
