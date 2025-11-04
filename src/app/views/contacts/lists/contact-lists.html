@@ -170,7 +170,7 @@
                 <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>
               </button>
               <div class="hs-dropdown-menu" role="menu">
-                <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded" href="#">
+                <a [routerLink]="['/contacts/lists/view', list.id]" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded">
                   <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
                   View Details
                 </a>

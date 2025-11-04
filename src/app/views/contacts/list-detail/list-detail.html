@@ -1,0 +1,329 @@
+<main *ngIf="list$ | async as list">
+  <app-page-title title="List Details" [subtitle]="list.name" />
+
+  <!-- List Details Section -->
+  <div class="card mb-6">
+    <div class="card-header">
+      <h6 class="card-title">List Information</h6>
+      <div class="flex items-center gap-3">
+        <a [routerLink]="['/contacts/lists/edit', list.id]" class="btn btn-sm bg-default-100 text-default-600">
+          <div class="size-4 me-1"><ng-icon name="lucideFilePen"></ng-icon></div>
+          Edit List
+        </a>
+        <a routerLink="/contacts/lists" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
+          <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+          Back to Lists
+        </a>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- Basic Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <div class="size-6 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-default-900">{{ list.name }}</h3>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getTypeClass(list.type)">
+                  {{ list.type | titlecase }}
+                </span>
+                <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getListStatusClass(list.status)">
+                  {{ list.status | titlecase }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="list.description" class="mb-4">
+            <label class="text-sm font-medium text-default-700 mb-1 block">Description</label>
+            <p class="text-sm text-default-600">{{ list.description }}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-sm font-medium text-default-700 mb-1 block">Created</label>
+              <p class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-default-700 mb-1 block">Updated</label>
+              <p class="text-sm text-default-600">{{ list.updatedAt | date:'MMM d, y' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics -->
+        <div>
+          <h4 class="text-sm font-medium text-default-700 mb-3">Statistics</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-4 bg-primary/5 rounded-lg">
+              <div class="text-2xl font-bold text-primary">{{ list.subscriberCount | number }}</div>
+              <div class="text-xs text-default-600 mt-1">Subscribers</div>
+            </div>
+            <div class="p-4 rounded-lg" [class]="getEngagementRate(list) >= 80 ? 'bg-success/5' : getEngagementRate(list) >= 60 ? 'bg-warning/5' : 'bg-danger/5'">
+              <div class="text-2xl font-bold" [class]="getEngagementRate(list) >= 80 ? 'text-success' : getEngagementRate(list) >= 60 ? 'text-warning' : 'text-danger'">
+                {{ getEngagementRate(list) | number:'1.0-0' }}%
+              </div>
+              <div class="text-xs text-default-600 mt-1">Engagement</div>
+            </div>
+            <div class="p-4 bg-danger/5 rounded-lg">
+              <div class="text-xl font-bold text-danger">{{ list.unsubscribedCount | number }}</div>
+              <div class="text-xs text-default-600 mt-1">Unsubscribed</div>
+            </div>
+            <div class="p-4 bg-warning/5 rounded-lg">
+              <div class="text-xl font-bold text-warning">{{ list.bouncedCount | number }}</div>
+              <div class="text-xs text-default-600 mt-1">Bounced</div>
+            </div>
+            <div class="p-4 bg-info/5 rounded-lg">
+              <div class="text-xl font-bold text-info">{{ list.cleanedCount | number }}</div>
+              <div class="text-xs text-default-600 mt-1">Cleaned</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="border-t border-default-200 pt-6">
+        <h4 class="text-sm font-medium text-default-700 mb-3">Settings</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.doubleOptIn ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Double Opt-In</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.welcomeEmail ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Welcome Email</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.allowPublicSubscription ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Public Subscription</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.notifyOnSubscribe ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Subscribe Notifications</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.notifyOnUnsubscribe ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Unsubscribe Notifications</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="size-5 text-default-600">
+              <ng-icon [name]="list.settings.requireNameOnSignup ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+            </div>
+            <span class="text-sm text-default-700">Require Name</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div *ngIf="list.tags.length > 0" class="border-t border-default-200 pt-6 mt-6">
+        <h4 class="text-sm font-medium text-default-700 mb-3">Tags</h4>
+        <div class="flex flex-wrap gap-2">
+          <span *ngFor="let tag of list.tags"
+                class="py-1 px-3 text-xs font-medium rounded bg-secondary/10 text-secondary">
+            {{ tag }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Custom Fields -->
+      <div *ngIf="list.customFields.length > 0" class="border-t border-default-200 pt-6 mt-6">
+        <h4 class="text-sm font-medium text-default-700 mb-3">Custom Fields</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div *ngFor="let field of list.customFields" class="p-3 bg-default-50 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-medium text-default-900">{{ field.label }}</div>
+                <div class="text-xs text-default-500">{{ field.type | titlecase }}{{ field.required ? ' (Required)' : '' }}</div>
+              </div>
+              <div class="size-5 text-default-400">
+                <ng-icon [name]="field.isVisible ? 'lucideEye' : 'lucideEyeOff'"></ng-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contacts Section -->
+  <div class="card">
+    <div class="card-header">
+      <h6 class="card-title">Contacts in this List</h6>
+      <div class="flex items-center gap-3">
+        <a routerLink="/contacts/create" class="btn btn-sm bg-primary text-white">
+          <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+          Add Contact
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-header">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
+        <!-- Search -->
+        <div class="relative">
+          <input type="text"
+                 [(ngModel)]="searchTerm"
+                 (input)="onSearch()"
+                 class="form-input form-input-sm ps-9"
+                 placeholder="Search contacts...">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="unconfirmed">Unconfirmed</option>
+          <option value="unsubscribed">Unsubscribed</option>
+          <option value="bounced">Bounced</option>
+          <option value="blocked">Blocked</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2 items-center flex-wrap">
+        <button type="button" (click)="clearFilters()" class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-1500 hover:text-white">
+          <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="flex flex-col">
+      <div class="overflow-x-auto">
+        <div class="min-w-full inline-block align-middle">
+          <div class="overflow-hidden">
+            <table class="min-w-full divide-y divide-default-200">
+              <thead class="bg-default-150">
+                <tr class="text-sm font-normal text-default-700 whitespace-nowrap">
+                  <th class="ps-4 text-start">
+                    <input id="checkbox-all" type="checkbox" class="form-checkbox">
+                  </th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Contact</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Status</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Tags</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Added</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let contact of contacts$ | async; trackBy: trackByContactId"
+                    class="text-default-800 font-normal text-sm whitespace-nowrap">
+                  <td class="py-3 ps-4">
+                    <input type="checkbox" class="form-checkbox">
+                  </td>
+
+                  <!-- Contact Info -->
+                  <td class="flex py-3 px-3.5 items-center gap-3">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
+                      {{ getInitials(contact) }}
+                    </div>
+                    <div>
+                      <h6 class="mb-1.5 font-semibold">
+                        <a [routerLink]="['/contacts/view', contact.id]" class="text-default-800 hover:text-primary">
+                          {{ contact.firstName }} {{ contact.lastName }}
+                        </a>
+                      </h6>
+                      <p class="text-default-500">{{ contact.email }}</p>
+                      <p *ngIf="contact.organization" class="text-xs text-default-400">{{ contact.organization }}</p>
+                    </div>
+                  </td>
+
+                  <!-- Status -->
+                  <td class="px-3.5 py-3">
+                    <span class="py-0.5 px-2.5 inline-flex items-center gap-x-1 text-xs font-medium rounded"
+                          [class]="getStatusClass(contact.status)">
+                      <div class="size-3"><ng-icon [name]="getStatusIcon(contact.status)"></ng-icon></div>
+                      {{ contact.status | titlecase }}
+                    </span>
+                  </td>
+
+                  <!-- Tags -->
+                  <td class="px-3.5 py-3">
+                    <div class="flex flex-wrap gap-1">
+                      <span *ngFor="let tag of contact.tags.slice(0, 2)"
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                        {{ tag }}
+                      </span>
+                      <span *ngIf="contact.tags.length > 2"
+                            class="py-0.5 px-2 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                        +{{ contact.tags.length - 2 }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Date -->
+                  <td class="px-3.5 py-3">
+                    <div class="text-sm">{{ contact.createdAt | date:'MMM d, y' }}</div>
+                    <div class="text-xs text-default-500">{{ contact.createdAt | date:'h:mm a' }}</div>
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="px-3.5 py-3">
+                    <div class="hs-dropdown relative inline-flex">
+                      <button type="button" class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500"
+                              aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                        <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>
+                      </button>
+                      <div class="hs-dropdown-menu" role="menu">
+                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
+                           [routerLink]="['/contacts/view', contact.id]">
+                          <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
+                          View
+                        </a>
+                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
+                           [routerLink]="['/contacts/edit', contact.id]">
+                          <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>
+                          Edit
+                        </a>
+                        <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                                (click)="deleteContact(contact)">
+                          <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <p class="text-default-500 text-sm">
+          Showing <b>{{ (contacts$ | async)?.length || 0 }}</b> contacts
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Loading State -->
+<div *ngIf="!(list$ | async)" class="flex items-center justify-center py-12">
+  <div class="text-center">
+    <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+    <p class="text-default-600">Loading list details...</p>
+  </div>
+</div>
