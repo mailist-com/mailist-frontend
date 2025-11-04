@@ -83,35 +83,70 @@ export class FlowNodeSettingsComponent {
 
   protected updateNodeData(): void {
     const currentNode = this.node();
+    const nodeType = currentNode.type;
 
-    // Build data object with only non-empty values
+    // Build data object based on node type
     const data: any = {};
 
-    if (this.nodeName()) data.name = this.nodeName();
-    if (this.emailSubject()) data.emailSubject = this.emailSubject();
-    if (this.emailContent()) data.emailContent = this.emailContent();
-    if (this.emailTemplate()) data.emailTemplate = this.emailTemplate();
-    if (this.waitDuration() && this.waitDuration() !== 1) data.waitDuration = this.waitDuration();
-    if (this.waitUnit() && this.waitUnit() !== 'days') data.waitUnit = this.waitUnit();
-    if (this.groupName()) data.groupName = this.groupName();
-    if (this.tagName()) data.tagName = this.tagName();
-    if (this.fieldName()) data.fieldName = this.fieldName();
-    if (this.fieldValue()) data.fieldValue = this.fieldValue();
-    if (this.webhookUrl()) data.webhookUrl = this.webhookUrl();
-    if (this.conditionField()) data.conditionField = this.conditionField();
-    if (this.conditionOperator() && this.conditionOperator() !== 'equals') data.conditionOperator = this.conditionOperator();
-    if (this.conditionValue()) data.conditionValue = this.conditionValue();
-    if (this.splitPercentageA() && this.splitPercentageA() !== 50) data.splitPercentageA = this.splitPercentageA();
-    if (this.splitPercentageB() && this.splitPercentageB() !== 50) data.splitPercentageB = this.splitPercentageB();
-    if (this.dateField()) data.dateField = this.dateField();
-    if (this.linkUrl()) data.linkUrl = this.linkUrl();
-    if (this.formId()) data.formId = this.formId();
-    if (this.notificationMessage()) data.notificationMessage = this.notificationMessage();
+    // Always save name if provided
+    if (this.nodeName()) {
+      data.name = this.nodeName();
+    }
 
-    // Keep waitDuration and waitUnit if they were already set (even with default values)
-    if (currentNode.data?.waitDuration) {
+    // Save fields based on node type
+    if (nodeType === NodeType.SendEmail) {
+      if (this.emailSubject()) data.emailSubject = this.emailSubject();
+      if (this.emailContent()) data.emailContent = this.emailContent();
+      if (this.emailTemplate()) data.emailTemplate = this.emailTemplate();
+    }
+
+    if (nodeType === NodeType.Wait) {
       data.waitDuration = this.waitDuration();
       data.waitUnit = this.waitUnit();
+    }
+
+    if (nodeType === NodeType.AddToGroup || nodeType === NodeType.RemoveFromGroup || nodeType === NodeType.SubscriberJoinsGroup) {
+      if (this.groupName()) data.groupName = this.groupName();
+    }
+
+    if (nodeType === NodeType.AddTag || nodeType === NodeType.RemoveTag || nodeType === NodeType.TagAdded || nodeType === NodeType.TagRemoved) {
+      if (this.tagName()) data.tagName = this.tagName();
+    }
+
+    if (nodeType === NodeType.UpdateField || nodeType === NodeType.FieldUpdated) {
+      if (this.fieldName()) data.fieldName = this.fieldName();
+      if (this.fieldValue()) data.fieldValue = this.fieldValue();
+    }
+
+    if (nodeType === NodeType.SendWebhook) {
+      if (this.webhookUrl()) data.webhookUrl = this.webhookUrl();
+    }
+
+    if (nodeType === NodeType.Condition || nodeType === NodeType.IfElse) {
+      if (this.conditionField()) data.conditionField = this.conditionField();
+      data.conditionOperator = this.conditionOperator();
+      if (this.conditionValue()) data.conditionValue = this.conditionValue();
+    }
+
+    if (nodeType === NodeType.Split) {
+      data.splitPercentageA = this.splitPercentageA();
+      data.splitPercentageB = this.splitPercentageB();
+    }
+
+    if (nodeType === NodeType.DateBased) {
+      if (this.dateField()) data.dateField = this.dateField();
+    }
+
+    if (nodeType === NodeType.LinkClicked) {
+      if (this.linkUrl()) data.linkUrl = this.linkUrl();
+    }
+
+    if (nodeType === NodeType.FormSubmitted) {
+      if (this.formId()) data.formId = this.formId();
+    }
+
+    if (nodeType === NodeType.SendNotification) {
+      if (this.notificationMessage()) data.notificationMessage = this.notificationMessage();
     }
 
     this._state.update({
