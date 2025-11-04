@@ -16,6 +16,7 @@ interface IFlowStateUpdatePatch {
   connections?: { [key: string]: Partial<IFlowStateConnection> };
   transform?: Partial<{ scale: number; position: IPoint; }>;
   selection?: Partial<{ nodes: string[]; connections: string[]; groups: string[]; }> | undefined;
+  name?: string;
 }
 
 @Injectable({
@@ -111,6 +112,9 @@ export class FlowState {
     }
     if (patch.hasOwnProperty('selection')) {
         newState.selection = patch.selection as any;
+    }
+    if (patch.name !== undefined) {
+        newState.name = patch.name;
     }
 
     this.updateState(newState);
