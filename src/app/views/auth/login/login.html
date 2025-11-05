@@ -1,9 +1,9 @@
-<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] min-h-screen w-full flex justify-center items-center">
+<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] h-screen w-full flex justify-center items-center">
   <div class="relative">
-    <div class="bg-card/70 rounded-lg w-full max-w-lg relative mx-4">
+    <div class="bg-card/70 rounded-lg w-lg relative">
       <div class="text-center px-10 py-12">
         <div class="text-center">
-          <h4 class="mb-3 text-xl font-semibold text-purple-500">Welcome Back!</h4>
+          <h4 class="mb-2.5 text-xl font-semibold text-primary">Welcome Back!</h4>
           <p class="text-base text-default-500">Sign in to continue to Email Marketing Platform</p>
         </div>
 
@@ -18,7 +18,7 @@
         </div>
 
         <!-- Login Form -->
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-6">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-10">
           <div class="mb-4">
             <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
             <input type="email"
@@ -64,7 +64,7 @@
             <label class="text-default-900 text-sm font-medium" for="rememberMe">Remember Me</label>
           </div>
 
-          <div class="text-center">
+          <div class="mt-10 text-center">
             <button type="submit"
                     [disabled]="isLoading || loginForm.invalid"
                     class="btn bg-primary text-white w-full">
@@ -77,10 +77,10 @@
           </div>
         </form>
 
-        <div class="mt-8 text-center">
-          <p class="text-default-600 text-sm">
+        <div class="mt-10 text-center">
+          <p class="text-base text-default-500">
             Don't have an account?
-            <a routerLink="/auth/register" class="text-primary font-medium">Create account</a>
+            <a routerLink="/auth/register" class="font-semibold underline hover:text-primary transition duration-200">Create account</a>
           </p>
         </div>
       </div>
