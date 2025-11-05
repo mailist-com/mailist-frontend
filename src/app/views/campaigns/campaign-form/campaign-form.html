@@ -1,7 +1,7 @@
 <main class="p-6">
   <app-page-title
-    [title]="isEditMode ? 'Edytuj kampanię' : 'Nowa kampania'"
-    [subtitle]="isEditMode ? 'Wprowadź zmiany w kampanii' : 'Utwórz nową kampanię email marketingową'" />
+    [title]="(isEditMode ? 'CAMPAIGNS.EDIT_CAMPAIGN' : 'CAMPAIGNS.NEW_CAMPAIGN') | translate"
+    [subtitle]="(isEditMode ? 'CAMPAIGNS.EDIT_SUBTITLE' : 'CAMPAIGNS.CREATE_NEW_SUBTITLE') | translate" />
 
   <!-- Step Indicator -->
   <div class="card p-6 mb-6">
@@ -21,7 +21,7 @@
             <span *ngIf="step >= currentStep || !isStepComplete(step)">{{ step }}</span>
           </button>
           <div class="ms-3 text-left">
-            <div class="text-sm font-medium text-default-900">{{ getStepTitle(step) }}</div>
+            <div class="text-sm font-medium text-default-900">{{ getStepTitle(step) | translate }}</div>
           </div>
         </div>
         <div *ngIf="step < 5" class="flex-1 h-px bg-default-200 mx-4"></div>
@@ -33,12 +33,12 @@
   <form #campaignFormElement="ngForm" (ngSubmit)="saveCampaign()">
     <!-- Step 1: Basic Information -->
     <div *ngIf="currentStep === 1" class="card p-6">
-      <h3 class="text-lg font-semibold text-default-900 mb-6">Informacje podstawowe</h3>
+      <h3 class="text-lg font-semibold text-default-900 mb-6">{{ 'CAMPAIGNS.BASIC_INFO' | translate }}</h3>
 
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Nazwa kampanii <span class="text-danger">*</span>
+            {{ 'CAMPAIGNS.CAMPAIGN_NAME' | translate }} <span class="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -46,12 +46,12 @@
             name="name"
             required
             class="form-input w-full"
-            placeholder="np. Newsletter Listopad 2024">
+            [placeholder]="'CAMPAIGNS.CAMPAIGN_NAME_PLACEHOLDER' | translate">
         </div>
 
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Temat wiadomości <span class="text-danger">*</span>
+            {{ 'CAMPAIGNS.SUBJECT' | translate }} <span class="text-danger">*</span>
           </label>
           <input
             type="text"
@@ -59,25 +59,25 @@
             name="subject"
             required
             class="form-input w-full"
-            placeholder="np. Najnowsze trendy w marketingu emailowym">
+            [placeholder]="'CAMPAIGNS.SUBJECT_PLACEHOLDER' | translate">
         </div>
 
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Preheader
+            {{ 'CAMPAIGNS.PREHEADER' | translate }}
           </label>
           <input
             type="text"
             [(ngModel)]="campaign.preheader"
             name="preheader"
             class="form-input w-full"
-            placeholder="Krótki tekst widoczny obok tematu">
+            [placeholder]="'CAMPAIGNS.PREHEADER_PLACEHOLDER' | translate">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-default-700 mb-2">
-              Imię nadawcy <span class="text-danger">*</span>
+              {{ 'CAMPAIGNS.SENDER_NAME' | translate }} <span class="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -85,12 +85,12 @@
               name="fromName"
               required
               class="form-input w-full"
-              placeholder="np. Zespół Mailist">
+              [placeholder]="'CAMPAIGNS.SENDER_NAME_PLACEHOLDER' | translate">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-default-700 mb-2">
-              Email nadawcy <span class="text-danger">*</span>
+              {{ 'CAMPAIGNS.SENDER_EMAIL' | translate }} <span class="text-danger">*</span>
             </label>
             <input
               type="email"
@@ -98,34 +98,34 @@
               name="fromEmail"
               required
               class="form-input w-full"
-              placeholder="newsletter@example.com">
+              [placeholder]="'CAMPAIGNS.SENDER_EMAIL_PLACEHOLDER' | translate">
           </div>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Email odpowiedzi (Reply-To)
+            {{ 'CAMPAIGNS.REPLY_TO' | translate }}
           </label>
           <input
             type="email"
             [(ngModel)]="campaign.replyTo"
             name="replyTo"
             class="form-input w-full"
-            placeholder="kontakt@example.com">
+            [placeholder]="'CAMPAIGNS.REPLY_TO_PLACEHOLDER' | translate">
         </div>
 
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Typ kampanii
+            {{ 'CAMPAIGNS.CAMPAIGN_TYPE' | translate }}
           </label>
           <select
             [(ngModel)]="campaign.type"
             name="type"
             class="form-input w-full">
-            <option value="regular">Standardowa</option>
-            <option value="ab_test">Test A/B</option>
-            <option value="rss">RSS</option>
-            <option value="automated">Automatyczna</option>
+            <option value="regular">{{ 'CAMPAIGNS.TYPE.REGULAR' | translate }}</option>
+            <option value="ab_test">{{ 'CAMPAIGNS.TYPE.AB_TEST' | translate }}</option>
+            <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
+            <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
           </select>
         </div>
       </div>
@@ -133,12 +133,12 @@
 
     <!-- Step 2: Recipients -->
     <div *ngIf="currentStep === 2" class="card p-6">
-      <h3 class="text-lg font-semibold text-default-900 mb-6">Odbiorcy</h3>
+      <h3 class="text-lg font-semibold text-default-900 mb-6">{{ 'CAMPAIGNS.RECIPIENTS' | translate }}</h3>
 
       <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-default-700 mb-3">
-            Wybierz odbiorców
+            {{ 'CAMPAIGNS.SELECT_RECIPIENTS' | translate }}
           </label>
           <div class="space-y-2">
             <label class="flex items-center">
@@ -148,7 +148,7 @@
                 name="recipientType"
                 value="all"
                 class="form-radio text-primary">
-              <span class="ms-2 text-sm text-default-700">Wszyscy subskrybenci</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.ALL_SUBSCRIBERS' | translate }}</span>
             </label>
             <label class="flex items-center">
               <input
@@ -157,7 +157,7 @@
                 name="recipientType"
                 value="lists"
                 class="form-radio text-primary">
-              <span class="ms-2 text-sm text-default-700">Określone listy</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.SPECIFIC_LISTS' | translate }}</span>
             </label>
             <label class="flex items-center">
               <input
@@ -166,7 +166,7 @@
                 name="recipientType"
                 value="segments"
                 class="form-radio text-primary">
-              <span class="ms-2 text-sm text-default-700">Segmenty</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.SEGMENTS' | translate }}</span>
             </label>
             <label class="flex items-center">
               <input
@@ -175,34 +175,34 @@
                 name="recipientType"
                 value="tags"
                 class="form-radio text-primary">
-              <span class="ms-2 text-sm text-default-700">Tagi</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.TAGS' | translate }}</span>
             </label>
           </div>
         </div>
 
         <!-- Lists Selection -->
         <div *ngIf="campaign.recipients!.type === 'lists'" class="border border-default-200 rounded-lg p-4">
-          <h4 class="text-sm font-medium text-default-900 mb-3">Wybierz listy</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.SELECT_LISTS' | translate }}</h4>
           <div class="space-y-2">
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="list-1">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Newsletter główny</div>
-                <div class="text-xs text-default-600">2,543 subskrybentów</div>
+                <div class="text-xs text-default-600">2,543 {{ 'CAMPAIGNS.SUBSCRIBERS' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="list-2">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Klienci VIP</div>
-                <div class="text-xs text-default-600">1,234 subskrybentów</div>
+                <div class="text-xs text-default-600">1,234 {{ 'CAMPAIGNS.SUBSCRIBERS' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="list-3">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Blog subscribers</div>
-                <div class="text-xs text-default-600">987 subskrybentów</div>
+                <div class="text-xs text-default-600">987 {{ 'CAMPAIGNS.SUBSCRIBERS' | translate }}</div>
               </span>
             </label>
           </div>
@@ -210,27 +210,27 @@
 
         <!-- Segments Selection -->
         <div *ngIf="campaign.recipients!.type === 'segments'" class="border border-default-200 rounded-lg p-4">
-          <h4 class="text-sm font-medium text-default-900 mb-3">Wybierz segmenty</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.SELECT_SEGMENTS' | translate }}</h4>
           <div class="space-y-2">
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="segment-1">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Aktywni użytkownicy</div>
-                <div class="text-xs text-default-600">4,231 odbiorców</div>
+                <div class="text-xs text-default-600">4,231 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="segment-2">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Nowi subskrybenci (ostatnie 30 dni)</div>
-                <div class="text-xs text-default-600">567 odbiorców</div>
+                <div class="text-xs text-default-600">567 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="segment-3">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Nieaktywni od 3 miesięcy</div>
-                <div class="text-xs text-default-600">1,892 odbiorców</div>
+                <div class="text-xs text-default-600">1,892 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
           </div>
@@ -238,27 +238,27 @@
 
         <!-- Tags Selection -->
         <div *ngIf="campaign.recipients!.type === 'tags'" class="border border-default-200 rounded-lg p-4">
-          <h4 class="text-sm font-medium text-default-900 mb-3">Wybierz tagi</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.SELECT_TAGS' | translate }}</h4>
           <div class="space-y-2">
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="tag-1">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Zainteresowani webinarami</div>
-                <div class="text-xs text-default-600">1,234 odbiorców</div>
+                <div class="text-xs text-default-600">1,234 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="tag-2">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">E-commerce</div>
-                <div class="text-xs text-default-600">2,345 odbiorców</div>
+                <div class="text-xs text-default-600">2,345 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
             <label class="flex items-center p-3 rounded-lg hover:bg-default-50 transition-colors">
               <input type="checkbox" class="form-checkbox text-primary" value="tag-3">
               <span class="ms-3">
                 <div class="text-sm font-medium text-default-900">Premium</div>
-                <div class="text-xs text-default-600">678 odbiorców</div>
+                <div class="text-xs text-default-600">678 {{ 'CAMPAIGNS.RECIPIENTS_LOWER' | translate }}</div>
               </span>
             </label>
           </div>
@@ -267,7 +267,7 @@
         <!-- Total Count Display -->
         <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-default-700">Szacowana liczba odbiorców:</span>
+            <span class="text-sm text-default-700">{{ 'CAMPAIGNS.ESTIMATED_RECIPIENTS' | translate }}:</span>
             <span class="text-lg font-semibold text-primary">{{ campaign.recipients!.totalCount || 0 }}</span>
           </div>
         </div>
@@ -276,12 +276,12 @@
 
     <!-- Step 3: Content -->
     <div *ngIf="currentStep === 3" class="card p-6">
-      <h3 class="text-lg font-semibold text-default-900 mb-6">Treść wiadomości</h3>
+      <h3 class="text-lg font-semibold text-default-900 mb-6">{{ 'CAMPAIGNS.EMAIL_CONTENT' | translate }}</h3>
 
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Treść HTML <span class="text-danger">*</span>
+            {{ 'CAMPAIGNS.CONTENT' | translate }} HTML <span class="text-danger">*</span>
           </label>
           <textarea
             [(ngModel)]="campaign.content!.html"
@@ -397,7 +397,7 @@
                 class="form-input w-full">
             </div>
           </div>
-          <p class="mt-2 text-xs text-default-600">Strefa czasowa: Europe/Warsaw (CET/CEST)</p>
+          <p class="mt-2 text-xs text-default-600">{{ 'CAMPAIGNS.TIMEZONE' | translate }}: Europe/Warsaw (CET/CEST)</p>
         </div>
 
         <!-- Info Box -->
@@ -417,23 +417,23 @@
 
     <!-- Step 5: Summary -->
     <div *ngIf="currentStep === 5" class="card p-6">
-      <h3 class="text-lg font-semibold text-default-900 mb-6">Podsumowanie</h3>
+      <h3 class="text-lg font-semibold text-default-900 mb-6">{{ 'CAMPAIGNS.CAMPAIGN_SUMMARY' | translate }}</h3>
 
       <div class="space-y-6">
         <!-- Basic Info -->
         <div>
-          <h4 class="text-sm font-medium text-default-900 mb-3">Informacje podstawowe</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.BASIC_INFO' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4 space-y-2">
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Nazwa kampanii:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.CAMPAIGN_NAME' | translate }}:</span>
               <span class="text-sm font-medium text-default-900">{{ campaign.name }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Temat:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.SUBJECT' | translate }}:</span>
               <span class="text-sm font-medium text-default-900">{{ campaign.subject }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Od:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.FROM' | translate }}:</span>
               <span class="text-sm font-medium text-default-900">{{ campaign.fromName }} &lt;{{ campaign.fromEmail }}&gt;</span>
             </div>
             <div class="flex justify-between" *ngIf="campaign.replyTo">
@@ -445,7 +445,7 @@
 
         <!-- Recipients -->
         <div>
-          <h4 class="text-sm font-medium text-default-900 mb-3">Odbiorcy</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.RECIPIENTS' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4">
             <div class="flex justify-between items-center">
               <span class="text-sm text-default-600">Liczba odbiorców:</span>
@@ -456,10 +456,10 @@
 
         <!-- Content -->
         <div>
-          <h4 class="text-sm font-medium text-default-900 mb-3">Treść</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.CONTENT' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4 space-y-2">
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Treść HTML:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.CONTENT' | translate }} HTML:</span>
               <span class="text-sm font-medium text-success">
                 {{ campaign.content!.html ? 'Dodana' : 'Brak' }}
               </span>
@@ -475,7 +475,7 @@
 
         <!-- Schedule -->
         <div>
-          <h4 class="text-sm font-medium text-default-900 mb-3">Harmonogram</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.SCHEDULE' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4">
             <div class="flex justify-between">
               <span class="text-sm text-default-600">Wysyłka:</span>
@@ -516,7 +516,7 @@
           (click)="previousStep()"
           class="btn bg-default-100 text-default-600 hover:bg-default-200">
           <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
-          Wstecz
+          {{ 'CAMPAIGNS.PREVIOUS' | translate }}
         </button>
       </div>
 
@@ -525,7 +525,7 @@
           type="button"
           (click)="cancel()"
           class="btn bg-transparent border border-default-300 text-default-700 hover:bg-default-50">
-          Anuluj
+          {{ 'COMMON.CANCEL' | translate }}
         </button>
 
         <button
@@ -533,7 +533,7 @@
           type="button"
           (click)="nextStep()"
           class="btn bg-primary text-white hover:bg-primary/90">
-          Dalej
+          {{ 'CAMPAIGNS.NEXT' | translate }}
           <div class="size-4 ms-1"><ng-icon name="lucideArrowRight"></ng-icon></div>
         </button>
 

@@ -1,12 +1,12 @@
 <main class="p-6">
-  <app-page-title title="Kampanie" subtitle="Zarządzaj kampaniami email marketingowymi" />
+  <app-page-title [title]="'CAMPAIGNS.TITLE' | translate" [subtitle]="'CAMPAIGNS.SUBTITLE' | translate" />
 
   <!-- Statistics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
     <div class="card p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-default-600 mb-1">Łącznie</p>
+          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.TOTAL' | translate }}</p>
           <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
         </div>
         <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -18,7 +18,7 @@
     <div class="card p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-default-600 mb-1">Wysłane</p>
+          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SENT' | translate }}</p>
           <p class="text-2xl font-semibold text-success">{{ stats.sent }}</p>
         </div>
         <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
@@ -30,7 +30,7 @@
     <div class="card p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-default-600 mb-1">Zaplanowane</p>
+          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SCHEDULED' | translate }}</p>
           <p class="text-2xl font-semibold text-warning">{{ stats.scheduled }}</p>
         </div>
         <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
@@ -42,7 +42,7 @@
     <div class="card p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-default-600 mb-1">Szkice</p>
+          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.DRAFT' | translate }}</p>
           <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
         </div>
         <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
@@ -55,21 +55,21 @@
   <!-- Main Card -->
   <div class="card">
     <div class="card-header">
-      <h6 class="card-title">Lista kampanii</h6>
+      <h6 class="card-title">{{ 'CAMPAIGNS.CAMPAIGN_LIST' | translate }}</h6>
       <div class="flex items-center gap-3">
         <button
           type="button"
           (click)="refreshCampaigns()"
           class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
           <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
-          Odśwież
+          {{ 'COMMON.REFRESH' | translate }}
         </button>
         <button
           type="button"
           (click)="createCampaign()"
           class="btn btn-sm bg-primary text-white hover:bg-primary/90">
           <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-          Nowa kampania
+          {{ 'CAMPAIGNS.NEW_CAMPAIGN' | translate }}
         </button>
       </div>
     </div>
@@ -83,7 +83,7 @@
                  [(ngModel)]="searchTerm"
                  (input)="applyFilters()"
                  class="form-input form-input-sm ps-9 w-full"
-                 placeholder="Szukaj kampanii...">
+                 [placeholder]="'CAMPAIGNS.SEARCH_CAMPAIGNS' | translate">
           <div class="absolute inset-y-0 start-0 flex items-center ps-3">
             <div class="size-3.5 flex items-center text-default-500">
               <ng-icon name="lucideSearch"></ng-icon>
@@ -93,28 +93,28 @@
 
         <!-- Status Filter -->
         <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">Wszystkie statusy</option>
-          <option value="draft">Szkice</option>
-          <option value="scheduled">Zaplanowane</option>
-          <option value="sending">Wysyłanie</option>
-          <option value="sent">Wysłane</option>
-          <option value="paused">Wstrzymane</option>
+          <option value="">{{ 'CAMPAIGNS.ALL_STATUSES' | translate }}</option>
+          <option value="draft">{{ 'CAMPAIGNS.DRAFT' | translate }}</option>
+          <option value="scheduled">{{ 'CAMPAIGNS.SCHEDULED' | translate }}</option>
+          <option value="sending">{{ 'CAMPAIGNS.SENDING' | translate }}</option>
+          <option value="sent">{{ 'CAMPAIGNS.SENT' | translate }}</option>
+          <option value="paused">{{ 'CAMPAIGNS.PAUSED' | translate }}</option>
         </select>
 
         <!-- Type Filter -->
         <select [(ngModel)]="selectedType" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">Wszystkie typy</option>
-          <option value="regular">Standardowa</option>
-          <option value="ab_test">Test A/B</option>
-          <option value="rss">RSS</option>
-          <option value="automated">Automatyczna</option>
+          <option value="">{{ 'CAMPAIGNS.ALL_TYPES' | translate }}</option>
+          <option value="regular">{{ 'CAMPAIGNS.TYPE.REGULAR' | translate }}</option>
+          <option value="ab_test">{{ 'CAMPAIGNS.TYPE.AB_TEST' | translate }}</option>
+          <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
+          <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
         </select>
 
         <button
           type="button"
           (click)="clearFilters()"
           class="btn btn-sm bg-transparent border border-dashed border-default-300 text-default-600 hover:bg-default-50">
-          Wyczyść filtry
+          {{ 'COMMON.CLEAR_FILTERS' | translate }}
         </button>
       </div>
     </div>
@@ -131,9 +131,9 @@
         <div class="size-16 mx-auto mb-4 text-default-400">
           <ng-icon name="lucideMail"></ng-icon>
         </div>
-        <h3 class="text-lg font-medium text-default-900 mb-2">Brak kampanii</h3>
+        <h3 class="text-lg font-medium text-default-900 mb-2">{{ 'CAMPAIGNS.NO_CAMPAIGNS' | translate }}</h3>
         <p class="text-default-600 mb-6 max-w-md mx-auto">
-          {{ searchTerm || selectedStatus || selectedType ? 'Nie znaleziono kampanii spełniających kryteria.' : 'Rozpocznij od utworzenia pierwszej kampanii.' }}
+          {{ searchTerm || selectedStatus || selectedType ? ('CAMPAIGNS.NO_CAMPAIGNS_FOUND' | translate) : ('CAMPAIGNS.START_FIRST_CAMPAIGN' | translate) }}
         </p>
         <button
           *ngIf="!searchTerm && !selectedStatus && !selectedType"
@@ -141,7 +141,7 @@
           (click)="createCampaign()"
           class="btn bg-primary text-white">
           <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-          Utwórz kampanię
+          {{ 'CAMPAIGNS.CREATE_CAMPAIGN' | translate }}
         </button>
       </div>
 
@@ -150,13 +150,13 @@
         <table class="w-full">
           <thead class="bg-default-150">
             <tr class="border-b border-default-200">
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Nazwa</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Typ</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Odbiorcy</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Wydajność</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Data</th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Akcje</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.NAME_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.STATUS_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.TYPE_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.RECIPIENTS_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.PERFORMANCE_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'CAMPAIGNS.DATE_COLUMN' | translate }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">{{ 'COMMON.ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-default-200">
@@ -175,19 +175,19 @@
                   'bg-default-100 text-default-600': campaign.status === 'draft',
                   'bg-danger/10 text-danger': campaign.status === 'paused' || campaign.status === 'cancelled'
                 }">
-                  {{ getStatusLabel(campaign.status) }}
+                  {{ getStatusLabel(campaign.status) | translate }}
                 </span>
               </td>
               <td class="px-6 py-4">
-                <span class="text-sm text-default-700">{{ getTypeLabel(campaign.type) }}</span>
+                <span class="text-sm text-default-700">{{ getTypeLabel(campaign.type) | translate }}</span>
               </td>
               <td class="px-6 py-4">
                 <div class="text-sm text-default-900 font-medium">{{ formatNumber(campaign.recipients.totalCount || 0) }}</div>
               </td>
               <td class="px-6 py-4">
                 <div class="text-sm" *ngIf="campaign.status === 'sent'">
-                  <div class="text-default-900 font-medium">{{ campaign.statistics.performance.openRate.toFixed(1) }}% otwarć</div>
-                  <div class="text-default-600">{{ campaign.statistics.performance.clickRate.toFixed(1) }}% kliknięć</div>
+                  <div class="text-default-900 font-medium">{{ campaign.statistics.performance.openRate.toFixed(1) }}% {{ 'CAMPAIGNS.OPENS_PERCENT' | translate }}</div>
+                  <div class="text-default-600">{{ campaign.statistics.performance.clickRate.toFixed(1) }}% {{ 'CAMPAIGNS.CLICKS_PERCENT' | translate }}</div>
                 </div>
                 <div class="text-sm text-default-500" *ngIf="campaign.status !== 'sent'">—</div>
               </td>

@@ -1,39 +1,39 @@
 <div class="space-y-6">
   <!-- Basic Info -->
   <div class="card p-6">
-    <h3 class="text-lg font-semibold text-default-900 mb-4">Podstawowe informacje</h3>
+    <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.BASIC_INFO' | translate }}</h3>
 
     <form (submit)="saveProfile(); $event.preventDefault()" class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-default-700 mb-2">Imię</label>
+          <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.FIRST_NAME' | translate }}</label>
           <input type="text" [(ngModel)]="formData.firstName" name="firstName" class="form-input w-full" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-default-700 mb-2">Nazwisko</label>
+          <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.LAST_NAME' | translate }}</label>
           <input type="text" [(ngModel)]="formData.lastName" name="lastName" class="form-input w-full" required />
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-default-700 mb-2">Email</label>
+        <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.EMAIL' | translate }}</label>
         <input type="email" [(ngModel)]="formData.email" name="email" class="form-input w-full" required />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-default-700 mb-2">Telefon</label>
+          <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.PHONE' | translate }}</label>
           <input type="tel" [(ngModel)]="formData.phone" name="phone" class="form-input w-full" />
         </div>
         <div>
-          <label class="block text-sm font-medium text-default-700 mb-2">Firma</label>
+          <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.COMPANY' | translate }}</label>
           <input type="text" [(ngModel)]="formData.company" name="company" class="form-input w-full" />
         </div>
       </div>
 
       <div class="flex justify-end">
         <button type="submit" class="btn btn-sm bg-primary text-white" [disabled]="saving">
-          {{ saving ? 'Zapisywanie...' : 'Zapisz zmiany' }}
+          {{ saving ? ('COMMON.LOADING' | translate) : ('COMMON.SAVE_CHANGES' | translate) }}
         </button>
       </div>
     </form>
@@ -41,56 +41,56 @@
 
   <!-- Notifications -->
   <div class="card p-6">
-    <h3 class="text-lg font-semibold text-default-900 mb-4">Powiadomienia</h3>
+    <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.NOTIFICATIONS' | translate }}</h3>
 
     <div class="space-y-3">
       <label class="flex items-center gap-3">
         <input type="checkbox" [(ngModel)]="notifications.emailNotifications" class="form-checkbox" />
-        <span class="text-sm text-default-900">Powiadomienia email</span>
+        <span class="text-sm text-default-900">{{ 'SETTINGS.EMAIL_NOTIFICATIONS' | translate }}</span>
       </label>
       <label class="flex items-center gap-3">
         <input type="checkbox" [(ngModel)]="notifications.campaignUpdates" class="form-checkbox" />
-        <span class="text-sm text-default-900">Aktualizacje kampanii</span>
+        <span class="text-sm text-default-900">{{ 'SETTINGS.CAMPAIGN_UPDATES' | translate }}</span>
       </label>
       <label class="flex items-center gap-3">
         <input type="checkbox" [(ngModel)]="notifications.automationAlerts" class="form-checkbox" />
-        <span class="text-sm text-default-900">Alerty automatyzacji</span>
+        <span class="text-sm text-default-900">{{ 'SETTINGS.AUTOMATION_ALERTS' | translate }}</span>
       </label>
       <label class="flex items-center gap-3">
         <input type="checkbox" [(ngModel)]="notifications.monthlyReports" class="form-checkbox" />
-        <span class="text-sm text-default-900">Miesięczne raporty</span>
+        <span class="text-sm text-default-900">{{ 'SETTINGS.MONTHLY_REPORTS' | translate }}</span>
       </label>
     </div>
 
     <div class="flex justify-end mt-6">
       <button (click)="saveNotifications()" class="btn btn-sm bg-primary text-white" [disabled]="saving">
-        {{ saving ? 'Zapisywanie...' : 'Zapisz' }}
+        {{ saving ? ('COMMON.LOADING' | translate) : ('COMMON.SAVE' | translate) }}
       </button>
     </div>
   </div>
 
   <!-- Preferences -->
   <div class="card p-6">
-    <h3 class="text-lg font-semibold text-default-900 mb-4">Preferencje email</h3>
+    <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.EMAIL_PREFERENCES' | translate }}</h3>
 
     <div class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-default-700 mb-2">Domyślna nazwa nadawcy</label>
+        <label class="block text-sm font-medium text-default-700 mb-2">{{ 'SETTINGS.DEFAULT_SENDER_NAME' | translate }}</label>
         <input type="text" [(ngModel)]="preferences.defaultFromName" class="form-input w-full" />
       </div>
       <div>
-        <label class="block text-sm font-medium text-default-700 mb-2">Domyślny email nadawcy</label>
+        <label class="block text-sm font-medium text-default-700 mb-2">{{ 'SETTINGS.DEFAULT_SENDER_EMAIL' | translate }}</label>
         <input type="email" [(ngModel)]="preferences.defaultFromEmail" class="form-input w-full" />
       </div>
       <div>
-        <label class="block text-sm font-medium text-default-700 mb-2">Podpis email</label>
+        <label class="block text-sm font-medium text-default-700 mb-2">{{ 'SETTINGS.EMAIL_SIGNATURE' | translate }}</label>
         <textarea [(ngModel)]="preferences.emailSignature" rows="3" class="form-input w-full"></textarea>
       </div>
     </div>
 
     <div class="flex justify-end mt-6">
       <button (click)="savePreferences()" class="btn btn-sm bg-primary text-white" [disabled]="saving">
-        {{ saving ? 'Zapisywanie...' : 'Zapisz' }}
+        {{ saving ? ('COMMON.LOADING' | translate) : ('COMMON.SAVE' | translate) }}
       </button>
     </div>
   </div>

@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TeamService } from '../../../services/team.service';
 import { TeamMember, TeamRole, InviteTeamMemberDTO } from '../../../models/team.model';
 
 @Component({
   selector: 'app-team-settings',
-  imports: [CommonModule, FormsModule, NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, TranslateModule],
   templateUrl: './team.html',
   styleUrl: './team.css',
 })

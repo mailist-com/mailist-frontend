@@ -15,6 +15,7 @@ export class Login {
   loginForm: FormGroup;
   isLoading = false;
   error = '';
+  success = '';
   returnUrl = '';
   showPassword = false;
 
@@ -32,12 +33,20 @@ export class Login {
 
     // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
+
+    // Check if user was redirected after email verification
+    if (this.route.snapshot.queryParams['verified'] === 'true') {
+      this.success = 'Email verified successfully! You can now login.';
+    }
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.error = '';
+      this.success = '';
+
+      const email = this.loginForm.value.email;
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (user) => {
@@ -46,7 +55,19 @@ export class Login {
         },
         error: (error) => {
           console.error('Login error:', error);
-          this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Login failed. Please try again.');
+
+          // Check if the error is related to unverified email
+          const errorMessage = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Login failed. Please try again.');
+
+          if (errorMessage.toLowerCase().includes('verify') ||
+              errorMessage.toLowerCase().includes('verification') ||
+              errorMessage.toLowerCase().includes('not verified')) {
+            // Redirect to verification page
+            this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
+            return;
+          }
+
+          this.error = errorMessage;
           this.isLoading = false;
         }
       });

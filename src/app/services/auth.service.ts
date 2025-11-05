@@ -35,6 +35,17 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
+export interface RegistrationResponse {
+  message: string;
+  requiresVerification?: boolean;
+}
+
+export interface VerificationResponse {
+  user: User;
+  token: string;
+  refreshToken: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -104,7 +115,12 @@ export class AuthService {
           if (error.status === 0) {
             errorMessage = 'Unable to connect to server. Please check your internet connection.';
           } else if (error.status === 401) {
-            errorMessage = 'Invalid email or password. Please try again.';
+            // Preserve backend message (e.g., "Please verify your email before logging in")
+            // or use default message for invalid credentials
+            errorMessage = error.message || 'Invalid email or password. Please try again.';
+          } else if (error.status === 403) {
+            // Email not verified
+            errorMessage = error.message || 'Please verify your email address before logging in.';
           } else if (error.status === 422) {
             errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid input. Please check your credentials.';
           } else if (error.status === 429) {
@@ -120,10 +136,10 @@ export class AuthService {
       );
   }
 
-  register(data: RegisterData): Observable<User> {
+  register(data: RegisterData): Observable<RegistrationResponse> {
     this.isLoadingSubject.next(true);
 
-    return this.api.post<ApiResponse<AuthResponse>>('auth/register', data)
+    return this.api.post<ApiResponse<RegistrationResponse>>('auth/register', data)
       .pipe(
         map(response => {
           // Validate response structure
@@ -133,27 +149,13 @@ export class AuthService {
           if (!response.success) {
             throw new Error(response.message || 'Registration failed');
           }
-          if (!response.data) {
-            throw new Error('Invalid response format - missing data');
-          }
-          if (!response.data.user) {
-            throw new Error('Invalid response format - missing user data');
-          }
-          if (!response.data.token) {
-            throw new Error('Invalid response format - missing authentication token');
-          }
-          return response;
-        }),
-        map(response => {
-          // Store tokens first
-          localStorage.setItem(environment.storage.authToken, response.data.token);
-          if (response.data.refreshToken) {
-            localStorage.setItem(environment.storage.refreshToken, response.data.refreshToken);
-          }
-          return response.data.user;
-        }),
-        tap(user => {
-          this.setUser(user);
+
+          // Return the registration response (message about email verification)
+          // Backend returns: { success: true, message: "...", timestamp: "..." }
+          return {
+            message: response.message || 'Registration successful. Please check your email.',
+            requiresVerification: true
+          };
         }),
         tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
@@ -308,6 +310,81 @@ export class AuthService {
         tap(token => {
           const storage = localStorage.getItem(environment.storage.refreshToken) ? localStorage : sessionStorage;
           storage.setItem(environment.storage.authToken, token);
+        })
+      );
+  }
+
+  /**
+   * Verify email with code
+   */
+  verifyEmail(email: string, code: string): Observable<string> {
+    this.isLoadingSubject.next(true);
+
+    return this.api.post<ApiResponse<any>>('auth/verify-email', { email, verificationCode: code })
+      .pipe(
+        map(response => {
+          // Validate response structure
+          if (!response || !response.success) {
+            throw new Error('Email verification failed');
+          }
+
+          // Backend returns only success message, no user data or token
+          // User needs to login after verification
+          return response.message || 'Email verified successfully. You can now login.';
+        }),
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError(error => {
+          this.isLoadingSubject.next(false);
+
+          let errorMessage = 'Email verification failed. Please try again.';
+
+          if (error.status === 0) {
+            errorMessage = 'Unable to connect to server. Please check your internet connection.';
+          } else if (error.status === 400) {
+            errorMessage = 'Invalid or expired verification code.';
+          } else if (error.status === 404) {
+            errorMessage = 'User not found.';
+          } else if (error.status === 422) {
+            errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid input.';
+          } else if (error.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+
+          return throwError(() => errorMessage);
+        })
+      );
+  }
+
+  /**
+   * Resend verification code
+   */
+  resendVerificationCode(email: string): Observable<string> {
+    this.isLoadingSubject.next(true);
+
+    return this.api.post<ApiResponse<{ message: string }>>('auth/resend-verification', { email })
+      .pipe(
+        map(response => response.message || response.data?.message || 'Verification code sent'),
+        tap(() => this.isLoadingSubject.next(false)),
+        catchError(error => {
+          this.isLoadingSubject.next(false);
+
+          let errorMessage = 'Failed to resend verification code.';
+
+          if (error.status === 0) {
+            errorMessage = 'Unable to connect to server. Please check your internet connection.';
+          } else if (error.status === 404) {
+            errorMessage = 'User not found.';
+          } else if (error.status === 429) {
+            errorMessage = 'Too many requests. Please try again later.';
+          } else if (error.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+
+          return throwError(() => errorMessage);
         })
       );
   }

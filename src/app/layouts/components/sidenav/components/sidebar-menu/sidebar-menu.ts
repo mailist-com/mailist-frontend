@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon } from "@ng-icons/core";
+import { TranslateModule } from '@ngx-translate/core';
 
 
 type MenuItem = {
@@ -15,7 +16,7 @@ type MenuItem = {
 
 @Component({
   selector: 'app-sidebar-menu',
-  imports: [NgIcon, RouterLink, CommonModule],
+  imports: [NgIcon, RouterLink, CommonModule, TranslateModule],
   templateUrl: './sidebar-menu.html',
   standalone: true,
   styles: ``
@@ -25,37 +26,37 @@ export class SidebarMenu {
   menus: MenuItem[] = [
     {
       type: 'item',
-      label: 'Dashboard',
+      label: 'NAV.DASHBOARD',
       icon: 'lucideLayoutDashboard',
       link: '/dashboard'
     },
     {
       type: 'item',
-      label: 'Kontakty',
+      label: 'NAV.CONTACTS',
       icon: 'lucideUsers',
       link: '/contacts'
     },
     {
       type: 'item',
-      label: 'Listy',
+      label: 'NAV.LISTS',
       icon: 'lucideList',
       link: '/contacts/lists'
     },
     {
       type: 'item',
-      label: 'Kampanie',
+      label: 'NAV.CAMPAIGNS',
       icon: 'lucideMail',
       link: '/campaigns',
     },
     {
       type: 'item',
-      label: 'Automatyzacje',
+      label: 'NAV.AUTOMATIONS',
       icon: 'lucideWorkflow',
       link: '/automations',
     },
     {
       type: 'item',
-      label: 'Szablony',
+      label: 'NAV.TEMPLATES',
       icon: 'lucideNotepadText',
       link: '/templates',
     },
@@ -65,13 +66,13 @@ export class SidebarMenu {
     },
     {
       type: 'item',
-      label: 'Ustawienia',
+      label: 'NAV.SETTINGS',
       icon: 'lucideSettings',
       link: '/settings',
     },
     {
       type: 'item',
-      label: 'Integracje',
+      label: 'NAV.INTEGRATIONS',
       icon: 'lucideLink',
       link: '/integrations',
     },

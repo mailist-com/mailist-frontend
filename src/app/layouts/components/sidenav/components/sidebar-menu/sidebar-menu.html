@@ -4,7 +4,7 @@
   <!-- Title -->
   @if (menu.type === 'title') {
   <li class="menu-title">
-    <span>{{ menu.label }}</span>
+    <span>{{ menu.label | translate }}</span>
   </li>
   }
 
@@ -15,7 +15,7 @@
       @if (menu.icon) {
       <span class="menu-icon"><ng-icon [name]="menu.icon"></ng-icon></span>
       }
-      <div class="menu-text">{{ menu.label }}</div>
+      <div class="menu-text">{{ menu.label | translate }}</div>
     </a>
   </li>
   }
@@ -27,7 +27,7 @@
       @if (menu.icon) {
       <span class="menu-icon"><ng-icon [name]="menu.icon"></ng-icon></span>
       }
-      <span class="menu-text">{{ menu.label }}</span>
+      <span class="menu-text">{{ menu.label | translate }}</span>
       <span class="menu-arrow" >
         <div class="size-4">
           <ng-icon name="tablerChevronRight"></ng-icon>
@@ -36,14 +36,14 @@
     </a>
 
     <ul class="sub-menu hs-accordion-content hs-accordion-group "
-    [class.block]="isItemActive(menu)" 
+    [class.block]="isItemActive(menu)"
             [class.hidden]="!isItemActive(menu)"
     >
       @for (child of menu.children; track child) {
       @if (child.type === 'item') {
       <li class="menu-item" [class.active]="isItemActive(child)">
         <a class="menu-link" [routerLink]="child.link" [class.active]="isItemActive(child)" [target]="child.target">
-          <span class="menu-text">{{ child.label }}</span>
+          <span class="menu-text">{{ child.label | translate }}</span>
         </a>
       </li>
       }
@@ -51,7 +51,7 @@
       @if (child.type === 'accordion') {
       <li class="menu-item hs-accordion" [class.active]="isItemActive(child)">
         <a [routerLink]="[]" class="hs-accordion-toggle menu-link" [class.active]="isItemActive(child)">
-          <span class="menu-text">{{ child.label }}</span>
+          <span class="menu-text">{{ child.label | translate }}</span>
           <span class="menu-arrow" >
             <div class="size-4" >
               <ng-icon name="tablerChevronRight"></ng-icon>
@@ -59,13 +59,13 @@
           </span>
         </a>
         <ul class="sub-menu hs-accordion-content hs-accordion-group"
-        [class.block]="isItemActive(child)" 
+        [class.block]="isItemActive(child)"
                     [class.hidden]="!isItemActive(child)"
         >
           @for (subChild of child.children; track subChild) {
           <li class="menu-item" [class.active]="isItemActive(subChild)">
             <a class="menu-link" [routerLink]="subChild.link"  [class.active]="isItemActive(subChild)">
-              <span class="menu-text">{{ subChild.label }}</span>
+              <span class="menu-text">{{ subChild.label | translate }}</span>
             </a>
           </li>
           }

@@ -20,6 +20,11 @@ export const AUTH_ROUTES: Routes = [
         data: { title: 'Register' }
       },
       {
+        path: 'verify-email',
+        loadComponent: () => import('./verify-email/verify-email').then(m => m.VerifyEmail),
+        data: { title: 'Verify Email' }
+      },
+      {
         path: 'reset-password',
         loadComponent: () => import('./reset-password/reset-password').then(m => m.ResetPassword),
         data: { title: 'Reset Password' }

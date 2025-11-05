@@ -239,7 +239,7 @@ export class ApiService {
   /**
    * Handle HTTP errors
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'An unexpected error occurred';
 
     if (error.error instanceof ErrorEvent) {
@@ -252,12 +252,11 @@ export class ApiService {
           errorMessage = error.error?.message || 'Bad request. Please check your input.';
           break;
         case 401:
-          errorMessage = 'Unauthorized. Please login again.';
-          // Optionally trigger logout
-          this.handleUnauthorized();
+          // Preserve backend message (e.g., "Please verify your email before logging in")
+          errorMessage = error.error?.message || 'Unauthorized. Please login again.';
           break;
         case 403:
-          errorMessage = 'Access forbidden. You do not have permission to access this resource.';
+          errorMessage = error.error?.message || 'Access forbidden. You do not have permission to access this resource.';
           break;
         case 404:
           errorMessage = error.error?.message || 'Resource not found.';

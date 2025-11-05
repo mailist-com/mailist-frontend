@@ -17,6 +17,7 @@ import {
   lucideFileText,
   lucideTags,
 } from '@ng-icons/lucide';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { TemplateService } from '../../../services/template.service';
@@ -29,7 +30,7 @@ import {
 @Component({
   selector: 'app-templates-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
   providers: [
     provideIcons({
       lucideLayoutTemplate,
@@ -225,23 +226,23 @@ export class TemplatesList implements OnInit, OnDestroy {
 
   getStatusLabel(status: TemplateStatus): string {
     const labels: Record<TemplateStatus, string> = {
-      draft: 'Szkic',
-      active: 'Aktywny',
-      archived: 'Zarchiwizowany',
+      draft: 'TEMPLATES.STATUS.DRAFT',
+      active: 'TEMPLATES.STATUS.ACTIVE',
+      archived: 'TEMPLATES.STATUS.ARCHIVED',
     };
     return labels[status] || status;
   }
 
   getCategoryLabel(category: TemplateCategory): string {
     const labels: Record<TemplateCategory, string> = {
-      promotional: 'Promocyjny',
-      newsletter: 'Newsletter',
-      welcome: 'Powitalny',
-      transactional: 'Transakcyjny',
-      announcement: 'Ogłoszenie',
-      event: 'Wydarzenie',
-      survey: 'Ankieta',
-      other: 'Inne',
+      promotional: 'TEMPLATES.CATEGORY.PROMOTIONAL',
+      newsletter: 'TEMPLATES.CATEGORY.NEWSLETTER',
+      welcome: 'TEMPLATES.CATEGORY.WELCOME',
+      transactional: 'TEMPLATES.CATEGORY.TRANSACTIONAL',
+      announcement: 'TEMPLATES.CATEGORY.ANNOUNCEMENT',
+      event: 'TEMPLATES.CATEGORY.EVENT',
+      survey: 'TEMPLATES.CATEGORY.SURVEY',
+      other: 'TEMPLATES.CATEGORY.OTHER',
     };
     return labels[category] || category;
   }

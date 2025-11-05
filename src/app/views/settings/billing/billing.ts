@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { BillingService } from '../../../services/billing.service';
 import { BillingPlan, CurrentSubscription, BillingHistory } from '../../../models/billing.model';
 
 @Component({
   selector: 'app-billing-settings',
-  imports: [CommonModule, NgIcon, FormsModule],
+  imports: [CommonModule, NgIcon, FormsModule, TranslateModule],
   templateUrl: './billing.html',
   styleUrl: './billing.css',
 })

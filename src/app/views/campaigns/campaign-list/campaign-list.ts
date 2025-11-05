@@ -20,6 +20,7 @@ import {
   lucidePause,
   lucideEye,
 } from '@ng-icons/lucide';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CampaignService } from '../../../services/campaign.service';
@@ -28,7 +29,7 @@ import { Campaign, CampaignStatus, CampaignType } from '../../../models/campaign
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
   providers: [provideIcons({
     lucideActivity,
     lucideSend,
@@ -225,25 +226,25 @@ export class CampaignList implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status: CampaignStatus): string {
-    const labels: Record<CampaignStatus, string> = {
-      'draft': 'Szkic',
-      'scheduled': 'Zaplanowana',
-      'sending': 'Wysyłanie',
-      'sent': 'Wysłana',
-      'paused': 'Wstrzymana',
-      'cancelled': 'Anulowana'
+    const keys: Record<CampaignStatus, string> = {
+      'draft': 'CAMPAIGNS.STATUS.DRAFT',
+      'scheduled': 'CAMPAIGNS.STATUS.SCHEDULED',
+      'sending': 'CAMPAIGNS.STATUS.SENDING',
+      'sent': 'CAMPAIGNS.STATUS.SENT',
+      'paused': 'CAMPAIGNS.STATUS.PAUSED',
+      'cancelled': 'CAMPAIGNS.STATUS.CANCELLED'
     };
-    return labels[status] || status;
+    return keys[status] || status;
   }
 
   getTypeLabel(type: CampaignType): string {
-    const labels: Record<CampaignType, string> = {
-      'regular': 'Standardowa',
-      'ab_test': 'Test A/B',
-      'rss': 'RSS',
-      'automated': 'Automatyczna'
+    const keys: Record<CampaignType, string> = {
+      'regular': 'CAMPAIGNS.TYPE.REGULAR',
+      'ab_test': 'CAMPAIGNS.TYPE.AB_TEST',
+      'rss': 'CAMPAIGNS.TYPE.RSS',
+      'automated': 'CAMPAIGNS.TYPE.AUTOMATED'
     };
-    return labels[type] || type;
+    return keys[type] || type;
   }
 
   formatDate(date: Date): string {
