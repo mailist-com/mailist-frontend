@@ -198,8 +198,8 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   getMaskedKey(key: string): string {
     if (key.length <= 12) return key;
-    const prefix = key.substring(0, 12);
-    return `${prefix}${'*'.repeat(36)}`;
+    const prefix = key.substring(0, 10);
+    return `${prefix}${'*'.repeat(12)}`;
   }
 
   closeKeyModal() {
