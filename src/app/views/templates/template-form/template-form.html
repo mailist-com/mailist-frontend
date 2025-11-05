@@ -23,13 +23,13 @@
               name="name"
               required
               class="form-input w-full"
-              placeholder="np. Newsletter miesiczny" />
+              placeholder="np. Newsletter miesięczny" />
           </div>
 
           <!-- Subject -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-default-700 mb-2">
-              Temat wiadomo[ci <span class="text-danger">*</span>
+              Temat wiadomości <span class="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -37,25 +37,25 @@
               name="subject"
               required
               class="form-input w-full"
-              placeholder="np. Tw�j miesiczny newsletter" />
+              placeholder="np. Twój miesięczny newsletter" />
             <p class="text-xs text-default-600 mt-1">
-              Mo|esz u|y zmiennych: {{ '{{' }} company_name {{ '}}' }}, {{ '{{' }} first_name {{ '}}' }}
+              Możesz użyć zmiennych: {{ '{{' }} company_name {{ '}}' }}, {{ '{{' }} first_name {{ '}}' }}
             </p>
           </div>
 
           <!-- Preview Text -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-default-700 mb-2">
-              Tekst podgldu
+              Tekst podglądu
             </label>
             <input
               type="text"
               [(ngModel)]="template.previewText"
               name="previewText"
               class="form-input w-full"
-              placeholder="Zobacz co przygotowali[my dla Ciebie..." />
+              placeholder="Zobacz co przygotowaliśmy dla Ciebie..." />
             <p class="text-xs text-default-600 mt-1">
-              Kr�tki tekst wy[wietlany w skrzynce odbiorczej obok tematu
+              Krótki tekst wyświetlany w skrzynce odbiorczej obok tematu
             </p>
           </div>
 
@@ -95,7 +95,7 @@
         <!-- Content -->
         <div class="bg-white border border-default-200 rounded-lg p-6">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-default-900">Tre[ szablonu</h3>
+            <h3 class="text-lg font-semibold text-default-900">Treść szablonu</h3>
             <button
               type="button"
               (click)="togglePreview()"
@@ -103,7 +103,7 @@
               <div class="size-4">
                 <ng-icon [name]="showPreview ? 'lucideCode' : 'lucideEye'"></ng-icon>
               </div>
-              {{ showPreview ? 'Edytuj HTML' : 'Podgld' }}
+              {{ showPreview ? 'Edytuj HTML' : 'Podgląd' }}
             </button>
           </div>
 
@@ -118,9 +118,9 @@
               required
               rows="20"
               class="form-input w-full font-mono text-sm"
-              placeholder="<div>Twoja tre[ HTML...</div>"></textarea>
+              placeholder="<div>Twoja treść HTML...</div>"></textarea>
             <p class="text-xs text-default-600 mt-1">
-              U|yj zmiennych: {{ '{{' }} first_name {{ '}}' }}, {{ '{{' }} last_name {{ '}}' }}, {{ '{{' }} company_name {{ '}}' }}
+              Użyj zmiennych: {{ '{{' }} first_name {{ '}}' }}, {{ '{{' }} last_name {{ '}}' }}, {{ '{{' }} company_name {{ '}}' }}
             </p>
           </div>
 
@@ -134,14 +134,14 @@
           <!-- Plain Text -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-default-700 mb-2">
-              Tekst alternatywny (dla klient�w bez HTML)
+              Tekst alternatywny (dla klientów bez HTML)
             </label>
             <textarea
               [(ngModel)]="template.content!.text"
               name="text"
               rows="6"
               class="form-input w-full"
-              placeholder="Wersja tekstowa wiadomo[ci..."></textarea>
+              placeholder="Wersja tekstowa wiadomości..."></textarea>
           </div>
         </div>
 
@@ -153,7 +153,7 @@
             <!-- Background Color -->
             <div>
               <label class="block text-sm font-medium text-default-700 mb-2">
-                Kolor tBa
+                Kolor tła
               </label>
               <div class="flex gap-2">
                 <input
@@ -173,7 +173,7 @@
             <!-- Primary Color -->
             <div>
               <label class="block text-sm font-medium text-default-700 mb-2">
-                Kolor gB�wny
+                Kolor główny
               </label>
               <div class="flex gap-2">
                 <input
@@ -245,7 +245,7 @@
               <div class="size-4">
                 <ng-icon name="lucideSave"></ng-icon>
               </div>
-              {{ isSaving ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Utw�rz szablon') }}
+              {{ isSaving ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Utwórz szablon') }}
             </button>
 
             <button
@@ -267,7 +267,7 @@
               <div class="size-4">
                 <ng-icon name="lucideArrowLeft"></ng-icon>
               </div>
-              Powr�t do listy
+              Powrót do listy
             </button>
           </div>
         </div>
@@ -314,7 +314,7 @@
           </div>
 
           <p *ngIf="!template.tags || template.tags.length === 0" class="text-sm text-default-600 italic">
-            Brak tag�w
+            Brak tagów
           </p>
         </div>
 
@@ -345,12 +345,12 @@
 
         <!-- Help -->
         <div class="bg-info/10 border border-info/20 rounded-lg p-4">
-          <h4 class="text-sm font-semibold text-info mb-2">Wskaz�wki</h4>
+          <h4 class="text-sm font-semibold text-info mb-2">Wskazówki</h4>
           <ul class="text-xs text-info space-y-1">
-            <li>" U|yj zmiennych aby personalizowa wiadomo[ci</li>
-            <li>" Dodaj tagi aby Batwiej organizowa szablony</li>
-            <li>" Zawsze testuj podgld przed zapisaniem</li>
-            <li>" Wersja tekstowa jest wy[wietlana klientom bez obsBugi HTML</li>
+            <li>• Użyj zmiennych aby personalizować wiadomości</li>
+            <li>• Dodaj tagi aby łatwiej organizować szablony</li>
+            <li>• Zawsze testuj podgląd przed zapisaniem</li>
+            <li>• Wersja tekstowa jest wyświetlana klientom bez obsługi HTML</li>
           </ul>
         </div>
       </div>

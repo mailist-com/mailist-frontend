@@ -82,7 +82,7 @@ export class TemplateForm implements OnInit, OnDestroy {
     { value: 'newsletter', label: 'Newsletter' },
     { value: 'welcome', label: 'Powitalny' },
     { value: 'transactional', label: 'Transakcyjny' },
-    { value: 'announcement', label: 'OgBoszenie' },
+    { value: 'announcement', label: 'Ogłoszenie' },
     { value: 'event', label: 'Wydarzenie' },
     { value: 'survey', label: 'Ankieta' },
     { value: 'other', label: 'Inne' },
@@ -133,7 +133,7 @@ export class TemplateForm implements OnInit, OnDestroy {
               thumbnailUrl: template.thumbnailUrl,
             };
           } else {
-            alert('Szablon nie zostaB znaleziony');
+            alert('Szablon nie został znaleziony');
             this.goBack();
           }
         },
@@ -153,7 +153,7 @@ export class TemplateForm implements OnInit, OnDestroy {
     }
 
     if (!this.template.subject?.trim()) {
-      alert('Temat wiadomo[ci jest wymagany');
+      alert('Temat wiadomości jest wymagany');
       return;
     }
 
