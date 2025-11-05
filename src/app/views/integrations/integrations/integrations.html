@@ -1,1 +1,692 @@
-<p>integrations works!</p>
+<main class="p-6">
+  <app-page-title
+    title="Integracje API"
+    subtitle="Zarządzaj kluczami API do automatyzacji procesów"
+  ></app-page-title>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6" *ngIf="statistics">
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Wszystkie klucze</p>
+          <p class="text-2xl font-semibold text-default-900">
+            {{ statistics.totalKeys }}
+          </p>
+        </div>
+        <div
+          class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+        >
+          <div class="size-6 text-primary">
+            <ng-icon name="lucideKey"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Aktywne klucze</p>
+          <p class="text-2xl font-semibold text-success">
+            {{ statistics.activeKeys }}
+          </p>
+        </div>
+        <div
+          class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center"
+        >
+          <div class="size-6 text-success">
+            <ng-icon name="lucideCircleCheck"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Nieaktywne klucze</p>
+          <p class="text-2xl font-semibold text-warning">
+            {{ statistics.inactiveKeys }}
+          </p>
+        </div>
+        <div
+          class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center"
+        >
+          <div class="size-6 text-warning">
+            <ng-icon name="lucideCirclePause"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Całkowite żądania</p>
+          <p class="text-2xl font-semibold text-info">
+            {{ statistics.totalRequests | number }}
+          </p>
+        </div>
+        <div
+          class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center"
+        >
+          <div class="size-6 text-info">
+            <ng-icon name="lucideActivity"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Keys Table -->
+  <div class="card mb-6">
+    <div class="card-header">
+      <h6 class="card-title">Klucze API</h6>
+      <button
+        class="btn btn-sm bg-primary text-white"
+        (click)="showCreateModal = true"
+      >
+        <div class="size-4 me-1">
+          <ng-icon name="lucidePlus"></ng-icon>
+        </div>
+        Utwórz nowy klucz
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-header">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
+        <!-- Search -->
+        <div class="relative">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            class="form-input form-input-sm ps-9"
+            placeholder="Szukaj kluczy..."
+          />
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <div
+              class="size-3.5 flex items-center text-default-500 fill-default-100"
+            >
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <select
+          [(ngModel)]="selectedStatus"
+          class="form-input form-input-sm"
+        >
+          <option value="">Wszystkie statusy</option>
+          <option value="active">Aktywny</option>
+          <option value="inactive">Nieaktywny</option>
+          <option value="expired">Wygasły</option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        (click)="clearFilters()"
+        class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-1500 hover:text-white"
+      >
+        <div class="size-4">
+          <ng-icon name="lucideX"></ng-icon>
+        </div>
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-default-150">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Nazwa
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Klucz API
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Status
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Żądania
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Ostatnie użycie
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Data utworzenia
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Akcje
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-default-200">
+          <tr
+            *ngFor="let key of getFilteredKeys(); trackBy: trackByKeyId"
+            class="hover:bg-default-50"
+          >
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div
+                  class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <div class="size-5 text-primary">
+                    <ng-icon name="lucideKey"></ng-icon>
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-default-900">
+                    {{ key.name }}
+                  </div>
+                  <div class="text-xs text-default-500">
+                    {{ key.permissions.length }} uprawnień
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2">
+                <code
+                  class="text-xs text-default-600 bg-default-100 px-2 py-1 rounded font-mono"
+                >
+                  {{ getMaskedKey(key.key) }}
+                </code>
+                <button
+                  (click)="copyToClipboard(key.key)"
+                  class="btn size-7 bg-default-100 text-default-600 hover:bg-default-200"
+                  title="Kopiuj do schowka"
+                >
+                  <div class="size-3.5">
+                    <ng-icon name="lucideCopy"></ng-icon>
+                  </div>
+                </button>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded"
+                [class]="getStatusClass(key.status)"
+              >
+                <div class="size-3 me-1">
+                  <ng-icon [name]="getStatusIcon(key.status)"></ng-icon>
+                </div>
+                {{ key.status === 'active' ? 'Aktywny' : key.status === 'inactive' ? 'Nieaktywny' : 'Wygasły' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-default-900">
+              {{ key.requestCount | number }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-default-600">
+              <span *ngIf="key.lastUsedAt">
+                {{ key.lastUsedAt | date : "dd.MM.yyyy HH:mm" }}
+              </span>
+              <span *ngIf="!key.lastUsedAt" class="text-default-400">
+                Nigdy
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-default-600">
+              {{ key.createdAt | date : "dd.MM.yyyy" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+              <div class="hs-dropdown relative inline-flex">
+                <button
+                  type="button"
+                  class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  aria-label="Dropdown"
+                >
+                  <div class="size-4">
+                    <ng-icon name="lucideEllipsis"></ng-icon>
+                  </div>
+                </button>
+                <div class="hs-dropdown-menu" role="menu">
+                  <button
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                    (click)="toggleKeyStatus(key)"
+                  >
+                    <div class="size-3">
+                      <ng-icon
+                        [name]="key.status === 'active' ? 'lucideCirclePause' : 'lucideCircleCheck'"
+                      ></ng-icon>
+                    </div>
+                    {{ key.status === 'active' ? 'Dezaktywuj' : 'Aktywuj' }}
+                  </button>
+                  <button
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                    (click)="regenerateKey(key)"
+                  >
+                    <div class="size-3">
+                      <ng-icon name="lucideRefreshCw"></ng-icon>
+                    </div>
+                    Wygeneruj ponownie
+                  </button>
+                  <button
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                    (click)="copyToClipboard(key.key)"
+                  >
+                    <div class="size-3">
+                      <ng-icon name="lucideCopy"></ng-icon>
+                    </div>
+                    Kopiuj klucz
+                  </button>
+                  <div class="border-t border-default-200 my-1"></div>
+                  <button
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"
+                    (click)="revokeKey(key)"
+                  >
+                    <div class="size-3">
+                      <ng-icon name="lucideTrash2"></ng-icon>
+                    </div>
+                    Odwołaj klucz
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div
+        *ngIf="getFilteredKeys().length === 0"
+        class="text-center py-12"
+      >
+        <div
+          class="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <div class="size-8 text-default-400">
+            <ng-icon name="lucideKey"></ng-icon>
+          </div>
+        </div>
+        <h3 class="text-lg font-semibold text-default-900 mb-2">
+          Brak kluczy API
+        </h3>
+        <p class="text-default-600 mb-6">
+          Utwórz swój pierwszy klucz API, aby rozpocząć automatyzację
+        </p>
+        <button
+          class="btn bg-primary text-white"
+          (click)="showCreateModal = true"
+        >
+          <div class="size-4 me-1">
+            <ng-icon name="lucidePlus"></ng-icon>
+          </div>
+          Utwórz pierwszy klucz
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="card" *ngIf="statistics && statistics.recentActivity.length > 0">
+    <div class="card-header">
+      <h6 class="card-title">Ostatnia aktywność</h6>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-default-150">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Klucz API
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Endpoint
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Metoda
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Status
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              IP
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase tracking-wider"
+            >
+              Czas
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-default-200">
+          <tr
+            *ngFor="let activity of statistics.recentActivity; trackBy: trackByActivityId"
+            class="hover:bg-default-50"
+          >
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-default-900">
+              {{ activity.apiKeyName }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <code class="text-xs text-default-600 font-mono">
+                {{ activity.endpoint }}
+              </code>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="py-0.5 px-2 inline-flex text-xs font-medium rounded"
+                [class]="getMethodClass(activity.method)"
+              >
+                {{ activity.method }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="text-sm font-medium"
+                [class]="getStatusCodeClass(activity.statusCode)"
+              >
+                {{ activity.statusCode }}
+              </span>
+            </td>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm text-default-600 font-mono"
+            >
+              {{ activity.ipAddress }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-default-600">
+              {{ activity.timestamp | date : "dd.MM.yyyy HH:mm:ss" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- API Key Modal (shown after creation/regeneration) -->
+  <div
+    *ngIf="showKeyModal && selectedKey"
+    class="fixed inset-0 z-50 overflow-y-auto"
+    (click)="closeKeyModal()"
+  >
+    <div
+      class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0"
+    >
+      <div
+        class="fixed inset-0 transition-opacity bg-default-900/50"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="inline-block align-bottom card text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="card-body p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-default-900">
+              Twój nowy klucz API
+            </h3>
+            <button
+              (click)="closeKeyModal()"
+              class="btn size-8 bg-default-100 text-default-600 hover:bg-default-200"
+            >
+              <div class="size-4">
+                <ng-icon name="lucideX"></ng-icon>
+              </div>
+            </button>
+          </div>
+
+          <div
+            class="bg-warning/10 border border-warning/20 rounded-lg p-4 mb-4"
+          >
+            <div class="flex gap-3">
+              <div class="size-5 text-warning flex-shrink-0">
+                <ng-icon name="lucideAlertTriangle"></ng-icon>
+              </div>
+              <div class="text-sm text-default-900">
+                <p class="font-medium mb-1">Ważne!</p>
+                <p>
+                  To jest jedyny raz, kiedy zobaczysz ten klucz. Skopiuj go i
+                  przechowuj w bezpiecznym miejscu.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Nazwa klucza
+              </label>
+              <p class="text-sm text-default-900">{{ selectedKey.name }}</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Klucz API
+              </label>
+              <div class="flex gap-2">
+                <code
+                  class="flex-1 text-xs text-default-900 bg-default-100 px-3 py-2 rounded font-mono break-all"
+                >
+                  {{ selectedKey.key }}
+                </code>
+                <button
+                  (click)="copyToClipboard(selectedKey.key)"
+                  class="btn bg-primary text-white flex-shrink-0"
+                >
+                  <div class="size-4 me-1">
+                    <ng-icon name="lucideCopy"></ng-icon>
+                  </div>
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Uprawnienia
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  *ngFor="let permission of selectedKey.permissions"
+                  class="py-1 px-2.5 text-xs font-medium bg-primary/10 text-primary rounded"
+                >
+                  {{ permission }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button
+            (click)="closeKeyModal()"
+            class="btn w-full bg-primary text-white"
+          >
+            Rozumiem, skopiowałem klucz
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create API Key Modal -->
+  <div
+    *ngIf="showCreateModal"
+    class="fixed inset-0 z-50 overflow-y-auto"
+    (click)="closeCreateModal()"
+  >
+    <div
+      class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0"
+    >
+      <div
+        class="fixed inset-0 transition-opacity bg-default-900/50"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="inline-block align-bottom card text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="card-body p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-default-900">
+              Utwórz nowy klucz API
+            </h3>
+            <button
+              (click)="closeCreateModal()"
+              class="btn size-8 bg-default-100 text-default-600 hover:bg-default-200"
+            >
+              <div class="size-4">
+                <ng-icon name="lucideX"></ng-icon>
+              </div>
+            </button>
+          </div>
+
+          <div
+            class="bg-info/10 border border-info/20 rounded-lg p-4 mb-6"
+          >
+            <div class="flex gap-3">
+              <div class="size-5 text-info flex-shrink-0">
+                <ng-icon name="lucideInfo"></ng-icon>
+              </div>
+              <div class="text-sm text-default-900">
+                <p class="font-medium mb-1">Jak używać klucza API?</p>
+                <p>
+                  Po utworzeniu klucza, dodaj go do nagłówka Authorization jako
+                  "Bearer [twój-klucz]" przy wywołaniach API.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form (submit)="createNewKey(); $event.preventDefault()">
+            <div class="space-y-6">
+              <!-- Name Field -->
+              <div>
+                <label
+                  for="keyName"
+                  class="block text-sm font-medium text-default-700 mb-2"
+                >
+                  Nazwa klucza <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="keyName"
+                  [(ngModel)]="newKeyName"
+                  name="keyName"
+                  class="form-input w-full"
+                  placeholder="np. Formularz kontaktowy - Strona główna"
+                  required
+                />
+                <p class="mt-1 text-xs text-default-500">
+                  Opisowa nazwa, która pomoże Ci zidentyfikować klucz
+                </p>
+              </div>
+
+              <!-- Permissions -->
+              <div>
+                <label class="block text-sm font-medium text-default-700 mb-2">
+                  Uprawnienia <span class="text-danger">*</span>
+                </label>
+                <p class="text-xs text-default-500 mb-3">
+                  Wybierz uprawnienia, które będzie miał ten klucz API
+                </p>
+
+                <div class="space-y-2">
+                  <label
+                    *ngFor="let perm of availablePermissions"
+                    class="flex items-center p-3 border border-default-200 rounded-lg hover:bg-default-50 cursor-pointer transition-colors"
+                    [class.bg-primary/5]="isPermissionSelected(perm.value)"
+                    [class.border-primary]="isPermissionSelected(perm.value)"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isPermissionSelected(perm.value)"
+                      (change)="togglePermission(perm.value)"
+                      class="form-checkbox h-4 w-4 text-primary rounded border-default-300 focus:ring-primary"
+                    />
+                    <span class="ml-3 text-sm text-default-900">
+                      {{ perm.label }}
+                    </span>
+                  </label>
+                </div>
+
+                <p class="mt-2 text-xs text-default-500">
+                  Wybrano: {{ newKeyPermissions.length }} uprawnień
+                </p>
+              </div>
+
+              <!-- Documentation Link -->
+              <div class="bg-default-50 border border-default-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <div class="size-5 text-primary flex-shrink-0">
+                    <ng-icon name="lucideBookOpen"></ng-icon>
+                  </div>
+                  <div class="text-sm">
+                    <p class="font-medium text-default-900 mb-1">
+                      Dokumentacja API
+                    </p>
+                    <p class="text-default-600 mb-2">
+                      Sprawdź naszą dokumentację, aby dowiedzieć się, jak
+                      używać kluczy API w swoich integracjach.
+                    </p>
+                    <a
+                      href="#"
+                      class="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      Zobacz dokumentację
+                      <div class="size-3">
+                        <ng-icon name="lucideExternalLink"></ng-icon>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button
+                type="button"
+                (click)="closeCreateModal()"
+                class="btn flex-1 bg-default-100 text-default-600 hover:bg-default-200"
+              >
+                Anuluj
+              </button>
+              <button
+                type="submit"
+                class="btn flex-1 bg-primary text-white hover:bg-primary-600"
+                [disabled]="!newKeyName.trim() || newKeyPermissions.length === 0"
+              >
+                <div class="size-4 me-1">
+                  <ng-icon name="lucideKey"></ng-icon>
+                </div>
+                Utwórz klucz API
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
