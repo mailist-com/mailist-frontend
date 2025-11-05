@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable, of, catchError, map } from 'rxjs';
+import { Observable, of, catchError } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -27,6 +27,7 @@ export class ContactListsComponent implements OnInit {
 
   ngOnInit() {
     this.loadLists();
+    this.loadStatistics();
   }
 
   loadLists() {
@@ -39,34 +40,21 @@ export class ContactListsComponent implements OnInit {
           return of([]);
         })
       );
-
-    // Calculate statistics locally from loaded lists
-    this.statistics$ = this.lists$.pipe(
-      map(lists => this.calculateStatistics(lists))
-    );
   }
 
-  private calculateStatistics(lists: ContactList[]) {
-    const totalLists = lists.length;
-    const activeLists = lists.filter(list => list.status === 'active').length;
-    const totalSubscribers = lists.reduce((sum, list) => sum + (list.subscriberCount || 0), 0);
-
-    // Calculate average engagement rate
-    let totalEngagement = 0;
-    lists.forEach(list => {
-      if (list.subscriberCount > 0) {
-        const engagementRate = ((list.subscriberCount - (list.unsubscribedCount || 0)) / list.subscriberCount) * 100;
-        totalEngagement += engagementRate;
-      }
-    });
-    const averageEngagement = totalLists > 0 ? totalEngagement / totalLists : 0;
-
-    return {
-      totalLists,
-      activeLists,
-      totalSubscribers,
-      averageEngagement
-    };
+  private loadStatistics() {
+    this.statistics$ = this.contactListService.getListStatistics()
+      .pipe(
+        catchError((error) => {
+          console.error('Error loading statistics:', error);
+          return of({
+            totalLists: 0,
+            activeLists: 0,
+            totalSubscribers: 0,
+            averageEngagement: 0
+          });
+        })
+      );
   }
 
   onSearch() {
