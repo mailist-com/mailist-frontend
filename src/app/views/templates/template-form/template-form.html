@@ -1,9 +1,10 @@
-<app-page-title
-  [title]="isEditMode ? 'Edytuj szablon' : 'Nowy szablon'"
-  icon="lucideLayoutTemplate">
-</app-page-title>
+<main class="p-6">
+  <app-page-title
+    [title]="isEditMode ? 'Edytuj szablon' : 'Nowy szablon'"
+    subtitle="Twórz i zarządzaj szablonami email">
+  </app-page-title>
 
-<div class="p-6">
+  <div>
   <form #templateForm="ngForm" (ngSubmit)="saveTemplate()">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Main Form Column -->
@@ -356,4 +357,5 @@
       </div>
     </div>
   </form>
-</div>
+  </div>
+</main>
