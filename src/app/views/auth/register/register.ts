@@ -61,10 +61,12 @@ export class Register {
 
       this.authService.register(this.registerForm.value).subscribe({
         next: (user) => {
+          this.isLoading = false;
           this.router.navigate(['/contacts']);
         },
         error: (error) => {
-          this.error = error;
+          console.error('Registration error:', error);
+          this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Registration failed. Please try again.');
           this.isLoading = false;
         }
       });

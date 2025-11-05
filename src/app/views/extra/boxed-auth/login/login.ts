@@ -42,10 +42,12 @@ export class Login {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (user) => {
+          this.isLoading = false;
           this.router.navigate([this.returnUrl]);
         },
         error: (error) => {
-          this.error = error;
+          console.error('Login error:', error);
+          this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Login failed. Please try again.');
           this.isLoading = false;
         }
       });
