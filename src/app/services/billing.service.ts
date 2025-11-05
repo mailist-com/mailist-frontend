@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import {
   BillingPlan,
   CurrentSubscription,
@@ -22,14 +22,14 @@ export class BillingService {
    * Get available billing plans
    */
   getPlans(): Observable<BillingPlan[]> {
-    return of(this.getMockPlans()).pipe(delay(400));
+    return of(this.getMockPlans());
   }
 
   /**
    * Get current subscription
    */
   getCurrentSubscription(): Observable<CurrentSubscription> {
-    return of(this.subscriptionSubject.value).pipe(delay(300));
+    return of(this.subscriptionSubject.value);
   }
 
   /**
@@ -52,7 +52,7 @@ export class BillingService {
     };
 
     this.subscriptionSubject.next(updatedSubscription);
-    return of(updatedSubscription).pipe(delay(1000));
+    return of(updatedSubscription);
   }
 
   /**
@@ -66,7 +66,7 @@ export class BillingService {
     };
 
     this.subscriptionSubject.next(updatedSubscription);
-    return of(updatedSubscription).pipe(delay(800));
+    return of(updatedSubscription);
   }
 
   /**
@@ -80,14 +80,14 @@ export class BillingService {
     };
 
     this.subscriptionSubject.next(updatedSubscription);
-    return of(updatedSubscription).pipe(delay(800));
+    return of(updatedSubscription);
   }
 
   /**
    * Get payment methods
    */
   getPaymentMethods(): Observable<PaymentMethod[]> {
-    return of(this.getMockPaymentMethods()).pipe(delay(400));
+    return of(this.getMockPaymentMethods());
   }
 
   /**
@@ -104,21 +104,21 @@ export class BillingService {
       isDefault: false,
     };
 
-    return of(newMethod).pipe(delay(1000));
+    return of(newMethod);
   }
 
   /**
    * Remove payment method
    */
   removePaymentMethod(methodId: string): Observable<boolean> {
-    return of(true).pipe(delay(500));
+    return of(true);
   }
 
   /**
    * Get billing history
    */
   getBillingHistory(): Observable<BillingHistory[]> {
-    return of(this.getMockBillingHistory()).pipe(delay(400));
+    return of(this.getMockBillingHistory());
   }
 
   /**

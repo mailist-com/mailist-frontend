@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, map, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, throwError } from 'rxjs';
 import { User, UserProfile, NotificationSettings, UserPreferences } from '../models/user.model';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class UserService {
    * Get current user profile
    */
   getCurrentUser(): Observable<UserProfile> {
-    return of(this.currentUserSubject.value).pipe(delay(300));
+    return of(this.currentUserSubject.value);
   }
 
   /**
@@ -29,7 +29,7 @@ export class UserService {
     };
 
     this.currentUserSubject.next(updatedUser);
-    return of(updatedUser).pipe(delay(500));
+    return of(updatedUser);
   }
 
   /**
@@ -43,7 +43,7 @@ export class UserService {
     };
 
     this.currentUserSubject.next(updatedUser);
-    return of(updatedUser).pipe(delay(500));
+    return of(updatedUser);
   }
 
   /**
@@ -60,7 +60,7 @@ export class UserService {
     };
 
     this.currentUserSubject.next(updatedUser);
-    return of(updatedUser).pipe(delay(500));
+    return of(updatedUser);
   }
 
   /**
@@ -71,7 +71,7 @@ export class UserService {
     if (oldPassword === 'wrong') {
       return throwError(() => new Error('Nieprawidłowe hasło'));
     }
-    return of(true).pipe(delay(800));
+    return of(true);
   }
 
   /**
@@ -88,7 +88,7 @@ export class UserService {
     };
 
     this.currentUserSubject.next(updatedUser);
-    return of(mockUrl).pipe(delay(1000));
+    return of(mockUrl);
   }
 
   /**

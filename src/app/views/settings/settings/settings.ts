@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
@@ -14,13 +14,11 @@ interface SettingsMenuItem {
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, RouterOutlet, NgIcon, PageTitle],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, NgIcon, PageTitle],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
 export class Settings {
-  constructor(private router: Router) {}
-
   menuItems: SettingsMenuItem[] = [
     {
       title: 'Profil',
@@ -47,12 +45,4 @@ export class Settings {
       description: 'Zarządzaj członkami zespołu',
     },
   ];
-
-  isItemActive(item: SettingsMenuItem): boolean {
-    return this.router.url === item.route;
-  }
-
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
-  }
 }

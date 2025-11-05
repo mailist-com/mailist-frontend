@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import {
   TeamMember,
   InviteTeamMemberDTO,
@@ -22,7 +22,7 @@ export class TeamService {
    * Get all team members
    */
   getTeamMembers(): Observable<TeamMember[]> {
-    return of(this.teamMembersSubject.value).pipe(delay(400));
+    return of(this.teamMembersSubject.value);
   }
 
   /**
@@ -42,7 +42,7 @@ export class TeamService {
       },
     };
 
-    return of(stats).pipe(delay(300));
+    return of(stats);
   }
 
   /**
@@ -64,7 +64,7 @@ export class TeamService {
     const currentMembers = this.teamMembersSubject.value;
     this.teamMembersSubject.next([...currentMembers, newMember]);
 
-    return of(newMember).pipe(delay(800));
+    return of(newMember);
   }
 
   /**
@@ -87,7 +87,7 @@ export class TeamService {
     updatedMembers[memberIndex] = updatedMember;
     this.teamMembersSubject.next(updatedMembers);
 
-    return of(updatedMember).pipe(delay(500));
+    return of(updatedMember);
   }
 
   /**
@@ -102,14 +102,14 @@ export class TeamService {
     }
 
     this.teamMembersSubject.next(filteredMembers);
-    return of(true).pipe(delay(500));
+    return of(true);
   }
 
   /**
    * Resend invitation
    */
   resendInvitation(memberId: string): Observable<boolean> {
-    return of(true).pipe(delay(500));
+    return of(true);
   }
 
   /**

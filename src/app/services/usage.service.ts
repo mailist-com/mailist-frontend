@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, delay, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UsageStatistics, UsageHistory, UsageAlert } from '../models/usage.model';
 
 @Injectable({
@@ -12,21 +12,21 @@ export class UsageService {
    * Get current usage statistics
    */
   getUsageStatistics(): Observable<UsageStatistics> {
-    return of(this.getMockUsageStatistics()).pipe(delay(400));
+    return of(this.getMockUsageStatistics());
   }
 
   /**
    * Get usage history
    */
   getUsageHistory(days: number = 30): Observable<UsageHistory[]> {
-    return of(this.getMockUsageHistory(days)).pipe(delay(400));
+    return of(this.getMockUsageHistory(days));
   }
 
   /**
    * Get usage alerts
    */
   getUsageAlerts(): Observable<UsageAlert[]> {
-    return of(this.getMockUsageAlerts()).pipe(delay(300));
+    return of(this.getMockUsageAlerts());
   }
 
   /**
