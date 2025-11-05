@@ -1,0 +1,332 @@
+<main class="p-6">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+
+  <!-- Campaign Stats -->
+  <div *ngIf="!isLoading && campaign">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          (click)="goBack()"
+          class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+          Powrót
+        </button>
+        <div>
+          <h1 class="text-2xl font-semibold text-default-900">Statystyki kampanii</h1>
+          <p class="text-sm text-default-600 mt-1">{{ campaign.name }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Sent -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="size-12 bg-info/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-info"><ng-icon name="lucideSend"></ng-icon></div>
+          </div>
+        </div>
+        <div class="text-2xl font-semibold text-default-900 mb-1">{{ formatNumber(campaign.statistics.sent) }}</div>
+        <div class="text-sm text-default-600">Wysłane</div>
+      </div>
+
+      <!-- Delivered -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="size-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success"><ng-icon name="lucideCircleCheck"></ng-icon></div>
+          </div>
+        </div>
+        <div class="text-2xl font-semibold text-default-900 mb-1">{{ formatNumber(campaign.statistics.delivered) }}</div>
+        <div class="text-sm text-default-600">Dostarczone</div>
+        <div class="text-xs text-default-500 mt-1">
+          {{ formatPercentage((campaign.statistics.delivered / campaign.statistics.sent) * 100) }}
+        </div>
+      </div>
+
+      <!-- Opens -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary"><ng-icon name="lucideEye"></ng-icon></div>
+          </div>
+        </div>
+        <div class="text-2xl font-semibold text-default-900 mb-1">{{ formatNumber(campaign.statistics.uniqueOpens) }}</div>
+        <div class="text-sm text-default-600">Unikalne otwarcia</div>
+        <div class="text-xs text-default-500 mt-1">
+          {{ formatNumber(campaign.statistics.opens) }} łącznie
+        </div>
+      </div>
+
+      <!-- Clicks -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="size-12 bg-warning/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-warning"><ng-icon name="lucideMousePointerClick"></ng-icon></div>
+          </div>
+        </div>
+        <div class="text-2xl font-semibold text-default-900 mb-1">{{ formatNumber(campaign.statistics.uniqueClicks) }}</div>
+        <div class="text-sm text-default-600">Unikalne kliknięcia</div>
+        <div class="text-xs text-default-500 mt-1">
+          {{ formatNumber(campaign.statistics.clicks) }} łącznie
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="bg-white border border-default-200 rounded-lg p-6 mb-6">
+      <h2 class="text-lg font-semibold text-default-900 mb-6">Wskaźniki wydajności</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <!-- Open Rate -->
+        <div class="text-center">
+          <div class="text-3xl font-semibold text-success mb-2">
+            {{ formatPercentage(campaign.statistics.performance.openRate) }}
+          </div>
+          <div class="text-sm text-default-600">Wskaźnik otwarć</div>
+          <div class="text-xs text-default-500 mt-1">(Open Rate)</div>
+        </div>
+
+        <!-- Click Rate -->
+        <div class="text-center">
+          <div class="text-3xl font-semibold text-primary mb-2">
+            {{ formatPercentage(campaign.statistics.performance.clickRate) }}
+          </div>
+          <div class="text-sm text-default-600">Wskaźnik kliknięć</div>
+          <div class="text-xs text-default-500 mt-1">(Click Rate)</div>
+        </div>
+
+        <!-- CTOR -->
+        <div class="text-center">
+          <div class="text-3xl font-semibold text-info mb-2">
+            {{ formatPercentage(campaign.statistics.performance.clickToOpenRate) }}
+          </div>
+          <div class="text-sm text-default-600">CTOR</div>
+          <div class="text-xs text-default-500 mt-1">(Click-to-Open)</div>
+        </div>
+
+        <!-- Bounce Rate -->
+        <div class="text-center">
+          <div class="text-3xl font-semibold text-warning mb-2">
+            {{ formatPercentage(campaign.statistics.performance.bounceRate) }}
+          </div>
+          <div class="text-sm text-default-600">Wskaźnik odrzuceń</div>
+          <div class="text-xs text-default-500 mt-1">(Bounce Rate)</div>
+        </div>
+
+        <!-- Unsubscribe Rate -->
+        <div class="text-center">
+          <div class="text-3xl font-semibold text-danger mb-2">
+            {{ formatPercentage(campaign.statistics.performance.unsubscribeRate) }}
+          </div>
+          <div class="text-sm text-default-600">Wskaźnik rezygnacji</div>
+          <div class="text-xs text-default-500 mt-1">(Unsubscribe Rate)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Statistics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- Engagement Stats -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-default-900 mb-4">Zaangażowanie</h3>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-default-200">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-primary"><ng-icon name="lucideEye"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">Otwarcia</div>
+                <div class="text-xs text-default-600">Łącznie / Unikalne</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatNumber(campaign.statistics.opens) }}</div>
+              <div class="text-xs text-default-600">{{ formatNumber(campaign.statistics.uniqueOpens) }} unik.</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pb-3 border-b border-default-200">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-warning"><ng-icon name="lucideMousePointerClick"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">Kliknięcia</div>
+                <div class="text-xs text-default-600">Łącznie / Unikalne</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatNumber(campaign.statistics.clicks) }}</div>
+              <div class="text-xs text-default-600">{{ formatNumber(campaign.statistics.uniqueClicks) }} unik.</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-info/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-info"><ng-icon name="lucideTrendingUp"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">CTOR</div>
+                <div class="text-xs text-default-600">Click-to-Open Rate</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatPercentage(campaign.statistics.performance.clickToOpenRate) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issues Stats -->
+      <div class="bg-white border border-default-200 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-default-900 mb-4">Problemy</h3>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-default-200">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-danger/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-danger"><ng-icon name="lucideCircleAlert"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">Odrzucenia</div>
+                <div class="text-xs text-default-600">Miękkie / Twarde</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatNumber(campaign.statistics.bounces) }}</div>
+              <div class="text-xs text-default-600">
+                {{ formatNumber(campaign.statistics.softBounces) }} / {{ formatNumber(campaign.statistics.hardBounces) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pb-3 border-b border-default-200">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-warning"><ng-icon name="lucideUserMinus"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">Rezygnacje</div>
+                <div class="text-xs text-default-600">Unsubscribes</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatNumber(campaign.statistics.unsubscribes) }}</div>
+              <div class="text-xs text-default-600">{{ formatPercentage(campaign.statistics.performance.unsubscribeRate) }}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="size-10 bg-danger/10 rounded-lg flex items-center justify-center">
+                <div class="size-5 text-danger"><ng-icon name="lucideMail"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-default-900">Skargi</div>
+                <div class="text-xs text-default-600">Spam complaints</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-semibold text-default-900">{{ formatNumber(campaign.statistics.complaints) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Placeholder -->
+    <div class="bg-white border border-default-200 rounded-lg p-6 mb-6">
+      <h2 class="text-lg font-semibold text-default-900 mb-4">Wykresy</h2>
+      <div class="bg-default-50 rounded-lg p-12 text-center">
+        <div class="size-16 mx-auto mb-4 text-default-400">
+          <ng-icon name="lucideTrendingUp"></ng-icon>
+        </div>
+        <p class="text-default-600">Wykresy będą dostępne wkrótce</p>
+        <p class="text-sm text-default-500 mt-2">Wykres otwarć w czasie, wykres kliknięć, etc.</p>
+      </div>
+    </div>
+
+    <!-- Link Clicks Table -->
+    <div class="bg-white border border-default-200 rounded-lg">
+      <div class="px-6 py-4 border-b border-default-200">
+        <h2 class="text-lg font-semibold text-default-900">Śledzenie kliknięć linków</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-default-50/50">
+            <tr class="border-b border-default-200">
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">URL</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Kliknięcia</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Unikalne</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Wskaźnik</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-default-200">
+            <tr *ngFor="let link of linkClicks" class="hover:bg-default-50/50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <div class="size-5 text-primary">
+                    <ng-icon name="lucideExternalLink"></ng-icon>
+                  </div>
+                  <a
+                    [href]="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm text-primary hover:underline"
+                    [title]="link.url">
+                    {{ truncateUrl(link.url, 60) }}
+                  </a>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="text-sm font-medium text-default-900">{{ formatNumber(link.clicks) }}</span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="text-sm font-medium text-default-900">{{ formatNumber(link.uniqueClicks) }}</span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  {{ formatPercentage(link.clickRate) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="linkClicks.length === 0" class="p-12 text-center">
+        <div class="size-16 mx-auto mb-4 text-default-400">
+          <ng-icon name="lucideMousePointerClick"></ng-icon>
+        </div>
+        <h3 class="text-lg font-medium text-default-900 mb-2">Brak kliknięć</h3>
+        <p class="text-default-600">Nie zarejestrowano jeszcze żadnych kliknięć w linki.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found -->
+  <div *ngIf="!isLoading && !campaign" class="text-center py-12">
+    <div class="size-16 mx-auto mb-4 text-default-400">
+      <ng-icon name="lucideCircleAlert"></ng-icon>
+    </div>
+    <h3 class="text-lg font-medium text-default-900 mb-2">Nie znaleziono kampanii</h3>
+    <p class="text-default-600 mb-6">Kampania o podanym ID nie istnieje lub została usunięta.</p>
+    <button
+      type="button"
+      (click)="goBack()"
+      class="btn bg-primary text-white">
+      <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+      Powrót do listy
+    </button>
+  </div>
+</main>

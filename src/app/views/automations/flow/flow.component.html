@@ -1,49 +1,86 @@
-<main>
-  <app-page-title title="Kreator Automatyzacji" subtitle="Automatyzacje" />
+<main class="p-6">
+  <app-page-title title="Kreator Automatyzacji" subtitle="Twórz i edytuj automatyzacje marketingowe" />
 
   @if (viewModel(); as model) {
-    <div class="card">
+    <div class="bg-white border border-default-200 rounded-lg">
       <!-- Card Header -->
-      <div class="card-header">
-        <h6 class="card-title">{{ model.name || 'Nowa automatyzacja' }}</h6>
-        <div class="flex items-center gap-3">
-          <button class="btn btn-sm bg-primary text-white">
-            <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
-            Zapisz i zamknij
-          </button>
+      <div class="px-6 py-4 border-b border-default-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 flex-1">
+            @if (isEditingName()) {
+              <input
+                type="text"
+                class="form-input form-input-sm text-lg font-semibold max-w-md"
+                [(ngModel)]="editingNameValue"
+                (blur)="saveName()"
+                (keydown)="onNameKeydown($event)"
+                #nameInput
+                autofocus
+              />
+              <button class="btn btn-sm btn-ghost" (click)="saveName()" title="Zapisz">
+                <ng-icon name="lucideCheck"></ng-icon>
+              </button>
+              <button class="btn btn-sm btn-ghost" (click)="cancelEditingName()" title="Anuluj">
+                <ng-icon name="lucideX"></ng-icon>
+              </button>
+            } @else {
+              <h2 class="text-lg font-semibold text-default-900 cursor-pointer hover:text-primary transition-colors group flex items-center gap-2" (click)="startEditingName()">
+                {{ model.name || 'Nowa automatyzacja' }}
+                <div class="size-4 text-default-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ng-icon name="lucidePencil"></ng-icon>
+                </div>
+              </h2>
+            }
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" (click)="cancel()">
+              <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
+              Anuluj
+            </button>
+            <button class="btn btn-sm bg-primary text-white hover:bg-primary/90" (click)="saveAutomation()">
+              <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
+              Zapisz i zamknij
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Toolbar -->
-      <div class="card-header">
+      <div class="px-6 py-3 border-b border-default-200 bg-default-50/50">
         <app-flow-action-panel [viewModel]="model" (processAction)="processAction($event)" (resetFlow)="reset()"/>
       </div>
 
       <!-- Main Content -->
-      <div class="flex flex-grow-1 overflow-hidden" style="height: 70vh;">
+      <div class="flex overflow-hidden" style="height: 70vh;">
         <!-- Left Sidebar (Node Library) -->
-        <div class="flow-sidebar-left border-e overflow-y-auto transition-all duration-300" [class.w-80]="!isLeftSidebarMinimized()" [class.w-20]="isLeftSidebarMinimized()">
+        <div class="flow-sidebar-left border-e border-default-200 overflow-y-auto" [class.w-80]="!isLeftSidebarMinimized()" [class.w-16]="isLeftSidebarMinimized()" style="transition: width 0.2s ease;">
           <div class="p-4">
             @if (isLeftSidebarMinimized()) {
-              <button class="btn btn-sm w-full" (click)="isLeftSidebarMinimized.set(false)" title="Rozwiń panel">
+              <button class="btn btn-sm w-full justify-center" (click)="toggleLeftSidebar()" title="Rozwiń panel">
                 <ng-icon name="lucidePanelRight"></ng-icon>
               </button>
             } @else {
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-default-900">Elementy</h3>
+                <button class="btn btn-sm btn-ghost" (click)="toggleLeftSidebar()" title="Zwiń panel">
+                  <ng-icon name="lucidePanelLeft"></ng-icon>
+                </button>
+              </div>
               <div class="relative">
-                <input type="search" placeholder="Szukaj..." class="form-input form-input-sm ps-9"/>
+                <input type="search" placeholder="Szukaj elementów..." class="form-input form-input-sm ps-9 w-full"/>
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                   <div class="size-4 text-default-500"><ng-icon name="lucideSearch"></ng-icon></div>
                 </div>
               </div>
             }
           </div>
-          <div class="p-4">
+          <div class="px-4 pb-4">
             <app-flow-palette [viewModel]="model" [isMinimized]="isLeftSidebarMinimized()"/>
           </div>
         </div>
 
         <!-- Center (Canvas) -->
-        <div class="flex-grow relative">
+        <div class="flex-1 relative bg-default-50">
           <f-flow fDraggable
                   (fLoaded)="editorLoaded()"
                   (fMoveNodes)="moveNodes($event)"
@@ -101,9 +138,9 @@
 
         <!-- Right Sidebar (Settings) -->
         @if (selectedNode(); as node) {
-          <div class="w-80 border-s overflow-y-auto">
-            <div class="p-4 border-b flex justify-between items-center">
-              <h3 class="text-lg font-semibold">Ustawienia</h3>
+          <div class="w-96 border-s border-default-200 overflow-y-auto bg-white">
+            <div class="px-4 py-3 border-b border-default-200 flex justify-between items-center bg-default-50/50">
+              <h3 class="text-sm font-semibold text-default-900">Ustawienia elementu</h3>
               <button class="btn btn-sm btn-ghost" (click)="closeSettings()" title="Zamknij">
                 <ng-icon name="lucideX"></ng-icon>
               </button>

@@ -3,24 +3,28 @@
   flex-direction: row-reverse;
   justify-content: space-evenly;
   align-items: flex-end;
-  padding: 16px 0;
+  padding: 8px 0 0 0; /* Reduced bottom padding */
+  position: relative;
 
   .f-node-output {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border: 2px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     transition: all 0.15s ease;
     cursor: pointer;
     position: relative;
     z-index: 10;
-    background: #10b981; /* Example output color */
+    background: #10b981;
+
+    /* Position on edge - halfway outside the node */
+    transform: translateY(50%);
   }
 
   .f-node-output:hover {
-    transform: scale(1.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(50%) scale(1.3);
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
   }
 
   /* Hide the 'X' for now, as it's not part of the Rete.js style */

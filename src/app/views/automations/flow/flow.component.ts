@@ -25,7 +25,9 @@ import { generateGuid } from '@foblex/utils';
 import { FlowNodeSettingsComponent } from './components/flow-node-settings/flow-node-settings.component';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX } from '@ng-icons/lucide';
+import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucidePencil, lucideCheck } from '@ng-icons/lucide';
+import { Router } from '@angular/router';
+import { AutomationService } from '../../../services/automation.service';
 
 @Component({
   selector: 'app-flow',
@@ -42,7 +44,7 @@ import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX } 
     PageTitle,
     NgIcon,
   ],
-  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX })],
+  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucidePencil, lucideCheck })],
   styles: [`
     :host ::ng-deep .f-flow-background {
       background-color: #f9fafb;
@@ -59,6 +61,8 @@ export class FlowComponent implements OnInit {
   private readonly _apiService = inject(FlowApiService);
   private readonly _injector = inject(Injector);
   private readonly _platform = inject(PlatformService);
+  private readonly _automationService = inject(AutomationService);
+  private readonly _router = inject(Router);
 
   private readonly _flow = viewChild(FFlowComponent);
   private readonly _canvas = viewChild(FCanvasComponent);
@@ -69,6 +73,8 @@ export class FlowComponent implements OnInit {
   protected readonly viewModel = signal<IFlowState | undefined>(undefined);
   protected readonly selectedNode = signal<IFlowStateNode | undefined>(undefined);
   protected readonly isLeftSidebarMinimized = signal(false);
+  protected readonly isEditingName = signal(false);
+  protected readonly editingNameValue = signal('');
 
   protected readonly nodes = computed(() => {
     return Object.values(this.viewModel()?.nodes || {});
@@ -88,6 +94,8 @@ export class FlowComponent implements OnInit {
   private _initializeState(): void {
     effect(() => {
       const id = this.id() || generateGuid();
+      console.log('[FlowComponent] Initializing state with ID:', id);
+      console.log('[FlowComponent] ID from input:', this.id());
       untracked(() => {
         this._state.initialize(this._apiService.getFlowById(id))
       });
@@ -126,10 +134,14 @@ export class FlowComponent implements OnInit {
     const selectedNodeId = model.selection?.nodes[0];
     if (selectedNodeId) {
       this.selectedNode.set(model.nodes[selectedNodeId]);
-      this.isLeftSidebarMinimized.set(true);
+      // Don't auto-minimize the palette when selecting a node
     } else {
       this.selectedNode.set(undefined);
     }
+  }
+
+  protected toggleLeftSidebar(): void {
+    this.isLeftSidebarMinimized.set(!this.isLeftSidebarMinimized());
   }
 
   protected closeSettings(): void {
@@ -231,5 +243,85 @@ export class FlowComponent implements OnInit {
 
   private _isCommandButton(event: { metaKey: boolean, ctrlKey: boolean }): boolean {
     return this._platform.getOS() === EOperationSystem.MAC_OS ? event.metaKey : event.ctrlKey;
+  }
+
+  protected saveAutomation(): void {
+    const currentState = this._state.getSnapshot();
+    const currentId = this.id();
+
+    console.log('[FlowComponent] Saving automation');
+    console.log('[FlowComponent] Current ID:', currentId);
+    console.log('[FlowComponent] Current state nodes:', Object.keys(currentState.nodes || {}).length);
+
+    if (currentId) {
+      // Update existing automation
+      console.log('[FlowComponent] Updating existing automation:', currentId);
+      // Save flow to localStorage with automation ID
+      this._apiService.saveFlow(currentState, currentId);
+
+      this._automationService.updateAutomation(currentId, {
+        flowData: currentState,
+        name: currentState.name || 'Automatyzacja'
+      }).subscribe({
+        next: () => {
+          console.log('[FlowComponent] Automation updated successfully');
+          this._router.navigate(['/automations']);
+        },
+        error: (error) => {
+          console.error('[FlowComponent] Error updating automation:', error);
+        }
+      });
+    } else {
+      // Create new automation
+      console.log('[FlowComponent] Creating new automation');
+      this._automationService.createAutomation({
+        name: currentState.name || 'Nowa automatyzacja',
+        description: 'Automatyzacja stworzona w edytorze flow',
+        type: 'custom',
+        flowData: currentState
+      }).subscribe({
+        next: (automation) => {
+          console.log('[FlowComponent] Automation created successfully with ID:', automation.id);
+          // Save flow to localStorage with the new automation ID
+          this._apiService.saveFlow(currentState, automation.id);
+          this._router.navigate(['/automations']);
+        },
+        error: (error) => {
+          console.error('[FlowComponent] Error creating automation:', error);
+        }
+      });
+    }
+  }
+
+  protected cancel(): void {
+    this._router.navigate(['/automations']);
+  }
+
+  protected startEditingName(): void {
+    const currentName = this.viewModel()?.name || 'Nowa automatyzacja';
+    this.editingNameValue.set(currentName);
+    this.isEditingName.set(true);
+  }
+
+  protected saveName(): void {
+    const newName = this.editingNameValue().trim();
+    if (newName) {
+      this._state.update({
+        name: newName
+      }, 'updateName');
+    }
+    this.isEditingName.set(false);
+  }
+
+  protected cancelEditingName(): void {
+    this.isEditingName.set(false);
+  }
+
+  protected onNameKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.saveName();
+    } else if (event.key === 'Escape') {
+      this.cancelEditingName();
+    }
   }
 }

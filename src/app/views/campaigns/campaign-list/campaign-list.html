@@ -1,1 +1,285 @@
-<p>campaign-list works!</p>
+<main class="p-6">
+  <app-page-title title="Kampanie" subtitle="Zarządzaj kampaniami email marketingowymi" />
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Łącznie</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
+        </div>
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-primary"><ng-icon name="lucideMail"></ng-icon></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Wysłane</p>
+          <p class="text-2xl font-semibold text-success">{{ stats.sent }}</p>
+        </div>
+        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-success"><ng-icon name="lucideSend"></ng-icon></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Zaplanowane</p>
+          <p class="text-2xl font-semibold text-warning">{{ stats.scheduled }}</p>
+        </div>
+        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-warning"><ng-icon name="lucideClock"></ng-icon></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Szkice</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+        </div>
+        <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-default-600"><ng-icon name="lucideFileText"></ng-icon></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="bg-white border border-default-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-default-200">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-default-900">Lista kampanii</h2>
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="refreshCampaigns()"
+            class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+            <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
+            Odśwież
+          </button>
+          <button
+            type="button"
+            (click)="createCampaign()"
+            class="btn btn-sm bg-primary text-white hover:bg-primary/90">
+            <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+            Nowa kampania
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="px-6 py-4 border-b border-default-200 bg-default-50/50">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Search -->
+        <div class="relative min-w-64">
+          <input type="text"
+                 [(ngModel)]="searchTerm"
+                 (input)="applyFilters()"
+                 class="form-input form-input-sm ps-9 w-full"
+                 placeholder="Szukaj kampanii...">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <div class="size-3.5 flex items-center text-default-500">
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="form-input form-input-sm">
+          <option value="">Wszystkie statusy</option>
+          <option value="draft">Szkice</option>
+          <option value="scheduled">Zaplanowane</option>
+          <option value="sending">Wysyłanie</option>
+          <option value="sent">Wysłane</option>
+          <option value="paused">Wstrzymane</option>
+        </select>
+
+        <!-- Type Filter -->
+        <select [(ngModel)]="selectedType" (change)="applyFilters()" class="form-input form-input-sm">
+          <option value="">Wszystkie typy</option>
+          <option value="regular">Standardowa</option>
+          <option value="ab_test">Test A/B</option>
+          <option value="rss">RSS</option>
+          <option value="automated">Automatyczna</option>
+        </select>
+
+        <button
+          type="button"
+          (click)="clearFilters()"
+          class="btn btn-sm bg-transparent border border-dashed border-default-300 text-default-600 hover:bg-default-50">
+          Wyczyść filtry
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+
+    <!-- Campaigns List -->
+    <div *ngIf="!isLoading">
+      <!-- Empty State -->
+      <div *ngIf="filteredCampaigns.length === 0" class="p-12 text-center">
+        <div class="size-16 mx-auto mb-4 text-default-400">
+          <ng-icon name="lucideMail"></ng-icon>
+        </div>
+        <h3 class="text-lg font-medium text-default-900 mb-2">Brak kampanii</h3>
+        <p class="text-default-600 mb-6 max-w-md mx-auto">
+          {{ searchTerm || selectedStatus || selectedType ? 'Nie znaleziono kampanii spełniających kryteria.' : 'Rozpocznij od utworzenia pierwszej kampanii.' }}
+        </p>
+        <button
+          *ngIf="!searchTerm && !selectedStatus && !selectedType"
+          type="button"
+          (click)="createCampaign()"
+          class="btn bg-primary text-white">
+          <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+          Utwórz kampanię
+        </button>
+      </div>
+
+      <!-- Campaigns Table -->
+      <div *ngIf="filteredCampaigns.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-default-50/50">
+            <tr class="border-b border-default-200">
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Nazwa</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Typ</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Odbiorcy</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Wydajność</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Akcje</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-default-200">
+            <tr *ngFor="let campaign of filteredCampaigns" class="hover:bg-default-50/50 transition-colors">
+              <td class="px-6 py-4">
+                <div>
+                  <h6 class="text-sm font-medium text-default-900 mb-1">{{ campaign.name }}</h6>
+                  <p class="text-xs text-default-600">{{ campaign.subject | slice:0:60 }}{{ campaign.subject.length > 60 ? '...' : '' }}</p>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+                  'bg-success/10 text-success': campaign.status === 'sent',
+                  'bg-warning/10 text-warning': campaign.status === 'scheduled',
+                  'bg-info/10 text-info': campaign.status === 'sending',
+                  'bg-default-100 text-default-600': campaign.status === 'draft',
+                  'bg-danger/10 text-danger': campaign.status === 'paused' || campaign.status === 'cancelled'
+                }">
+                  {{ getStatusLabel(campaign.status) }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-sm text-default-700">{{ getTypeLabel(campaign.type) }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-default-900 font-medium">{{ formatNumber(campaign.recipients.totalCount || 0) }}</div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm" *ngIf="campaign.status === 'sent'">
+                  <div class="text-default-900 font-medium">{{ campaign.statistics.performance.openRate.toFixed(1) }}% otwarć</div>
+                  <div class="text-default-600">{{ campaign.statistics.performance.clickRate.toFixed(1) }}% kliknięć</div>
+                </div>
+                <div class="text-sm text-default-500" *ngIf="campaign.status !== 'sent'">—</div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-sm text-default-600" *ngIf="campaign.sentAt">{{ formatDate(campaign.sentAt) }}</span>
+                <span class="text-sm text-default-600" *ngIf="!campaign.sentAt && campaign.scheduledFor">{{ formatDate(campaign.scheduledFor) }}</span>
+                <span class="text-sm text-default-600" *ngIf="!campaign.sentAt && !campaign.scheduledFor">{{ formatDate(campaign.createdAt) }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center gap-1">
+                  <!-- Send/Pause/Resume Button -->
+                  <button
+                    *ngIf="campaign.status === 'draft' || campaign.status === 'scheduled'"
+                    type="button"
+                    (click)="sendCampaign(campaign)"
+                    class="p-2 rounded-md bg-success/10 text-success hover:bg-success/20 transition-colors"
+                    title="Wyślij">
+                    <div class="size-4"><ng-icon name="lucideSend"></ng-icon></div>
+                  </button>
+
+                  <button
+                    *ngIf="campaign.status === 'sending'"
+                    type="button"
+                    (click)="pauseCampaign(campaign)"
+                    class="p-2 rounded-md bg-warning/10 text-warning hover:bg-warning/20 transition-colors"
+                    title="Wstrzymaj">
+                    <div class="size-4"><ng-icon name="lucidePause"></ng-icon></div>
+                  </button>
+
+                  <button
+                    *ngIf="campaign.status === 'paused'"
+                    type="button"
+                    (click)="resumeCampaign(campaign)"
+                    class="p-2 rounded-md bg-success/10 text-success hover:bg-success/20 transition-colors"
+                    title="Wznów">
+                    <div class="size-4"><ng-icon name="lucidePlay"></ng-icon></div>
+                  </button>
+
+                  <!-- View Stats -->
+                  <button
+                    *ngIf="campaign.status === 'sent'"
+                    type="button"
+                    (click)="viewStats(campaign)"
+                    class="p-2 rounded-md bg-info/10 text-info hover:bg-info/20 transition-colors"
+                    title="Statystyki">
+                    <div class="size-4"><ng-icon name="lucideActivity"></ng-icon></div>
+                  </button>
+
+                  <!-- View -->
+                  <button
+                    type="button"
+                    (click)="viewCampaign(campaign)"
+                    class="p-2 rounded-md bg-default-100 text-default-600 hover:bg-default-200 transition-colors"
+                    title="Podgląd">
+                    <div class="size-4"><ng-icon name="lucideEye"></ng-icon></div>
+                  </button>
+
+                  <!-- Edit -->
+                  <button
+                    *ngIf="campaign.status === 'draft' || campaign.status === 'scheduled'"
+                    type="button"
+                    (click)="editCampaign(campaign)"
+                    class="p-2 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    title="Edytuj">
+                    <div class="size-4"><ng-icon name="lucidePencil"></ng-icon></div>
+                  </button>
+
+                  <!-- Duplicate -->
+                  <button
+                    type="button"
+                    (click)="duplicateCampaign(campaign)"
+                    class="p-2 rounded-md bg-default-100 text-default-600 hover:bg-default-200 transition-colors"
+                    title="Duplikuj">
+                    <div class="size-4"><ng-icon name="lucideCopy"></ng-icon></div>
+                  </button>
+
+                  <!-- Delete -->
+                  <button
+                    type="button"
+                    (click)="deleteCampaign(campaign)"
+                    class="p-2 rounded-md bg-danger/10 text-danger hover:bg-danger/20 transition-colors"
+                    title="Usuń">
+                    <div class="size-4"><ng-icon name="lucideTrash2"></ng-icon></div>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>

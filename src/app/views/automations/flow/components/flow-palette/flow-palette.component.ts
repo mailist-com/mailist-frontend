@@ -3,7 +3,25 @@ import { FFlowModule } from '@foblex/flow';
 import { IFlowState } from "../../models/i-flow-state";
 import { NODE_PARAMS_MAP } from "../../constants/node-params-map";
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideMail, lucideClock, lucideCircleHelp } from '@ng-icons/lucide';
+import {
+  lucideMail,
+  lucideClock,
+  lucideCircleHelp,
+  lucideUserPlus,
+  lucideUserMinus,
+  lucideFileText,
+  lucideMousePointerClick,
+  lucidePencil,
+  lucideTag,
+  lucideX,
+  lucideMailOpen,
+  lucideCalendar,
+  lucideWebhook,
+  lucideBell,
+  lucideGitBranch,
+  lucideShuffle,
+  lucideTarget
+} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-flow-palette',
@@ -15,7 +33,25 @@ import { lucideMail, lucideClock, lucideCircleHelp } from '@ng-icons/lucide';
     FFlowModule,
     NgIcon
   ],
-  providers: [provideIcons({ lucideMail, lucideClock, lucideCircleHelp })]
+  providers: [provideIcons({
+    lucideMail,
+    lucideClock,
+    lucideCircleHelp,
+    lucideUserPlus,
+    lucideUserMinus,
+    lucideFileText,
+    lucideMousePointerClick,
+    lucidePencil,
+    lucideTag,
+    lucideX,
+    lucideMailOpen,
+    lucideCalendar,
+    lucideWebhook,
+    lucideBell,
+    lucideGitBranch,
+    lucideShuffle,
+    lucideTarget
+  })]
 })
 export class FlowPaletteComponent {
 

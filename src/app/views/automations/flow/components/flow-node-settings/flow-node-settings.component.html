@@ -1,0 +1,436 @@
+@if (node(); as n) {
+  <div class="node-settings">
+    <!-- Node Header -->
+    <div class="node-header">
+      <div class="node-icon" [style.color]="getNodeColor(n.type)">
+        <ng-icon [name]="getNodeIcon(n.type)"></ng-icon>
+      </div>
+      <div class="node-info">
+        <h4 class="node-title">{{ defaultParams[n.type].name }}</h4>
+        <span class="node-category">{{ defaultParams[n.type].category }}</span>
+      </div>
+    </div>
+
+    <!-- General Settings -->
+    <div class="settings-section">
+      <label class="settings-label">Nazwa elementu</label>
+      <input type="text" class="form-input form-input-sm" placeholder="Wprowadź nazwę..."
+             [ngModel]="nodeName()" (ngModelChange)="nodeName.set($event); updateNodeData()" />
+    </div>
+
+    <div class="settings-section">
+      <label class="settings-label">Opis</label>
+      <textarea class="form-textarea form-input-sm" rows="2" placeholder="Dodaj opis (opcjonalnie)..."
+                [ngModel]="nodeDescription()" (ngModelChange)="nodeDescription.set($event); updateNodeData()"></textarea>
+    </div>
+
+    <!-- Type-specific settings -->
+    <div class="settings-divider"></div>
+
+    <!-- Send Email Settings -->
+    @if (n.type === NodeType.SendEmail) {
+      <div class="settings-section">
+        <label class="settings-label">Szablon email</label>
+        <select class="form-input form-input-sm" [ngModel]="emailTemplate()" (ngModelChange)="emailTemplate.set($event); updateNodeData()">
+          <option value="">Wybierz szablon...</option>
+          <option value="welcome">Email powitalny</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="promotion">Promocja</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Temat</label>
+        <input type="text" class="form-input form-input-sm" placeholder="Temat emaila..."
+               [ngModel]="emailSubject()" (ngModelChange)="emailSubject.set($event); updateNodeData()" />
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Treść</label>
+        <textarea class="form-textarea form-input-sm" rows="4" placeholder="Treść wiadomości..."
+                  [ngModel]="emailContent()" (ngModelChange)="emailContent.set($event); updateNodeData()"></textarea>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Email zostanie wysłany do subskrybenta w momencie osiągnięcia tego kroku.</span>
+      </div>
+    }
+
+    <!-- Wait Settings -->
+    @if (n.type === NodeType.Wait) {
+      <div class="settings-section">
+        <label class="settings-label">Czas oczekiwania</label>
+        <div class="flex gap-2">
+          <input type="number" class="form-input form-input-sm flex-1" [ngModel]="waitDuration()" (ngModelChange)="waitDuration.set($event); updateNodeData()" min="1" />
+          <select class="form-input form-input-sm" [ngModel]="waitUnit()" (ngModelChange)="waitUnit.set($event); updateNodeData()">
+            <option value="minutes">Minut</option>
+            <option value="hours">Godzin</option>
+            <option value="days">Dni</option>
+            <option value="weeks">Tygodni</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja wstrzyma się na określony czas przed przejściem dalej.</span>
+      </div>
+    }
+
+    <!-- Add to Group Settings -->
+    @if (n.type === NodeType.AddToGroup) {
+      <div class="settings-section">
+        <label class="settings-label">Grupa</label>
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
+          <option value="">Wybierz grupę...</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="customers">Klienci</option>
+          <option value="leads">Leady</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Subskrybent zostanie dodany do wybranej grupy.</span>
+      </div>
+    }
+
+    <!-- Remove from Group Settings -->
+    @if (n.type === NodeType.RemoveFromGroup) {
+      <div class="settings-section">
+        <label class="settings-label">Grupa</label>
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
+          <option value="">Wybierz grupę...</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="customers">Klienci</option>
+          <option value="leads">Leady</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Subskrybent zostanie usunięty z wybranej grupy.</span>
+      </div>
+    }
+
+    <!-- Add Tag Settings -->
+    @if (n.type === NodeType.AddTag) {
+      <div class="settings-section">
+        <label class="settings-label">Tag</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Tag zostanie dodany do subskrybenta.</span>
+      </div>
+    }
+
+    <!-- Remove Tag Settings -->
+    @if (n.type === NodeType.RemoveTag) {
+      <div class="settings-section">
+        <label class="settings-label">Tag</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Tag zostanie usunięty od subskrybenta.</span>
+      </div>
+    }
+
+    <!-- Update Field Settings -->
+    @if (n.type === NodeType.UpdateField) {
+      <div class="settings-section">
+        <label class="settings-label">Pole</label>
+        <select class="form-input form-input-sm" [ngModel]="fieldName()" (ngModelChange)="fieldName.set($event); updateNodeData()">
+          <option value="">Wybierz pole...</option>
+          <option value="first_name">Imię</option>
+          <option value="last_name">Nazwisko</option>
+          <option value="company">Firma</option>
+          <option value="phone">Telefon</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Wartość</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="fieldValue()" (ngModelChange)="fieldValue.set($event); updateNodeData()" placeholder="Nowa wartość..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Pole subskrybenta zostanie zaktualizowane podaną wartością.</span>
+      </div>
+    }
+
+    <!-- Send Webhook Settings -->
+    @if (n.type === NodeType.SendWebhook) {
+      <div class="settings-section">
+        <label class="settings-label">URL Webhooka</label>
+        <input type="url" class="form-input form-input-sm" [ngModel]="webhookUrl()" (ngModelChange)="webhookUrl.set($event); updateNodeData()" placeholder="https://example.com/webhook" />
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Metoda</label>
+        <select class="form-input form-input-sm">
+          <option value="POST">POST</option>
+          <option value="GET">GET</option>
+          <option value="PUT">PUT</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Dane subskrybenta zostaną wysłane na podany URL.</span>
+      </div>
+    }
+
+    <!-- Send Notification Settings -->
+    @if (n.type === NodeType.SendNotification) {
+      <div class="settings-section">
+        <label class="settings-label">Wiadomość</label>
+        <textarea class="form-textarea form-input-sm" rows="3" [ngModel]="notificationMessage()" (ngModelChange)="notificationMessage.set($event); updateNodeData()" placeholder="Treść powiadomienia..."></textarea>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Powiadomienie zostanie wysłane do administratorów.</span>
+      </div>
+    }
+
+    <!-- Condition / If-Else Settings -->
+    @if (n.type === NodeType.Condition || n.type === NodeType.IfElse) {
+      <div class="settings-section">
+        <label class="settings-label">Pole do sprawdzenia</label>
+        <select class="form-input form-input-sm" [ngModel]="conditionField()" (ngModelChange)="conditionField.set($event); updateNodeData()">
+          <option value="">Wybierz pole...</option>
+          <option value="first_name">Imię</option>
+          <option value="last_name">Nazwisko</option>
+          <option value="email">Email</option>
+          <option value="tag">Tag</option>
+          <option value="group">Grupa</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Operator</label>
+        <select class="form-input form-input-sm" [ngModel]="conditionOperator()" (ngModelChange)="conditionOperator.set($event); updateNodeData()">
+          <option value="equals">Równa się</option>
+          <option value="not_equals">Nie równa się</option>
+          <option value="contains">Zawiera</option>
+          <option value="not_contains">Nie zawiera</option>
+          <option value="starts_with">Zaczyna się od</option>
+          <option value="ends_with">Kończy się na</option>
+          <option value="is_empty">Jest puste</option>
+          <option value="is_not_empty">Nie jest puste</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Wartość</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="conditionValue()" (ngModelChange)="conditionValue.set($event); updateNodeData()" placeholder="Wartość do porównania..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Przepływ rozdziela się w zależności od spełnienia warunku.</span>
+      </div>
+    }
+
+    <!-- Split / A/B Test Settings -->
+    @if (n.type === NodeType.Split) {
+      <div class="settings-section">
+        <label class="settings-label">Typ testu</label>
+        <select class="form-input form-input-sm">
+          <option value="random">Losowy podział</option>
+          <option value="weighted">Ważony podział</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Ścieżka A (%)</label>
+        <input type="number" class="form-input form-input-sm" [ngModel]="splitPercentageA()" (ngModelChange)="splitPercentageA.set($event); updateNodeData()" min="0" max="100" />
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Ścieżka B (%)</label>
+        <input type="number" class="form-input form-input-sm" [ngModel]="splitPercentageB()" (ngModelChange)="splitPercentageB.set($event); updateNodeData()" min="0" max="100" />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Subskrybenci zostaną losowo przydzieleni do różnych ścieżek.</span>
+      </div>
+    }
+
+    <!-- Trigger: Subscriber Joins Group -->
+    @if (n.type === NodeType.SubscriberJoinsGroup) {
+      <div class="settings-section">
+        <label class="settings-label">Grupa</label>
+        <select class="form-input form-input-sm" [ngModel]="groupName()" (ngModelChange)="groupName.set($event); updateNodeData()">
+          <option value="">Wybierz grupę...</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="customers">Klienci</option>
+          <option value="leads">Leady</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy subskrybent dołączy do wybranej grupy.</span>
+      </div>
+    }
+
+    <!-- Trigger: Form Submitted -->
+    @if (n.type === NodeType.FormSubmitted) {
+      <div class="settings-section">
+        <label class="settings-label">Formularz</label>
+        <select class="form-input form-input-sm" [ngModel]="formId()" (ngModelChange)="formId.set($event); updateNodeData()">
+          <option value="">Wybierz formularz...</option>
+          <option value="contact">Formularz kontaktowy</option>
+          <option value="newsletter">Formularz newslettera</option>
+          <option value="signup">Formularz rejestracji</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się po wysłaniu formularza.</span>
+      </div>
+    }
+
+    <!-- Trigger: Link Clicked -->
+    @if (n.type === NodeType.LinkClicked) {
+      <div class="settings-section">
+        <label class="settings-label">URL linku</label>
+        <input type="url" class="form-input form-input-sm" [ngModel]="linkUrl()" (ngModelChange)="linkUrl.set($event); updateNodeData()" placeholder="https://example.com/page" />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy subskrybent kliknie określony link.</span>
+      </div>
+    }
+
+    <!-- Trigger: Field Updated -->
+    @if (n.type === NodeType.FieldUpdated) {
+      <div class="settings-section">
+        <label class="settings-label">Pole</label>
+        <select class="form-input form-input-sm" [ngModel]="fieldName()" (ngModelChange)="fieldName.set($event); updateNodeData()">
+          <option value="">Wybierz pole...</option>
+          <option value="first_name">Imię</option>
+          <option value="last_name">Nazwisko</option>
+          <option value="company">Firma</option>
+          <option value="phone">Telefon</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy wybrane pole zostanie zaktualizowane.</span>
+      </div>
+    }
+
+    <!-- Trigger: Tag Added -->
+    @if (n.type === NodeType.TagAdded) {
+      <div class="settings-section">
+        <label class="settings-label">Tag</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy tag zostanie dodany do subskrybenta.</span>
+      </div>
+    }
+
+    <!-- Trigger: Tag Removed -->
+    @if (n.type === NodeType.TagRemoved) {
+      <div class="settings-section">
+        <label class="settings-label">Tag</label>
+        <input type="text" class="form-input form-input-sm" [ngModel]="tagName()" (ngModelChange)="tagName.set($event); updateNodeData()" placeholder="Nazwa tagu..." />
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy tag zostanie usunięty od subskrybenta.</span>
+      </div>
+    }
+
+    <!-- Trigger: Email Opened -->
+    @if (n.type === NodeType.EmailOpened) {
+      <div class="settings-section">
+        <label class="settings-label">Kampania emailowa</label>
+        <select class="form-input form-input-sm">
+          <option value="">Dowolna kampania</option>
+          <option value="welcome">Email powitalny</option>
+          <option value="newsletter">Newsletter</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się gdy subskrybent otworzy email.</span>
+      </div>
+    }
+
+    <!-- Trigger: Date Based -->
+    @if (n.type === NodeType.DateBased) {
+      <div class="settings-section">
+        <label class="settings-label">Pole daty</label>
+        <select class="form-input form-input-sm" [ngModel]="dateField()" (ngModelChange)="dateField.set($event); updateNodeData()">
+          <option value="">Wybierz pole...</option>
+          <option value="birthday">Data urodzenia</option>
+          <option value="signup_date">Data rejestracji</option>
+          <option value="custom_date">Data niestandardowa</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Przesunięcie</label>
+        <div class="flex gap-2">
+          <input type="number" class="form-input form-input-sm flex-1" value="0" />
+          <select class="form-input form-input-sm">
+            <option value="days">dni przed</option>
+            <option value="days_after">dni po</option>
+            <option value="exact">dokładnie w dniu</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Automatyzacja uruchomi się w określonym dniu względem wybranej daty.</span>
+      </div>
+    }
+
+    <!-- Goal Settings -->
+    @if (n.type === NodeType.Goal) {
+      <div class="settings-section">
+        <label class="settings-label">Cel</label>
+        <select class="form-input form-input-sm">
+          <option value="">Wybierz cel...</option>
+          <option value="purchase">Zakup</option>
+          <option value="link_click">Kliknięcie linku</option>
+          <option value="email_open">Otwarcie emaila</option>
+          <option value="tag_added">Dodanie tagu</option>
+        </select>
+      </div>
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Cel pomaga śledzić skuteczność automatyzacji.</span>
+      </div>
+    }
+
+    <!-- Save Button -->
+    <div class="settings-divider"></div>
+    <div class="settings-actions">
+      <button class="btn btn-sm bg-primary text-white w-full" (click)="updateNodeData()" type="button">
+        <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
+        Zastosuj zmiany
+      </button>
+    </div>
+  </div>
+}

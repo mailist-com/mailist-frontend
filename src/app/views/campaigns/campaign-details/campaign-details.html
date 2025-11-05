@@ -1,0 +1,323 @@
+<main class="p-6">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+
+  <!-- Campaign Details -->
+  <div *ngIf="!isLoading && campaign">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          (click)="goBack()"
+          class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+          Powrót
+        </button>
+        <div>
+          <h1 class="text-2xl font-semibold text-default-900">{{ campaign.name }}</h1>
+          <p class="text-sm text-default-600 mt-1">
+            Utworzona {{ formatDate(campaign.createdAt) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button
+          *ngIf="campaign.status === 'sent'"
+          type="button"
+          (click)="viewStats()"
+          class="btn btn-sm bg-info/10 text-info hover:bg-info/20">
+          <div class="size-4 me-1"><ng-icon name="lucideActivity"></ng-icon></div>
+          Statystyki
+        </button>
+        <button
+          *ngIf="campaign.status === 'draft' || campaign.status === 'scheduled'"
+          type="button"
+          (click)="editCampaign()"
+          class="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20">
+          <div class="size-4 me-1"><ng-icon name="lucidePencil"></ng-icon></div>
+          Edytuj
+        </button>
+        <button
+          type="button"
+          (click)="duplicateCampaign()"
+          class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideCopy"></ng-icon></div>
+          Duplikuj
+        </button>
+        <button
+          *ngIf="campaign.status === 'draft'"
+          type="button"
+          (click)="sendCampaign()"
+          class="btn btn-sm bg-success text-white hover:bg-success/90">
+          <div class="size-4 me-1"><ng-icon name="lucideSend"></ng-icon></div>
+          Wyślij
+        </button>
+        <button
+          type="button"
+          (click)="deleteCampaign()"
+          class="btn btn-sm bg-danger/10 text-danger hover:bg-danger/20">
+          <div class="size-4 me-1"><ng-icon name="lucideTrash2"></ng-icon></div>
+          Usuń
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Status and Basic Info -->
+        <div class="bg-white border border-default-200 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-default-900">Informacje podstawowe</h2>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" [ngClass]="getStatusClass(campaign.status)">
+              {{ getStatusLabel(campaign.status) }}
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="size-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-5 text-primary"><ng-icon name="lucideMail"></ng-icon></div>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-default-600 mb-1">Temat wiadomości</div>
+                <div class="text-sm font-medium text-default-900">{{ campaign.subject }}</div>
+              </div>
+            </div>
+
+            <div *ngIf="campaign.preheader" class="flex items-start gap-3">
+              <div class="size-10 bg-default-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-5 text-default-600"><ng-icon name="lucideEye"></ng-icon></div>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-default-600 mb-1">Preheader</div>
+                <div class="text-sm font-medium text-default-900">{{ campaign.preheader }}</div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="size-10 bg-success/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-5 text-success"><ng-icon name="lucideUser"></ng-icon></div>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-default-600 mb-1">Nadawca</div>
+                <div class="text-sm font-medium text-default-900">{{ campaign.fromName }} &lt;{{ campaign.fromEmail }}&gt;</div>
+              </div>
+            </div>
+
+            <div *ngIf="campaign.replyTo" class="flex items-start gap-3">
+              <div class="size-10 bg-info/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-5 text-info"><ng-icon name="lucideMail"></ng-icon></div>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-default-600 mb-1">Odpowiedz do</div>
+                <div class="text-sm font-medium text-default-900">{{ campaign.replyTo }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Preview -->
+        <div class="bg-white border border-default-200 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-default-900">Podgląd treści</h2>
+            <button
+              type="button"
+              (click)="togglePreview()"
+              class="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20">
+              <div class="size-4 me-1"><ng-icon name="lucideEye"></ng-icon></div>
+              {{ showHtmlPreview ? 'Ukryj' : 'Pokaż' }} HTML
+            </button>
+          </div>
+
+          <div *ngIf="!showHtmlPreview" class="space-y-4">
+            <div *ngIf="campaign.content.html">
+              <div class="text-xs font-medium text-default-600 mb-2">Treść HTML</div>
+              <div class="bg-default-50 border border-default-200 rounded-lg p-4 max-h-64 overflow-auto">
+                <pre class="text-xs text-default-900 whitespace-pre-wrap font-mono">{{ campaign.content.html }}</pre>
+              </div>
+            </div>
+
+            <div *ngIf="campaign.content.text">
+              <div class="text-xs font-medium text-default-600 mb-2">Wersja tekstowa</div>
+              <div class="bg-default-50 border border-default-200 rounded-lg p-4 max-h-64 overflow-auto">
+                <pre class="text-xs text-default-900 whitespace-pre-wrap">{{ campaign.content.text }}</pre>
+              </div>
+            </div>
+
+            <div *ngIf="!campaign.content.html && !campaign.content.text" class="text-center py-8 text-default-600">
+              Brak treści
+            </div>
+          </div>
+
+          <div *ngIf="showHtmlPreview && campaign.content.html" class="border border-default-200 rounded-lg p-4 bg-white max-h-96 overflow-auto">
+            <iframe
+              [srcdoc]="campaign.content.html"
+              class="w-full min-h-[400px] border-0"
+              sandbox="allow-same-origin">
+            </iframe>
+          </div>
+        </div>
+
+        <!-- Statistics (if sent) -->
+        <div *ngIf="campaign.status === 'sent'" class="bg-white border border-default-200 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-default-900">Statystyki</h2>
+            <button
+              type="button"
+              (click)="viewStats()"
+              class="text-sm text-primary hover:text-primary/80">
+              Zobacz szczegóły →
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-4 bg-default-50 rounded-lg">
+              <div class="text-2xl font-semibold text-default-900">{{ formatNumber(campaign.statistics.sent) }}</div>
+              <div class="text-xs text-default-600 mt-1">Wysłane</div>
+            </div>
+            <div class="text-center p-4 bg-success/5 rounded-lg">
+              <div class="text-2xl font-semibold text-success">{{ campaign.statistics.performance.openRate.toFixed(1) }}%</div>
+              <div class="text-xs text-default-600 mt-1">Otwarcia</div>
+            </div>
+            <div class="text-center p-4 bg-primary/5 rounded-lg">
+              <div class="text-2xl font-semibold text-primary">{{ campaign.statistics.performance.clickRate.toFixed(1) }}%</div>
+              <div class="text-xs text-default-600 mt-1">Kliknięcia</div>
+            </div>
+            <div class="text-center p-4 bg-danger/5 rounded-lg">
+              <div class="text-2xl font-semibold text-danger">{{ formatNumber(campaign.statistics.unsubscribes) }}</div>
+              <div class="text-xs text-default-600 mt-1">Rezygnacje</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Recipients Info -->
+        <div class="bg-white border border-default-200 rounded-lg p-6">
+          <h3 class="text-sm font-semibold text-default-900 mb-4">Odbiorcy</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-default-600">Łącznie:</span>
+              <span class="text-lg font-semibold text-primary">{{ formatNumber(campaign.recipients.totalCount || 0) }}</span>
+            </div>
+            <div class="pt-3 border-t border-default-200">
+              <div class="text-xs text-default-600 mb-2">Typ odbiorców:</div>
+              <div class="text-sm font-medium text-default-900 capitalize">
+                <span *ngIf="campaign.recipients.type === 'all'">Wszyscy subskrybenci</span>
+                <span *ngIf="campaign.recipients.type === 'lists'">Określone listy</span>
+                <span *ngIf="campaign.recipients.type === 'segments'">Segmenty</span>
+                <span *ngIf="campaign.recipients.type === 'tags'">Tagi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule Info -->
+        <div class="bg-white border border-default-200 rounded-lg p-6">
+          <h3 class="text-sm font-semibold text-default-900 mb-4">Harmonogram</h3>
+          <div class="space-y-3">
+            <div *ngIf="campaign.sentAt" class="flex items-start gap-3">
+              <div class="size-8 bg-success/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-4 text-success"><ng-icon name="lucideCircleCheck"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-xs text-default-600">Wysłana</div>
+                <div class="text-sm font-medium text-default-900 mt-1">{{ formatDate(campaign.sentAt) }}</div>
+              </div>
+            </div>
+
+            <div *ngIf="campaign.scheduledFor && !campaign.sentAt" class="flex items-start gap-3">
+              <div class="size-8 bg-warning/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-4 text-warning"><ng-icon name="lucideClock"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-xs text-default-600">Zaplanowana na</div>
+                <div class="text-sm font-medium text-default-900 mt-1">{{ formatDate(campaign.scheduledFor) }}</div>
+              </div>
+            </div>
+
+            <div *ngIf="!campaign.sentAt && !campaign.scheduledFor" class="flex items-start gap-3">
+              <div class="size-8 bg-default-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div class="size-4 text-default-600"><ng-icon name="lucideCircleAlert"></ng-icon></div>
+              </div>
+              <div>
+                <div class="text-xs text-default-600">Status</div>
+                <div class="text-sm font-medium text-default-900 mt-1">Nie zaplanowano</div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-default-200">
+              <div class="flex items-center gap-2 text-xs text-default-600">
+                <ng-icon name="lucideCalendar" class="size-3.5"></ng-icon>
+                <span>Utworzona: {{ formatDate(campaign.createdAt) }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-default-600 mt-2">
+                <ng-icon name="lucideCalendar" class="size-3.5"></ng-icon>
+                <span>Zaktualizowana: {{ formatDate(campaign.updatedAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="bg-white border border-default-200 rounded-lg p-6">
+          <h3 class="text-sm font-semibold text-default-900 mb-4">Ustawienia</h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-default-600">Śledzenie otwarć:</span>
+              <span [class.text-success]="campaign.settings.trackOpens" [class.text-default-500]="!campaign.settings.trackOpens">
+                {{ campaign.settings.trackOpens ? 'Włączone' : 'Wyłączone' }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-default-600">Śledzenie kliknięć:</span>
+              <span [class.text-success]="campaign.settings.trackClicks" [class.text-default-500]="!campaign.settings.trackClicks">
+                {{ campaign.settings.trackClicks ? 'Włączone' : 'Wyłączone' }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-default-600">Google Analytics:</span>
+              <span [class.text-success]="campaign.settings.googleAnalytics?.enabled" [class.text-default-500]="!campaign.settings.googleAnalytics?.enabled">
+                {{ campaign.settings.googleAnalytics?.enabled ? 'Włączone' : 'Wyłączone' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Type Badge -->
+        <div class="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
+          <div class="text-xs text-default-600 mb-1">Typ kampanii</div>
+          <div class="text-sm font-semibold text-primary capitalize">
+            <span *ngIf="campaign.type === 'regular'">Standardowa</span>
+            <span *ngIf="campaign.type === 'ab_test'">Test A/B</span>
+            <span *ngIf="campaign.type === 'rss'">RSS</span>
+            <span *ngIf="campaign.type === 'automated'">Automatyczna</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found -->
+  <div *ngIf="!isLoading && !campaign" class="text-center py-12">
+    <div class="size-16 mx-auto mb-4 text-default-400">
+      <ng-icon name="lucideCircleAlert"></ng-icon>
+    </div>
+    <h3 class="text-lg font-medium text-default-900 mb-2">Nie znaleziono kampanii</h3>
+    <p class="text-default-600 mb-6">Kampania o podanym ID nie istnieje lub została usunięta.</p>
+    <button
+      type="button"
+      (click)="goBack()"
+      class="btn bg-primary text-white">
+      <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+      Powrót do listy
+    </button>
+  </div>
+</main>
