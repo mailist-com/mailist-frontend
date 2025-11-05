@@ -320,7 +320,7 @@ export class AuthService {
   verifyEmail(email: string, code: string): Observable<User> {
     this.isLoadingSubject.next(true);
 
-    return this.api.post<ApiResponse<VerificationResponse>>('auth/verify-email', { email, code })
+    return this.api.post<ApiResponse<VerificationResponse>>('auth/verify-email', { email, verificationCode: code })
       .pipe(
         map(response => {
           // Validate response structure
