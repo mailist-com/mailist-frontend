@@ -149,8 +149,9 @@ export class AuthService {
           }
 
           // Return the registration response (message about email verification)
+          // Backend returns: { success: true, message: "...", timestamp: "..." }
           return {
-            message: response.message || 'Registration successful',
+            message: response.message || 'Registration successful. Please check your email.',
             requiresVerification: true
           };
         }),
