@@ -1,6 +1,6 @@
-<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] min-h-screen flex justify-center items-center">
+<div class="min-h-screen flex justify-center items-center bg-background">
   <div class="relative">
-    <div class="bg-card/70 rounded-lg w-2/3 mx-auto">
+    <div class="bg-card/70 rounded-lg w-2/3 mx-auto overflow-hidden">
       <div class="grid lg:grid-cols-12 grid-cols-1 items-center gap-0">
         <div class="lg:col-span-5">
           <div class="text-center px-10 py-12">
@@ -72,8 +72,15 @@
           </div>
         </div>
 
-        <div class="lg:col-span-7 hidden lg:block">
-          <img src="assets/images/auth-img.png" alt="Auth" class="w-full h-full object-cover" />
+        <div class="lg:col-span-7 bg-cover bg-center bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] hidden lg:flex">
+          <div class="py-12 h-full flex justify-center items-center min-h-[600px] w-full">
+            <div class="text-center px-10">
+              <h4 class="text-white mb-3 text-xl font-semibold drop-shadow-lg">Almost There!</h4>
+              <p class="text-white/90 mx-auto text-base leading-6 drop-shadow-md">
+                Verify your email to unlock all features of our powerful email marketing platform.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
