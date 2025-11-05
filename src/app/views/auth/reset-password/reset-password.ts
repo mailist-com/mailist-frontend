@@ -35,16 +35,17 @@ export class ResetPassword {
 
       this.authService.resetPassword(this.resetForm.get('email')?.value).subscribe({
         next: (message) => {
-          this.success = message;
+          this.success = typeof message === 'string' ? message : 'Password reset instructions sent to your email';
           this.isLoading = false;
-          
+
           // Redirect to login after 3 seconds
           setTimeout(() => {
             this.router.navigate(['/auth/login']);
           }, 3000);
         },
         error: (error) => {
-          this.error = error;
+          console.error('Reset password error:', error);
+          this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Password reset failed. Please try again.');
           this.isLoading = false;
         }
       });
