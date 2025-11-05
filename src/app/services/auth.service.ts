@@ -12,6 +12,7 @@ export interface User {
   lastName: string;
   role: 'admin' | 'user';
   avatar?: string;
+  plan?: 'free' | 'pro' | 'enterprise';
 }
 
 export interface LoginCredentials {
