@@ -55,24 +55,22 @@
   <!-- Main Card -->
   <div class="card">
     <div class="card-header">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-default-900">Lista kampanii</h2>
-        <div class="flex items-center gap-3">
-          <button
-            type="button"
-            (click)="refreshCampaigns()"
-            class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
-            <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
-            Odśwież
-          </button>
-          <button
-            type="button"
-            (click)="createCampaign()"
-            class="btn btn-sm bg-primary text-white hover:bg-primary/90">
-            <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-            Nowa kampania
-          </button>
-        </div>
+      <h6 class="card-title">Lista kampanii</h6>
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          (click)="refreshCampaigns()"
+          class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
+          Odśwież
+        </button>
+        <button
+          type="button"
+          (click)="createCampaign()"
+          class="btn btn-sm bg-primary text-white hover:bg-primary/90">
+          <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+          Nowa kampania
+        </button>
       </div>
     </div>
 

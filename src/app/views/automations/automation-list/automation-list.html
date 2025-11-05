@@ -55,29 +55,27 @@
   <!-- Main Card -->
   <div class="card">
     <div class="card-header">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-default-900">Lista automatyzacji</h2>
-        <div class="flex items-center gap-3">
+      <h6 class="card-title">Lista automatyzacji</h6>
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          (click)="refreshAutomations()"
+          class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
+          Odśwież
+        </button>
+        <!-- Create Automation Dropdown -->
+        <div class="relative inline-block">
           <button
             type="button"
-            (click)="refreshAutomations()"
-            class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
-            <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
-            Odśwież
+            class="btn btn-sm bg-primary text-white hover:bg-primary/90 dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            (click)="createFlowAutomation()"
+          >
+            <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+            Nowa automatyzacja
           </button>
-          <!-- Create Automation Dropdown -->
-          <div class="relative inline-block">
-            <button
-              type="button"
-              class="btn btn-sm bg-primary text-white hover:bg-primary/90 dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              (click)="createFlowAutomation()"
-            >
-              <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-              Nowa automatyzacja
-            </button>
-          </div>
         </div>
       </div>
     </div>
