@@ -1,0 +1,21 @@
+<div class="card">
+    <div class="p-6">
+        <h4 class="text-lg font-semibold text-default-900 dark:text-default-100 mb-4">Szybkie akcje</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            @for (action of actions; track action.label) {
+            <a [routerLink]="action.link"
+               class="flex items-start gap-3 p-4 rounded-lg border border-default-200 dark:border-default-700 hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-all group">
+                <div [class]="action.color" class="p-2 rounded-md bg-default-100 dark:bg-default-800 group-hover:scale-110 transition-transform">
+                    <div class="size-5">
+                        <ng-icon [name]="action.icon"></ng-icon>
+                    </div>
+                </div>
+                <div class="flex-grow">
+                    <h5 class="font-medium text-default-900 dark:text-default-100 mb-1">{{ action.label }}</h5>
+                    <p class="text-xs text-default-600 dark:text-default-400">{{ action.description }}</p>
+                </div>
+            </a>
+            }
+        </div>
+    </div>
+</div>

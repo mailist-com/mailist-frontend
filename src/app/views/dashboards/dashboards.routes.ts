@@ -3,8 +3,14 @@ import { Analytics } from "./analytics/analytics";
 import { Ecommerce } from "./ecommerce/ecommerce";
 import { Email } from "./email/email";
 import { Hr } from "./hr/hr";
+import { MainDashboard } from "./main/main-dashboard";
 
 export const DASHBOARDS_ROUTES: Routes = [
+    {
+        path: 'dashboard',
+        component: MainDashboard,
+        data: { title: 'Dashboard' },
+    },
      {
         path: 'dashboards/analytics',
         component: Analytics,

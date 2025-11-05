@@ -1,0 +1,21 @@
+<div class="card h-full">
+    <div class="p-6">
+        <h4 class="text-lg font-semibold text-default-900 dark:text-default-100 mb-4">Ostatnia aktywność</h4>
+        <div class="space-y-4">
+            @for (activity of activities; track activity.title) {
+            <div class="flex items-start gap-3">
+                <div [class]="activity.iconBg + ' ' + activity.iconColor" class="p-2 rounded-lg flex-shrink-0">
+                    <div class="size-4">
+                        <ng-icon [name]="activity.icon"></ng-icon>
+                    </div>
+                </div>
+                <div class="flex-grow min-w-0">
+                    <h5 class="font-medium text-default-900 dark:text-default-100 text-sm mb-1">{{ activity.title }}</h5>
+                    <p class="text-xs text-default-600 dark:text-default-400 mb-1">{{ activity.description }}</p>
+                    <span class="text-xs text-default-500">{{ activity.time }}</span>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
