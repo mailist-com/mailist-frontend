@@ -7,8 +7,8 @@ export const SETTINGS_ROUTES: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'profile',
-        pathMatch: 'full'
+        pathMatch: 'full',
+        redirectTo: 'profile'
       },
       {
         path: 'profile',
