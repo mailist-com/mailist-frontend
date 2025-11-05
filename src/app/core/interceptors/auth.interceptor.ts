@@ -33,18 +33,26 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       // Handle 401 Unauthorized errors
       if (error.status === 401) {
-        // Clear auth data
-        localStorage.removeItem(environment.storage.authToken);
-        localStorage.removeItem(environment.storage.refreshToken);
-        localStorage.removeItem(environment.storage.currentUser);
-        sessionStorage.removeItem(environment.storage.authToken);
-        sessionStorage.removeItem(environment.storage.refreshToken);
-        sessionStorage.removeItem(environment.storage.currentUser);
+        // Check if this is an auth endpoint (login, register, verify-email)
+        const isAuthEndpoint = req.url.includes('/auth/login') ||
+                              req.url.includes('/auth/register') ||
+                              req.url.includes('/auth/verify-email');
 
-        // Redirect to login
-        router.navigate(['/auth/login'], {
-          queryParams: { returnUrl: router.url }
-        });
+        if (!isAuthEndpoint) {
+          // Only clear auth data and redirect for non-auth endpoints
+          // Auth endpoints will handle their own error messages and redirects
+          localStorage.removeItem(environment.storage.authToken);
+          localStorage.removeItem(environment.storage.refreshToken);
+          localStorage.removeItem(environment.storage.currentUser);
+          sessionStorage.removeItem(environment.storage.authToken);
+          sessionStorage.removeItem(environment.storage.refreshToken);
+          sessionStorage.removeItem(environment.storage.currentUser);
+
+          // Redirect to login
+          router.navigate(['/auth/login'], {
+            queryParams: { returnUrl: router.url }
+          });
+        }
       }
 
       return throwError(() => error);

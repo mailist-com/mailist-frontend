@@ -115,10 +115,12 @@ export class AuthService {
           if (error.status === 0) {
             errorMessage = 'Unable to connect to server. Please check your internet connection.';
           } else if (error.status === 401) {
-            errorMessage = 'Invalid email or password. Please try again.';
+            // Preserve backend message (e.g., "Please verify your email before logging in")
+            // or use default message for invalid credentials
+            errorMessage = error.message || 'Invalid email or password. Please try again.';
           } else if (error.status === 403) {
             // Email not verified
-            errorMessage = 'Please verify your email address before logging in.';
+            errorMessage = error.message || 'Please verify your email address before logging in.';
           } else if (error.status === 422) {
             errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid input. Please check your credentials.';
           } else if (error.status === 429) {
