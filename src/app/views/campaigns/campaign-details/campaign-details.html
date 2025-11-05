@@ -71,7 +71,7 @@
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Status and Basic Info -->
-        <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="card p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-lg font-semibold text-default-900">Informacje podstawowe</h2>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" [ngClass]="getStatusClass(campaign.status)">
@@ -123,7 +123,7 @@
         </div>
 
         <!-- Content Preview -->
-        <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="card p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-default-900">Podgląd treści</h2>
             <button
@@ -165,7 +165,7 @@
         </div>
 
         <!-- Statistics (if sent) -->
-        <div *ngIf="campaign.status === 'sent'" class="bg-white border border-default-200 rounded-lg p-6">
+        <div *ngIf="campaign.status === 'sent'" class="card p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-default-900">Statystyki</h2>
             <button
@@ -200,7 +200,7 @@
       <!-- Sidebar -->
       <div class="space-y-6">
         <!-- Recipients Info -->
-        <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="card p-6">
           <h3 class="text-sm font-semibold text-default-900 mb-4">Odbiorcy</h3>
           <div class="space-y-3">
             <div class="flex items-center justify-between">
@@ -220,7 +220,7 @@
         </div>
 
         <!-- Schedule Info -->
-        <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="card p-6">
           <h3 class="text-sm font-semibold text-default-900 mb-4">Harmonogram</h3>
           <div class="space-y-3">
             <div *ngIf="campaign.sentAt" class="flex items-start gap-3">
@@ -267,7 +267,7 @@
         </div>
 
         <!-- Settings -->
-        <div class="bg-white border border-default-200 rounded-lg p-6">
+        <div class="card p-6">
           <h3 class="text-sm font-semibold text-default-900 mb-4">Ustawienia</h3>
           <div class="space-y-2">
             <div class="flex items-center justify-between text-sm">

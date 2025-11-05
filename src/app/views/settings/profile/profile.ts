@@ -1,0 +1,133 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
+import { UserService } from '../../../services/user.service';
+import { UserProfile } from '../../../models/user.model';
+
+@Component({
+  selector: 'app-profile-settings',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './profile.html',
+  styleUrl: './profile.css',
+})
+export class ProfileSettings implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  user: UserProfile | null = null;
+  saving = false;
+
+  // Form data
+  formData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    timezone: '',
+    language: '',
+  };
+
+  notifications = {
+    emailNotifications: false,
+    campaignUpdates: false,
+    automationAlerts: false,
+    monthlyReports: false,
+    systemUpdates: false,
+  };
+
+  preferences = {
+    defaultFromName: '',
+    defaultFromEmail: '',
+    emailSignature: '',
+    dateFormat: 'DD.MM.YYYY',
+    timeFormat: '24h' as '12h' | '24h',
+  };
+
+  constructor(private userService: UserService) {}
+
+  ngOnInit() {
+    this.loadUser();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadUser() {
+    this.userService
+      .getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.user = user;
+        this.formData = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone || '',
+          company: user.company || '',
+          timezone: user.timezone,
+          language: user.language,
+        };
+        this.notifications = { ...user.notifications };
+        this.preferences = {
+          defaultFromName: user.preferences.defaultFromName || '',
+          defaultFromEmail: user.preferences.defaultFromEmail || '',
+          emailSignature: user.preferences.emailSignature || '',
+          dateFormat: user.preferences.dateFormat,
+          timeFormat: user.preferences.timeFormat,
+        };
+      });
+  }
+
+  saveProfile() {
+    this.saving = true;
+    this.userService
+      .updateProfile(this.formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          alert('Profil zaktualizowany pomyślnie');
+        },
+        error: () => {
+          this.saving = false;
+          alert('Błąd podczas aktualizacji profilu');
+        },
+      });
+  }
+
+  saveNotifications() {
+    this.saving = true;
+    this.userService
+      .updateNotificationSettings(this.notifications)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          alert('Powiadomienia zaktualizowane');
+        },
+        error: () => {
+          this.saving = false;
+        },
+      });
+  }
+
+  savePreferences() {
+    this.saving = true;
+    this.userService
+      .updatePreferences(this.preferences)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          alert('Preferencje zaktualizowane');
+        },
+        error: () => {
+          this.saving = false;
+        },
+      });
+  }
+}

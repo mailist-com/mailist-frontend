@@ -1,0 +1,131 @@
+<div class="space-y-6">
+  <!-- Current Plan -->
+  <div class="card p-6" *ngIf="subscription">
+    <h3 class="text-lg font-semibold text-default-900 mb-4">Aktualny plan</h3>
+
+    <div class="flex items-center justify-between">
+      <div>
+        <h4 class="text-2xl font-bold text-default-900">{{ subscription.planName }}</h4>
+        <p class="text-default-600 mt-1">
+          {{ subscription.price }} {{ subscription.currency }} / {{ subscription.interval === 'month' ? 'miesiąc' : 'rok' }}
+        </p>
+        <span class="inline-flex items-center py-1 px-2.5 mt-2 text-xs font-medium rounded" [class]="getStatusClass(subscription.status)">
+          {{ subscription.status === 'active' ? 'Aktywny' : subscription.status === 'canceled' ? 'Anulowany' : subscription.status }}
+        </span>
+      </div>
+      <div class="text-right">
+        <p class="text-sm text-default-600">Następna płatność</p>
+        <p class="text-lg font-semibold text-default-900">{{ subscription.currentPeriodEnd | date:'dd.MM.yyyy' }}</p>
+      </div>
+    </div>
+
+    <div class="mt-6 pt-6 border-t border-default-200">
+      <button (click)="cancelSubscription()" *ngIf="!subscription.cancelAtPeriodEnd" class="btn btn-sm bg-danger text-white">
+        Anuluj subskrypcję
+      </button>
+      <div *ngIf="subscription.cancelAtPeriodEnd" class="text-sm text-danger">
+        Subskrypcja zostanie anulowana {{ subscription.currentPeriodEnd | date:'dd.MM.yyyy' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Available Plans -->
+  <div class="card p-6">
+    <h3 class="text-lg font-semibold text-default-900 mb-4">Dostępne plany</h3>
+
+    <!-- Contacts Slider -->
+    <div class="mb-8 p-6 bg-default-50 rounded-lg">
+      <div class="flex items-center justify-between mb-4">
+        <label class="text-sm font-medium text-default-700">Liczba kontaktów</label>
+        <span class="text-2xl font-bold text-primary">{{ formatContacts(selectedContacts) }}</span>
+      </div>
+      <input
+        type="range"
+        [(ngModel)]="selectedContacts"
+        [min]="minContacts"
+        [max]="maxContacts"
+        [step]="stepContacts"
+        (input)="onContactsChange()"
+        class="w-full h-2 bg-default-200 rounded-lg appearance-none cursor-pointer accent-primary"
+      />
+      <div class="flex justify-between mt-2 text-xs text-default-500">
+        <span>{{ formatContacts(minContacts) }}</span>
+        <span>{{ formatContacts(maxContacts) }}</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div *ngFor="let plan of plans" class="border border-default-200 rounded-lg p-6" [class.border-primary]="plan.popular">
+        <div *ngIf="plan.popular" class="text-xs font-medium text-primary mb-2">POPULARNY</div>
+        <h4 class="text-xl font-bold text-default-900">{{ plan.name }}</h4>
+        <div class="mt-4">
+          <span class="text-3xl font-bold text-default-900">{{ getPriceForPlan(plan) }}</span>
+          <span class="text-default-600"> {{ plan.currency }}/{{ plan.interval === 'month' ? 'msc' : 'rok' }}</span>
+        </div>
+        <div *ngIf="!plan.isFree" class="text-xs text-default-500 mt-1">
+          dla {{ formatContacts(selectedContacts) }} kontaktów
+        </div>
+
+        <ul class="mt-6 space-y-3">
+          <li *ngFor="let feature of plan.features" class="flex items-start gap-2 text-sm">
+            <ng-icon [name]="feature.included ? 'lucideCheck' : 'lucideX'"
+              class="size-4 flex-shrink-0 mt-0.5" [class.text-success]="feature.included" [class.text-default-400]="!feature.included">
+            </ng-icon>
+            <span [class.text-default-900]="feature.included" [class.text-default-400]="!feature.included">{{ feature.name }}</span>
+          </li>
+        </ul>
+
+        <button (click)="changePlan(plan.id)"
+          *ngIf="subscription && subscription.planId !== plan.id"
+          class="btn btn-sm w-full mt-6"
+          [class.bg-primary]="plan.popular"
+          [class.text-white]="plan.popular"
+          [class.bg-default-100]="!plan.popular"
+          [class.text-default-600]="!plan.popular">
+          Wybierz plan
+        </button>
+        <div *ngIf="subscription && subscription.planId === plan.id" class="w-full mt-6 py-2 text-center text-sm font-medium text-primary">
+          Aktualny plan
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Billing History -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Historia płatności</h3>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-default-150">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Data</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Opis</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Kwota</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Status</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase">Akcje</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-default-200">
+          <tr *ngFor="let item of billingHistory" class="hover:bg-default-50">
+            <td class="px-6 py-4 text-sm text-default-900">{{ item.date | date:'dd.MM.yyyy' }}</td>
+            <td class="px-6 py-4 text-sm text-default-600">{{ item.description }}</td>
+            <td class="px-6 py-4 text-sm font-medium text-default-900">{{ item.amount }} {{ item.currency }}</td>
+            <td class="px-6 py-4">
+              <span class="py-0.5 px-2.5 inline-flex text-xs font-medium rounded" [class]="getHistoryStatusClass(item.status)">
+                {{ item.status === 'paid' ? 'Opłacono' : item.status === 'pending' ? 'Oczekuje' : 'Niepowodzenie' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <a *ngIf="item.invoiceUrl" [href]="item.invoiceUrl" class="text-primary hover:underline text-sm">
+                Pobierz fakturę
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,361 @@
+<main class="p-6">
+  <app-page-title
+    [title]="isEditMode ? 'Edytuj szablon' : 'Nowy szablon'"
+    subtitle="Twórz i zarządzaj szablonami email">
+  </app-page-title>
+
+  <div>
+  <form #templateForm="ngForm" (ngSubmit)="saveTemplate()">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Form Column -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Basic Information -->
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-default-900 mb-4">Podstawowe informacje</h3>
+
+          <!-- Template Name -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              Nazwa szablonu <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="template.name"
+              name="name"
+              required
+              class="form-input w-full"
+              placeholder="np. Newsletter miesięczny" />
+          </div>
+
+          <!-- Subject -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              Temat wiadomości <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="template.subject"
+              name="subject"
+              required
+              class="form-input w-full"
+              placeholder="np. Twój miesięczny newsletter" />
+            <p class="text-xs text-default-600 mt-1">
+              Możesz użyć zmiennych: {{ '{{' }} company_name {{ '}}' }}, {{ '{{' }} first_name {{ '}}' }}
+            </p>
+          </div>
+
+          <!-- Preview Text -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              Tekst podglądu
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="template.previewText"
+              name="previewText"
+              class="form-input w-full"
+              placeholder="Zobacz co przygotowaliśmy dla Ciebie..." />
+            <p class="text-xs text-default-600 mt-1">
+              Krótki tekst wyświetlany w skrzynce odbiorczej obok tematu
+            </p>
+          </div>
+
+          <!-- Category and Status -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Kategoria <span class="text-danger">*</span>
+              </label>
+              <select
+                [(ngModel)]="template.category"
+                name="category"
+                required
+                class="form-input w-full">
+                <option *ngFor="let cat of categories" [value]="cat.value">
+                  {{ cat.label }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Status
+              </label>
+              <select
+                [(ngModel)]="template.status"
+                name="status"
+                class="form-input w-full">
+                <option *ngFor="let status of statuses" [value]="status.value">
+                  {{ status.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-default-900">Treść szablonu</h3>
+            <button
+              type="button"
+              (click)="togglePreview()"
+              class="btn btn-sm bg-default-100 text-default-700 hover:bg-default-200">
+              <div class="size-4">
+                <ng-icon [name]="showPreview ? 'lucideCode' : 'lucideEye'"></ng-icon>
+              </div>
+              {{ showPreview ? 'Edytuj HTML' : 'Podgląd' }}
+            </button>
+          </div>
+
+          <!-- HTML Editor -->
+          <div *ngIf="!showPreview" class="mb-4">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              HTML <span class="text-danger">*</span>
+            </label>
+            <textarea
+              [(ngModel)]="template.content!.html"
+              name="html"
+              required
+              rows="20"
+              class="form-input w-full font-mono text-sm"
+              placeholder="<div>Twoja treść HTML...</div>"></textarea>
+            <p class="text-xs text-default-600 mt-1">
+              Użyj zmiennych: {{ '{{' }} first_name {{ '}}' }}, {{ '{{' }} last_name {{ '}}' }}, {{ '{{' }} company_name {{ '}}' }}
+            </p>
+          </div>
+
+          <!-- Preview -->
+          <div *ngIf="showPreview" class="mb-4">
+            <div class="border border-default-200 rounded-lg p-6 bg-default-50 max-h-[600px] overflow-auto">
+              <div [innerHTML]="template.content!.html" class="bg-white p-4 rounded"></div>
+            </div>
+          </div>
+
+          <!-- Plain Text -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              Tekst alternatywny (dla klientów bez HTML)
+            </label>
+            <textarea
+              [(ngModel)]="template.content!.text"
+              name="text"
+              rows="6"
+              class="form-input w-full"
+              placeholder="Wersja tekstowa wiadomości..."></textarea>
+          </div>
+        </div>
+
+        <!-- Design Settings -->
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-default-900 mb-4">Ustawienia wizualne</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Background Color -->
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Kolor tła
+              </label>
+              <div class="flex gap-2">
+                <input
+                  type="color"
+                  [(ngModel)]="template.content!.design!.backgroundColor"
+                  name="backgroundColor"
+                  class="h-10 w-16 rounded border border-default-200" />
+                <input
+                  type="text"
+                  [(ngModel)]="template.content!.design!.backgroundColor"
+                  name="backgroundColorText"
+                  class="form-input flex-1"
+                  placeholder="#ffffff" />
+              </div>
+            </div>
+
+            <!-- Primary Color -->
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Kolor główny
+              </label>
+              <div class="flex gap-2">
+                <input
+                  type="color"
+                  [(ngModel)]="template.content!.design!.primaryColor"
+                  name="primaryColor"
+                  class="h-10 w-16 rounded border border-default-200" />
+                <input
+                  type="text"
+                  [(ngModel)]="template.content!.design!.primaryColor"
+                  name="primaryColorText"
+                  class="form-input flex-1"
+                  placeholder="#667eea" />
+              </div>
+            </div>
+
+            <!-- Secondary Color -->
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Kolor dodatkowy
+              </label>
+              <div class="flex gap-2">
+                <input
+                  type="color"
+                  [(ngModel)]="template.content!.design!.secondaryColor"
+                  name="secondaryColor"
+                  class="h-10 w-16 rounded border border-default-200" />
+                <input
+                  type="text"
+                  [(ngModel)]="template.content!.design!.secondaryColor"
+                  name="secondaryColorText"
+                  class="form-input flex-1"
+                  placeholder="#764ba2" />
+              </div>
+            </div>
+
+            <!-- Font Family -->
+            <div>
+              <label class="block text-sm font-medium text-default-700 mb-2">
+                Czcionka
+              </label>
+              <select
+                [(ngModel)]="template.content!.design!.fontFamily"
+                name="fontFamily"
+                class="form-input w-full">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                <option value="'Courier New', Courier, monospace">Courier New</option>
+                <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Column -->
+      <div class="space-y-6">
+        <!-- Actions -->
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-default-900 mb-4">Akcje</h3>
+
+          <div class="space-y-2">
+            <button
+              type="submit"
+              [disabled]="isSaving || !templateForm.valid"
+              class="btn w-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="size-4">
+                <ng-icon name="lucideSave"></ng-icon>
+              </div>
+              {{ isSaving ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Utwórz szablon') }}
+            </button>
+
+            <button
+              type="button"
+              (click)="cancel()"
+              [disabled]="isSaving"
+              class="btn w-full bg-default-100 text-default-700 hover:bg-default-200 disabled:opacity-50">
+              <div class="size-4">
+                <ng-icon name="lucideX"></ng-icon>
+              </div>
+              Anuluj
+            </button>
+
+            <button
+              type="button"
+              (click)="goBack()"
+              [disabled]="isSaving"
+              class="btn w-full bg-default-50 text-default-700 hover:bg-default-100 disabled:opacity-50">
+              <div class="size-4">
+                <ng-icon name="lucideArrowLeft"></ng-icon>
+              </div>
+              Powrót do listy
+            </button>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-default-900 mb-4">Tagi</h3>
+
+          <div class="mb-3">
+            <div class="flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="newTag"
+                name="newTag"
+                (keyup.enter)="addTag()"
+                class="form-input form-input-sm flex-1"
+                placeholder="Dodaj tag..." />
+              <button
+                type="button"
+                (click)="addTag()"
+                class="btn btn-sm bg-primary text-white hover:bg-primary/90">
+                Dodaj
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="template.tags && template.tags.length > 0" class="flex flex-wrap gap-2">
+            <span
+              *ngFor="let tag of template.tags"
+              class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-default-100 text-default-700">
+              <div class="size-3">
+                <ng-icon name="lucideTag"></ng-icon>
+              </div>
+              {{ tag }}
+              <button
+                type="button"
+                (click)="removeTag(tag)"
+                class="ms-1 hover:text-danger transition-colors">
+                <div class="size-3">
+                  <ng-icon name="lucideX"></ng-icon>
+                </div>
+              </button>
+            </span>
+          </div>
+
+          <p *ngIf="!template.tags || template.tags.length === 0" class="text-sm text-default-600 italic">
+            Brak tagów
+          </p>
+        </div>
+
+        <!-- Thumbnail URL -->
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-default-900 mb-4">Miniaturka</h3>
+
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-default-700 mb-2">
+              URL miniaturki
+            </label>
+            <input
+              type="url"
+              [(ngModel)]="template.thumbnailUrl"
+              name="thumbnailUrl"
+              class="form-input form-input-sm w-full"
+              placeholder="https://example.com/image.jpg" />
+          </div>
+
+          <div *ngIf="template.thumbnailUrl" class="border border-default-200 rounded overflow-hidden">
+            <img
+              [src]="template.thumbnailUrl"
+              [alt]="template.name"
+              class="w-full h-auto"
+              (error)="template.thumbnailUrl = ''" />
+          </div>
+        </div>
+
+        <!-- Help -->
+        <div class="bg-info/10 border border-info/20 rounded-lg p-4">
+          <h4 class="text-sm font-semibold text-info mb-2">Wskazówki</h4>
+          <ul class="text-xs text-info space-y-1">
+            <li>• Użyj zmiennych aby personalizować wiadomości</li>
+            <li>• Dodaj tagi aby łatwiej organizować szablony</li>
+            <li>• Zawsze testuj podgląd przed zapisaniem</li>
+            <li>• Wersja tekstowa jest wyświetlana klientom bez obsługi HTML</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </form>
+  </div>
+</main>

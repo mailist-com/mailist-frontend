@@ -1,0 +1,251 @@
+<main class="p-6">
+  <app-page-title
+    title="Zużycie"
+    subtitle="Monitoruj wykorzystanie zasobów w bieżącym okresie rozliczeniowym"
+  ></app-page-title>
+
+  <div class="space-y-6" *ngIf="statistics">
+    <!-- Period Card -->
+    <div class="card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-default-900">Bieżący okres rozliczeniowy</h3>
+          <p class="text-sm text-default-600 mt-1">
+            {{ statistics.period.start | date:'dd.MM.yyyy' }} - {{ statistics.period.end | date:'dd.MM.yyyy' }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-default-600">
+          <ng-icon name="lucideCalendar" class="size-4"></ng-icon>
+          <span>{{ getDaysRemaining(statistics.period.end) }} dni pozostało</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts Section -->
+    <div *ngIf="alerts && alerts.length > 0" class="space-y-3">
+      <div *ngFor="let alert of alerts" class="border rounded-lg p-4" [class]="getAlertClass(alert.severity)">
+        <div class="flex items-start gap-3">
+          <ng-icon [name]="getAlertIcon(alert.severity)" class="size-5 flex-shrink-0 mt-0.5"></ng-icon>
+          <div class="flex-1">
+            <p class="text-sm font-medium">{{ alert.message }}</p>
+            <p class="text-xs mt-1 opacity-75">
+              Wykorzystano {{ alert.current | number }} z {{ alert.limit === -1 ? 'nielimitowanych' : (alert.limit | number) }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primary Metrics (Contacts & Emails) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Contacts -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-medium text-default-600">Kontakty</p>
+              <ng-icon *ngIf="statistics.contacts.trend"
+                [name]="getTrendIcon(statistics.contacts.trend)"
+                [class]="getTrendClass(statistics.contacts.trend)"
+                class="size-4">
+              </ng-icon>
+            </div>
+            <p class="text-3xl font-bold mt-2" [class]="getUsageClass(statistics.contacts)">
+              {{ statistics.contacts.current | number }}
+            </p>
+            <p class="text-sm text-default-500 mt-1">
+              z {{ statistics.contacts.limit === -1 ? 'nielimitowanych' : (statistics.contacts.limit | number) }}
+            </p>
+          </div>
+          <div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideUsers" class="size-6 text-primary"></ng-icon>
+          </div>
+        </div>
+        <div class="w-full bg-default-200 rounded-full h-2.5">
+          <div class="h-2.5 rounded-full transition-all"
+            [class]="getProgressClass(statistics.contacts)"
+            [style.width.%]="statistics.contacts.percentage">
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <p class="text-xs text-default-500">{{ statistics.contacts.percentage | number:'1.1-1' }}% wykorzystane</p>
+          <p *ngIf="statistics.contacts.trend" class="text-xs" [class]="getTrendClass(statistics.contacts.trend)">
+            {{ statistics.contacts.trend > 0 ? '+' : '' }}{{ statistics.contacts.trend | number:'1.1-1' }}%
+          </p>
+        </div>
+      </div>
+
+      <!-- Emails -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-medium text-default-600">Wysłane emaile</p>
+              <ng-icon *ngIf="statistics.emails.trend"
+                [name]="getTrendIcon(statistics.emails.trend)"
+                [class]="getTrendClass(statistics.emails.trend)"
+                class="size-4">
+              </ng-icon>
+            </div>
+            <p class="text-3xl font-bold mt-2" [class]="getUsageClass(statistics.emails)">
+              {{ statistics.emails.current | number }}
+            </p>
+            <p class="text-sm text-default-500 mt-1">
+              z {{ statistics.emails.limit === -1 ? 'nielimitowanych' : (statistics.emails.limit | number) }}
+            </p>
+          </div>
+          <div class="size-12 bg-success/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideMail" class="size-6 text-success"></ng-icon>
+          </div>
+        </div>
+        <div class="w-full bg-default-200 rounded-full h-2.5">
+          <div class="h-2.5 rounded-full transition-all"
+            [class]="getProgressClass(statistics.emails)"
+            [style.width.%]="statistics.emails.percentage">
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <p class="text-xs text-default-500">{{ statistics.emails.percentage | number:'1.1-1' }}% wykorzystane</p>
+          <p *ngIf="statistics.emails.trend" class="text-xs" [class]="getTrendClass(statistics.emails.trend)">
+            {{ statistics.emails.trend > 0 ? '+' : '' }}{{ statistics.emails.trend | number:'1.1-1' }}%
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Users -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-default-600">Użytkownicy</p>
+            <p class="text-2xl font-bold mt-2" [class]="getUsageClass(statistics.users)">
+              {{ statistics.users.current }}
+            </p>
+            <p class="text-xs text-default-500 mt-1">
+              z {{ statistics.users.limit === -1 ? '∞' : statistics.users.limit }}
+            </p>
+          </div>
+          <div class="size-10 bg-warning/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideUserCheck" class="size-5 text-warning"></ng-icon>
+          </div>
+        </div>
+        <div class="w-full bg-default-200 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all"
+            [class]="getProgressClass(statistics.users)"
+            [style.width.%]="statistics.users.percentage">
+          </div>
+        </div>
+        <p class="text-xs text-default-500 mt-2">{{ statistics.users.percentage | number:'1.1-1' }}%</p>
+      </div>
+
+      <!-- Automations -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-default-600">Automatyzacje</p>
+            <p class="text-2xl font-bold mt-2" [class]="getUsageClass(statistics.automations)">
+              {{ statistics.automations.current }}
+            </p>
+            <p class="text-xs text-default-500 mt-1">
+              {{ statistics.automations.limit === -1 ? 'Nielimitowane' : ('z ' + statistics.automations.limit) }}
+            </p>
+          </div>
+          <div class="size-10 bg-info/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideWorkflow" class="size-5 text-info"></ng-icon>
+          </div>
+        </div>
+        <div *ngIf="statistics.automations.limit !== -1" class="w-full bg-default-200 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all"
+            [class]="getProgressClass(statistics.automations)"
+            [style.width.%]="statistics.automations.percentage">
+          </div>
+        </div>
+        <p *ngIf="statistics.automations.limit !== -1" class="text-xs text-default-500 mt-2">
+          {{ statistics.automations.percentage | number:'1.1-1' }}%
+        </p>
+      </div>
+
+      <!-- Templates -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-default-600">Szablony</p>
+            <p class="text-2xl font-bold mt-2" [class]="getUsageClass(statistics.templates)">
+              {{ statistics.templates.current }}
+            </p>
+            <p class="text-xs text-default-500 mt-1">
+              {{ statistics.templates.limit === -1 ? 'Nielimitowane' : ('z ' + statistics.templates.limit) }}
+            </p>
+          </div>
+          <div class="size-10 bg-purple-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideFileText" class="size-5 text-purple-500"></ng-icon>
+          </div>
+        </div>
+        <div *ngIf="statistics.templates.limit !== -1" class="w-full bg-default-200 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all"
+            [class]="getProgressClass(statistics.templates)"
+            [style.width.%]="statistics.templates.percentage">
+          </div>
+        </div>
+        <p *ngIf="statistics.templates.limit !== -1" class="text-xs text-default-500 mt-2">
+          {{ statistics.templates.percentage | number:'1.1-1' }}%
+        </p>
+      </div>
+    </div>
+
+    <!-- Tertiary Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- API Calls -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-default-600">Wywołania API</p>
+            <p class="text-2xl font-bold mt-2" [class]="getUsageClass(statistics.apiCalls)">
+              {{ statistics.apiCalls.current | number }}
+            </p>
+            <p class="text-xs text-default-500 mt-1">
+              z {{ statistics.apiCalls.limit === -1 ? 'nielimitowanych' : (statistics.apiCalls.limit | number) }}
+            </p>
+          </div>
+          <div class="size-10 bg-cyan-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideCode" class="size-5 text-cyan-500"></ng-icon>
+          </div>
+        </div>
+        <div class="w-full bg-default-200 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all"
+            [class]="getProgressClass(statistics.apiCalls)"
+            [style.width.%]="statistics.apiCalls.percentage">
+          </div>
+        </div>
+        <p class="text-xs text-default-500 mt-2">{{ statistics.apiCalls.percentage | number:'1.1-1' }}% wykorzystane</p>
+      </div>
+
+      <!-- Storage -->
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-default-600">Przestrzeń dyskowa</p>
+            <p class="text-2xl font-bold mt-2" [class]="getUsageClass(statistics.storage)">
+              {{ statistics.storage.current }} {{ statistics.storage.unit }}
+            </p>
+            <p class="text-xs text-default-500 mt-1">
+              z {{ statistics.storage.limit === -1 ? 'nielimitowanych' : (statistics.storage.limit + ' ' + statistics.storage.unit) }}
+            </p>
+          </div>
+          <div class="size-10 bg-orange-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <ng-icon name="lucideHardDrive" class="size-5 text-orange-500"></ng-icon>
+          </div>
+        </div>
+        <div class="w-full bg-default-200 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all"
+            [class]="getProgressClass(statistics.storage)"
+            [style.width.%]="statistics.storage.percentage">
+          </div>
+        </div>
+        <p class="text-xs text-default-500 mt-2">{{ statistics.storage.percentage | number:'1.1-1' }}% wykorzystane</p>
+      </div>
+    </div>
+  </div>
+</main>

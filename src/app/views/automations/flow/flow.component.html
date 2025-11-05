@@ -2,9 +2,9 @@
   <app-page-title title="Kreator Automatyzacji" subtitle="Twórz i edytuj automatyzacje marketingowe" />
 
   @if (viewModel(); as model) {
-    <div class="bg-white border border-default-200 rounded-lg">
+    <div class="card">
       <!-- Card Header -->
-      <div class="px-6 py-4 border-b border-default-200">
+      <div class="card-header">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 flex-1">
             @if (isEditingName()) {
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Toolbar -->
-      <div class="px-6 py-3 border-b border-default-200 bg-default-50/50">
+      <div class="card-header">
         <app-flow-action-panel [viewModel]="model" (processAction)="processAction($event)" (resetFlow)="reset()"/>
       </div>
 
@@ -139,7 +139,7 @@
         <!-- Right Sidebar (Settings) -->
         @if (selectedNode(); as node) {
           <div class="w-96 border-s border-default-200 overflow-y-auto bg-white">
-            <div class="px-4 py-3 border-b border-default-200 flex justify-between items-center bg-default-50/50">
+            <div class="px-4 py-3 border-b border-default-200 flex justify-between items-center">
               <h3 class="text-sm font-semibold text-default-900">Ustawienia elementu</h3>
               <button class="btn btn-sm btn-ghost" (click)="closeSettings()" title="Zamknij">
                 <ng-icon name="lucideX"></ng-icon>
