@@ -11,20 +11,19 @@
         <nav class="space-y-1">
           <a
             *ngFor="let item of menuItems"
-            [routerLink]="[item.route]"
-            routerLinkActive="bg-primary/10"
-            #rla="routerLinkActive"
+            [routerLink]="item.route"
+            [class.bg-primary/10]="isItemActive(item)"
             class="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-default-100 transition-colors group cursor-pointer"
           >
             <div class="size-5 flex-shrink-0 mt-0.5"
-              [class.text-default-600]="!rla.isActive"
-              [class.text-primary]="rla.isActive">
+              [class.text-default-600]="!isItemActive(item)"
+              [class.text-primary]="isItemActive(item)">
               <ng-icon [name]="item.icon"></ng-icon>
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium"
-                [class.text-default-900]="!rla.isActive"
-                [class.text-primary]="rla.isActive">
+                [class.text-default-900]="!isItemActive(item)"
+                [class.text-primary]="isItemActive(item)">
                 {{ item.title }}
               </p>
               <p class="text-xs text-default-500 mt-0.5">
