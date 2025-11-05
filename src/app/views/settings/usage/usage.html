@@ -1,0 +1,84 @@
+<div class="space-y-6" *ngIf="statistics">
+  <!-- Period Info -->
+  <div class="card p-6">
+    <h3 class="text-lg font-semibold text-default-900 mb-2">Zużycie w bieżącym okresie</h3>
+    <p class="text-sm text-default-600">
+      {{ statistics.period.start | date:'dd.MM.yyyy' }} - {{ statistics.period.end | date:'dd.MM.yyyy' }}
+    </p>
+  </div>
+
+  <!-- Usage Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm text-default-600">Kontakty</p>
+          <p class="text-2xl font-bold" [class]="getUsageClass(statistics.contacts)">
+            {{ statistics.contacts.current | number }} / {{ statistics.contacts.limit === -1 ? '∞' : (statistics.contacts.limit | number) }}
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+          <ng-icon name="lucideUsers" class="size-6 text-primary"></ng-icon>
+        </div>
+      </div>
+      <div class="w-full bg-default-200 rounded-full h-2">
+        <div class="h-2 rounded-full" [class]="getProgressClass(statistics.contacts)" [style.width.%]="statistics.contacts.percentage"></div>
+      </div>
+      <p class="text-xs text-default-500 mt-2">{{ statistics.contacts.percentage | number:'1.1-1' }}% wykorzystane</p>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm text-default-600">Emaile</p>
+          <p class="text-2xl font-bold" [class]="getUsageClass(statistics.emails)">
+            {{ statistics.emails.current | number }} / {{ statistics.emails.limit === -1 ? '∞' : (statistics.emails.limit | number) }}
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+          <ng-icon name="lucideMail" class="size-6 text-success"></ng-icon>
+        </div>
+      </div>
+      <div class="w-full bg-default-200 rounded-full h-2">
+        <div class="h-2 rounded-full" [class]="getProgressClass(statistics.emails)" [style.width.%]="statistics.emails.percentage"></div>
+      </div>
+      <p class="text-xs text-default-500 mt-2">{{ statistics.emails.percentage | number:'1.1-1' }}% wykorzystane</p>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm text-default-600">Użytkownicy</p>
+          <p class="text-2xl font-bold" [class]="getUsageClass(statistics.users)">
+            {{ statistics.users.current }} / {{ statistics.users.limit === -1 ? '∞' : statistics.users.limit }}
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+          <ng-icon name="lucideUserCheck" class="size-6 text-warning"></ng-icon>
+        </div>
+      </div>
+      <div class="w-full bg-default-200 rounded-full h-2">
+        <div class="h-2 rounded-full" [class]="getProgressClass(statistics.users)" [style.width.%]="statistics.users.percentage"></div>
+      </div>
+      <p class="text-xs text-default-500 mt-2">{{ statistics.users.percentage | number:'1.1-1' }}% wykorzystane</p>
+    </div>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm text-default-600">Wywołania API</p>
+          <p class="text-2xl font-bold" [class]="getUsageClass(statistics.apiCalls)">
+            {{ statistics.apiCalls.current | number }} / {{ statistics.apiCalls.limit === -1 ? '∞' : (statistics.apiCalls.limit | number) }}
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+          <ng-icon name="lucideCode" class="size-6 text-info"></ng-icon>
+        </div>
+      </div>
+      <div class="w-full bg-default-200 rounded-full h-2">
+        <div class="h-2 rounded-full" [class]="getProgressClass(statistics.apiCalls)" [style.width.%]="statistics.apiCalls.percentage"></div>
+      </div>
+      <p class="text-xs text-default-500 mt-2">{{ statistics.apiCalls.percentage | number:'1.1-1' }}% wykorzystane</p>
+    </div>
+  </div>
+</div>
