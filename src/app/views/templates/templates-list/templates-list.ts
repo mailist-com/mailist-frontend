@@ -7,19 +7,18 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideLayoutTemplate,
   lucideSearch,
-  lucideFilter,
   lucidePlus,
-  lucideEdit2,
+  lucidePencil,
   lucideCopy,
   lucideTrash2,
   lucideEye,
   lucideArchive,
-  lucideCheckCircle,
+  lucideCircleCheck,
   lucideFileText,
   lucideTags,
 } from '@ng-icons/lucide';
 
-import { PageTitle } from '../../../components/page-title';
+import { PageTitle } from '../../../components/page-title/page-title';
 import { TemplateService } from '../../../services/template.service';
 import {
   Template,
@@ -35,14 +34,13 @@ import {
     provideIcons({
       lucideLayoutTemplate,
       lucideSearch,
-      lucideFilter,
       lucidePlus,
-      lucideEdit2,
+      lucidePencil,
       lucideCopy,
       lucideTrash2,
       lucideEye,
       lucideArchive,
-      lucideCheckCircle,
+      lucideCircleCheck,
       lucideFileText,
       lucideTags,
     }),

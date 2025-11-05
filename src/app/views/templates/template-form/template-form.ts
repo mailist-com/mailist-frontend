@@ -15,7 +15,7 @@ import {
   lucideCode,
 } from '@ng-icons/lucide';
 
-import { PageTitle } from '../../../components/page-title';
+import { PageTitle } from '../../../components/page-title/page-title';
 import { TemplateService } from '../../../services/template.service';
 import {
   Template,
