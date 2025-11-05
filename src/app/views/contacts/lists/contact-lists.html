@@ -146,6 +146,21 @@
 
     <!-- Lists Grid -->
     <div class="card-body">
+      <!-- Error Message -->
+      <div *ngIf="error" class="mb-6 p-4 bg-danger/10 border border-danger/20 rounded-lg">
+        <div class="flex items-start gap-3">
+          <div class="size-5 text-danger mt-0.5"><ng-icon name="lucideAlertCircle"></ng-icon></div>
+          <div class="flex-1">
+            <h6 class="font-semibold text-danger mb-1">Error Loading Lists</h6>
+            <p class="text-sm text-danger/80">{{ error }}</p>
+            <button (click)="loadLists()" class="btn btn-sm bg-danger text-white mt-3">
+              <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div *ngFor="let list of lists$ | async; trackBy: trackByListId" 
              class="border border-default-200 rounded-lg p-6 hover:border-primary/50 transition-colors">

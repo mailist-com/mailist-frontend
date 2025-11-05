@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable } from 'rxjs';
+import { Observable, of, catchError } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -17,16 +17,44 @@ import { ContactList } from '../../../models/contact-list.model';
 export class ContactListsComponent implements OnInit {
   lists$!: Observable<ContactList[]>;
   statistics$!: Observable<any>;
-  
+
   searchTerm = '';
   selectedType = '';
   selectedStatus = '';
-  
+  error: string | null = null;
+
   constructor(private contactListService: ContactListService) {}
 
   ngOnInit() {
-    this.lists$ = this.contactListService.getLists();
-    this.statistics$ = this.contactListService.getListStatistics();
+    this.loadLists();
+    this.loadStatistics();
+  }
+
+  loadLists() {
+    this.error = null;
+    this.lists$ = this.contactListService.getLists()
+      .pipe(
+        catchError((error) => {
+          console.error('Error loading lists:', error);
+          this.error = error.message || 'Failed to load contact lists. Please try again later.';
+          return of([]);
+        })
+      );
+  }
+
+  private loadStatistics() {
+    this.statistics$ = this.contactListService.getListStatistics()
+      .pipe(
+        catchError((error) => {
+          console.error('Error loading statistics:', error);
+          return of({
+            totalLists: 0,
+            activeLists: 0,
+            totalSubscribers: 0,
+            averageEngagement: 0
+          });
+        })
+      );
   }
 
   onSearch() {
