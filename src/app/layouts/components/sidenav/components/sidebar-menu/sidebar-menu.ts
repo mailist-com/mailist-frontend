@@ -25,6 +25,12 @@ export class SidebarMenu {
   menus: MenuItem[] = [
     {
       type: 'item',
+      label: 'Dashboard',
+      icon: 'lucideLayoutDashboard',
+      link: '/dashboard'
+    },
+    {
+      type: 'item',
       label: 'Kontakty',
       icon: 'lucideUsers',
       link: '/contacts'

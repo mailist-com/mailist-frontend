@@ -1,0 +1,13 @@
+<div class="card">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-default-900 dark:text-default-100">Wzrost w czasie</h4>
+            <select class="form-select text-sm py-1.5 px-3">
+                <option>Ostatnie 12 miesięcy</option>
+                <option>Ostatnie 6 miesięcy</option>
+                <option>Ostatnie 30 dni</option>
+            </select>
+        </div>
+        <apexchart [options]="chartOptions()" />
+    </div>
+</div>

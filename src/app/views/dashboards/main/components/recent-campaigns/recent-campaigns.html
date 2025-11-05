@@ -1,0 +1,89 @@
+<div class="card">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-default-900 dark:text-default-100">Ostatnie kampanie</h4>
+            <a routerLink="/campaigns" class="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
+                Zobacz wszystkie
+                <div class="size-4">
+                    <ng-icon name="lucideArrowRight"></ng-icon>
+                </div>
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-default-200 dark:divide-default-700">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Kampania
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Wysłane
+                        </th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Otwarcia
+                        </th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Kliknięcia
+                        </th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Open Rate
+                        </th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Click Rate
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-default-600 dark:text-default-400 uppercase tracking-wider">
+                            Data
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-default-200 dark:divide-default-700">
+                    @for (campaign of campaigns; track campaign.id) {
+                    <tr class="hover:bg-default-50 dark:hover:bg-default-800/50">
+                        <td class="px-4 py-4">
+                            <div>
+                                <div class="text-sm font-medium text-default-900 dark:text-default-100">
+                                    {{ campaign.name }}
+                                </div>
+                                <div class="text-xs text-default-600 dark:text-default-400 mt-1">
+                                    {{ campaign.subject }}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <span [class]="campaign.statusColor" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                {{ campaign.statusLabel }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-right text-sm text-default-900 dark:text-default-100">
+                            {{ campaign.sent > 0 ? campaign.sent.toLocaleString() : '-' }}
+                        </td>
+                        <td class="px-4 py-4 text-right text-sm text-default-900 dark:text-default-100">
+                            {{ campaign.opens > 0 ? campaign.opens.toLocaleString() : '-' }}
+                        </td>
+                        <td class="px-4 py-4 text-right text-sm text-default-900 dark:text-default-100">
+                            {{ campaign.clicks > 0 ? campaign.clicks.toLocaleString() : '-' }}
+                        </td>
+                        <td class="px-4 py-4 text-right">
+                            <span class="text-sm font-medium" [class]="campaign.openRate !== '-' ? 'text-green-600 dark:text-green-400' : 'text-default-500'">
+                                {{ campaign.openRate }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-right">
+                            <span class="text-sm font-medium" [class]="campaign.clickRate !== '-' ? 'text-blue-600 dark:text-blue-400' : 'text-default-500'">
+                                {{ campaign.clickRate }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-default-600 dark:text-default-400">
+                            {{ campaign.sentDate }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

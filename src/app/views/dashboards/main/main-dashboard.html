@@ -1,0 +1,28 @@
+<main>
+    <app-page-title title="Dashboard" subtitle="Przegląd" />
+
+    <!-- Overview Statistics -->
+    <div class="mb-6">
+        <app-overview-stats />
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-6">
+        <app-quick-actions />
+    </div>
+
+    <!-- Growth Chart & Recent Campaigns -->
+    <div class="grid lg:grid-cols-3 grid-cols-1 gap-6 mb-6">
+        <div class="lg:col-span-2">
+            <app-growth-chart />
+        </div>
+        <div class="lg:col-span-1">
+            <app-activity-feed />
+        </div>
+    </div>
+
+    <!-- Recent Campaigns -->
+    <div class="mb-6">
+        <app-recent-campaigns />
+    </div>
+</main>
