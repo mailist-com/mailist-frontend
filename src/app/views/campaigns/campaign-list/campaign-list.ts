@@ -13,13 +13,12 @@ import {
   lucidePlus,
   lucideSearch,
   lucideMail,
-  lucideEdit,
+  lucidePencil,
   lucideCopy,
   lucideTrash2,
   lucidePlay,
   lucidePause,
   lucideEye,
-  lucideBarChart
 } from '@ng-icons/lucide';
 
 import { PageTitle } from '../../../components/page-title/page-title';
@@ -39,13 +38,12 @@ import { Campaign, CampaignStatus, CampaignType } from '../../../models/campaign
     lucidePlus,
     lucideSearch,
     lucideMail,
-    lucideEdit,
+    lucidePencil,
     lucideCopy,
     lucideTrash2,
     lucidePlay,
     lucidePause,
     lucideEye,
-    lucideBarChart
   })],
   templateUrl: './campaign-list.html',
   styleUrl: './campaign-list.css'

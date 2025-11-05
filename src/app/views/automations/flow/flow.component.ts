@@ -25,7 +25,7 @@ import { generateGuid } from '@foblex/utils';
 import { FlowNodeSettingsComponent } from './components/flow-node-settings/flow-node-settings.component';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucideEdit, lucideCheck } from '@ng-icons/lucide';
+import { lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucidePencil, lucideCheck } from '@ng-icons/lucide';
 import { Router } from '@angular/router';
 import { AutomationService } from '../../../services/automation.service';
 
@@ -44,7 +44,7 @@ import { AutomationService } from '../../../services/automation.service';
     PageTitle,
     NgIcon,
   ],
-  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucideEdit, lucideCheck })],
+  providers: [provideIcons({ lucideSave, lucideSearch, lucidePanelLeft, lucidePanelRight, lucideX, lucidePencil, lucideCheck })],
   styles: [`
     :host ::ng-deep .f-flow-background {
       background-color: #f9fafb;

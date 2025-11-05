@@ -14,7 +14,7 @@ import {
   lucideSearch,
   lucideZap,
   lucideWorkflow,
-  lucideEdit,
+  lucidePencil,
   lucideCopy,
   lucideTrash2
 } from '@ng-icons/lucide';
@@ -38,7 +38,7 @@ import { Automation, AutomationStatus, AutomationType } from '../../../models/au
     lucideSearch,
     lucideZap,
     lucideWorkflow,
-    lucideEdit,
+    lucidePencil,
     lucideCopy,
     lucideTrash2
   })],

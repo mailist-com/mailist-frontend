@@ -30,8 +30,7 @@
             "styles": [
               "src/styles.css",
               "node_modules/flatpickr/dist/flatpickr.css",
-              "node_modules/simplebar/dist/simplebar.min.css",
-              "node_modules/drawflow/dist/drawflow.min.css"
+              "node_modules/simplebar/dist/simplebar.min.css"
             ],
             "scripts": [
               "node_modules/preline/dist/index.js",

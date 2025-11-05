@@ -22,7 +22,7 @@ export const NODE_PARAMS_MAP = {
   },
   [NodeType.FieldUpdated]: {
     name: 'Pole zaktualizowane',
-    icon: 'lucideEdit',
+    icon: 'lucidePencil',
     color: '#8b5cf6',
     category: 'Wyzwalacze',
   },
@@ -34,7 +34,7 @@ export const NODE_PARAMS_MAP = {
   },
   [NodeType.TagRemoved]: {
     name: 'Tag usunięty',
-    icon: 'lucideTagOff',
+    icon: 'lucideX',
     color: '#8b5cf6',
     category: 'Wyzwalacze',
   },
@@ -96,7 +96,7 @@ export const NODE_PARAMS_MAP = {
   },
   [NodeType.UpdateField]: {
     name: 'Zaktualizuj pole',
-    icon: 'lucideEdit',
+    icon: 'lucidePencil',
     color: '#10b981',
     category: 'Akcje',
   },
