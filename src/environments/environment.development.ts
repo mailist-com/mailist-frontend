@@ -6,7 +6,7 @@ export const environment = {
 
   // Feature flags
   features: {
-    enableMockData: true, // Enable mock data in development for testing
+    enableMockData: false, // Mock data removed - using real API only
     enableDebugMode: true,
     enableAnalytics: false,
   },
