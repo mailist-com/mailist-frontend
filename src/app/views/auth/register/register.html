@@ -1,145 +1,137 @@
-<div class="min-h-screen flex justify-center items-center bg-background">
+<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] min-h-screen w-full flex justify-center items-center">
   <div class="relative">
-    <div class="bg-card/70 rounded-lg w-2/3 mx-auto overflow-hidden">
-      <div class="grid lg:grid-cols-12 grid-cols-1 items-center gap-0">
-        <div class="lg:col-span-5">
-          <div class="text-center px-10 py-12">
-            <div class="text-center">
-              <h4 class="mb-3 text-xl font-semibold text-purple-500">Create Account</h4>
-              <p class="text-base text-default-500">Get started with your Email Marketing Platform</p>
-            </div>
-
-            <!-- Error Alert -->
-            <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
-              <p class="text-sm text-danger">{{ error }}</p>
-            </div>
-
-            <!-- Register Form -->
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label for="firstName" class="block font-medium text-default-900 text-sm mb-2">First Name</label>
-                  <input type="text" 
-                         id="firstName" 
-                         formControlName="firstName"
-                         class="form-input" 
-                         [class.border-danger]="getFieldError('firstName')"
-                         placeholder="Enter your first name" />
-                  <div *ngIf="getFieldError('firstName')" class="text-sm text-danger mt-1">
-                    {{ getFieldError('firstName') }}
-                  </div>
-                </div>
-
-                <div>
-                  <label for="lastName" class="block font-medium text-default-900 text-sm mb-2">Last Name</label>
-                  <input type="text" 
-                         id="lastName" 
-                         formControlName="lastName"
-                         class="form-input" 
-                         [class.border-danger]="getFieldError('lastName')"
-                         placeholder="Enter your last name" />
-                  <div *ngIf="getFieldError('lastName')" class="text-sm text-danger mt-1">
-                    {{ getFieldError('lastName') }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
-                <input type="email" 
-                       id="email" 
-                       formControlName="email"
-                       class="form-input" 
-                       [class.border-danger]="getFieldError('email')"
-                       placeholder="Enter your email" />
-                <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
-                  {{ getFieldError('email') }}
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="password" class="block font-medium text-default-900 text-sm mb-2">Password</label>
-                <div class="relative">
-                  <input [type]="showPassword ? 'text' : 'password'" 
-                         id="password" 
-                         formControlName="password"
-                         class="form-input pr-12" 
-                         [class.border-danger]="getFieldError('password')"
-                         placeholder="Enter your password" />
-                  <button type="button" 
-                          (click)="togglePassword()"
-                          class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <iconify-icon [icon]="showPassword ? 'lucide:eye-off' : 'lucide:eye'" 
-                                  class="h-5 w-5 text-default-400"></iconify-icon>
-                  </button>
-                </div>
-                <div *ngIf="getFieldError('password')" class="text-sm text-danger mt-1">
-                  {{ getFieldError('password') }}
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="confirmPassword" class="block font-medium text-default-900 text-sm mb-2">Confirm Password</label>
-                <div class="relative">
-                  <input [type]="showConfirmPassword ? 'text' : 'password'" 
-                         id="confirmPassword" 
-                         formControlName="confirmPassword"
-                         class="form-input pr-12" 
-                         [class.border-danger]="getFieldError('confirmPassword')"
-                         placeholder="Confirm your password" />
-                  <button type="button" 
-                          (click)="toggleConfirmPassword()"
-                          class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <iconify-icon [icon]="showConfirmPassword ? 'lucide:eye-off' : 'lucide:eye'" 
-                                  class="h-5 w-5 text-default-400"></iconify-icon>
-                  </button>
-                </div>
-                <div *ngIf="getFieldError('confirmPassword')" class="text-sm text-danger mt-1">
-                  {{ getFieldError('confirmPassword') }}
-                </div>
-              </div>
-
-              <div class="flex items-start gap-2 mb-6">
-                <input id="acceptTerms" 
-                       type="checkbox" 
-                       formControlName="acceptTerms"
-                       class="form-checkbox mt-1"
-                       [class.border-danger]="getFieldError('acceptTerms')">
-                <label class="text-default-900 text-sm" for="acceptTerms">
-                  I agree to the 
-                  <a href="#" class="text-primary font-medium">Terms & Conditions</a> 
-                  and 
-                  <a href="#" class="text-primary font-medium">Privacy Policy</a>
-                </label>
-              </div>
-              <div *ngIf="getFieldError('acceptTerms')" class="text-sm text-danger -mt-4 mb-4">
-                {{ getFieldError('acceptTerms') }}
-              </div>
-
-              <div class="text-center">
-                <button type="submit" 
-                        [disabled]="isLoading || registerForm.invalid" 
-                        class="btn bg-primary text-white w-full">
-                  <span *ngIf="isLoading" class="animate-spin mr-2">
-                    <iconify-icon icon="lucide:loader-2"></iconify-icon>
-                  </span>
-                  <span *ngIf="!isLoading">Create Account</span>
-                  <span *ngIf="isLoading">Creating Account...</span>
-                </button>
-              </div>
-            </form>
-
-            <div class="mt-8 text-center">
-              <p class="text-default-600 text-sm">
-                Already have an account? 
-                <a routerLink="/auth/login" class="text-primary font-medium">Sign in</a>
-              </p>
-            </div>
-          </div>
+    <div class="bg-card/70 rounded-lg w-full max-w-xl relative mx-4">
+      <div class="text-center px-10 py-12">
+        <div class="text-center">
+          <h4 class="mb-3 text-xl font-semibold text-purple-500">Create Account</h4>
+          <p class="text-base text-default-500">Get started with your Email Marketing Platform</p>
         </div>
 
-        <div class="lg:col-span-7 bg-cover bg-center bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')]">
-          <div class="h-full min-h-[600px]"></div>
+        <!-- Error Alert -->
+        <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
+          <p class="text-sm text-danger">{{ error }}</p>
+        </div>
+
+        <!-- Register Form -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="firstName" class="block font-medium text-default-900 text-sm mb-2">First Name</label>
+              <input type="text"
+                     id="firstName"
+                     formControlName="firstName"
+                     class="form-input"
+                     [class.border-danger]="getFieldError('firstName')"
+                     placeholder="Enter your first name" />
+              <div *ngIf="getFieldError('firstName')" class="text-sm text-danger mt-1">
+                {{ getFieldError('firstName') }}
+              </div>
+            </div>
+
+            <div>
+              <label for="lastName" class="block font-medium text-default-900 text-sm mb-2">Last Name</label>
+              <input type="text"
+                     id="lastName"
+                     formControlName="lastName"
+                     class="form-input"
+                     [class.border-danger]="getFieldError('lastName')"
+                     placeholder="Enter your last name" />
+              <div *ngIf="getFieldError('lastName')" class="text-sm text-danger mt-1">
+                {{ getFieldError('lastName') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
+            <input type="email"
+                   id="email"
+                   formControlName="email"
+                   class="form-input"
+                   [class.border-danger]="getFieldError('email')"
+                   placeholder="Enter your email" />
+            <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
+              {{ getFieldError('email') }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="block font-medium text-default-900 text-sm mb-2">Password</label>
+            <div class="relative">
+              <input [type]="showPassword ? 'text' : 'password'"
+                     id="password"
+                     formControlName="password"
+                     class="form-input pr-12"
+                     [class.border-danger]="getFieldError('password')"
+                     placeholder="Enter your password" />
+              <button type="button"
+                      (click)="togglePassword()"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <iconify-icon [icon]="showPassword ? 'lucide:eye-off' : 'lucide:eye'"
+                              class="h-5 w-5 text-default-400"></iconify-icon>
+              </button>
+            </div>
+            <div *ngIf="getFieldError('password')" class="text-sm text-danger mt-1">
+              {{ getFieldError('password') }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="confirmPassword" class="block font-medium text-default-900 text-sm mb-2">Confirm Password</label>
+            <div class="relative">
+              <input [type]="showConfirmPassword ? 'text' : 'password'"
+                     id="confirmPassword"
+                     formControlName="confirmPassword"
+                     class="form-input pr-12"
+                     [class.border-danger]="getFieldError('confirmPassword')"
+                     placeholder="Confirm your password" />
+              <button type="button"
+                      (click)="toggleConfirmPassword()"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <iconify-icon [icon]="showConfirmPassword ? 'lucide:eye-off' : 'lucide:eye'"
+                              class="h-5 w-5 text-default-400"></iconify-icon>
+              </button>
+            </div>
+            <div *ngIf="getFieldError('confirmPassword')" class="text-sm text-danger mt-1">
+              {{ getFieldError('confirmPassword') }}
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2 mb-6">
+            <input id="acceptTerms"
+                   type="checkbox"
+                   formControlName="acceptTerms"
+                   class="form-checkbox mt-1"
+                   [class.border-danger]="getFieldError('acceptTerms')">
+            <label class="text-default-900 text-sm" for="acceptTerms">
+              I agree to the
+              <a href="#" class="text-primary font-medium">Terms & Conditions</a>
+              and
+              <a href="#" class="text-primary font-medium">Privacy Policy</a>
+            </label>
+          </div>
+          <div *ngIf="getFieldError('acceptTerms')" class="text-sm text-danger -mt-4 mb-4">
+            {{ getFieldError('acceptTerms') }}
+          </div>
+
+          <div class="text-center">
+            <button type="submit"
+                    [disabled]="isLoading || registerForm.invalid"
+                    class="btn bg-primary text-white w-full">
+              <span *ngIf="isLoading" class="animate-spin mr-2">
+                <iconify-icon icon="lucide:loader-2"></iconify-icon>
+              </span>
+              <span *ngIf="!isLoading">Create Account</span>
+              <span *ngIf="isLoading">Creating Account...</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-8 text-center">
+          <p class="text-default-600 text-sm">
+            Already have an account?
+            <a routerLink="/auth/login" class="text-primary font-medium">Sign in</a>
+          </p>
         </div>
       </div>
     </div>
