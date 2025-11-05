@@ -1,10 +1,10 @@
 <div class="space-y-6">
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Członkowie zespołu</h3>
+      <h3 class="card-title">{{ 'SETTINGS.TEAM_MEMBERS' | translate }}</h3>
       <button (click)="showInviteModal = true" class="btn btn-sm bg-primary text-white">
         <ng-icon name="lucidePlus" class="size-4 me-1"></ng-icon>
-        Zaproś członka
+        {{ 'SETTINGS.INVITE_MEMBER' | translate }}
       </button>
     </div>
 
@@ -12,11 +12,11 @@
       <table class="w-full">
         <thead class="bg-default-150">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Użytkownik</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Rola</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Dołączył</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase">Akcje</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'SETTINGS.USER' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'SETTINGS.ROLE' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'SETTINGS.JOINED' | translate }}</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-default-200">
@@ -38,7 +38,7 @@
             </td>
             <td class="px-6 py-4">
               <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getStatusClass(member.status)">
-                {{ member.status === 'active' ? 'Aktywny' : member.status === 'invited' ? 'Zaproszony' : 'Zawieszony' }}
+                {{ member.status === 'active' ? ('COMMON.ACTIVE' | translate) : member.status === 'invited' ? ('SETTINGS.INVITED' | translate) : ('SETTINGS.SUSPENDED' | translate) }}
               </span>
             </td>
             <td class="px-6 py-4 text-sm text-default-600">
@@ -53,7 +53,7 @@
                   <button *ngIf="member.role !== 'owner'" (click)="removeMember(member)"
                     class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left">
                     <ng-icon name="lucideTrash2" class="size-3"></ng-icon>
-                    Usuń
+                    {{ 'SETTINGS.REMOVE' | translate }}
                   </button>
                 </div>
               </div>
@@ -70,25 +70,25 @@
       <div class="fixed inset-0 bg-default-900/50"></div>
       <div class="card text-left max-w-lg w-full" (click)="$event.stopPropagation()">
         <div class="card-body p-6">
-          <h3 class="text-lg font-semibold text-default-900 mb-4">Zaproś członka zespołu</h3>
+          <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.INVITE_TEAM_MEMBER' | translate }}</h3>
 
           <form (submit)="inviteMember(); $event.preventDefault()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-default-700 mb-2">Email</label>
+              <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.EMAIL' | translate }}</label>
               <input type="email" [(ngModel)]="inviteForm.email" name="email" class="form-input w-full" required />
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Imię</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.FIRST_NAME' | translate }}</label>
                 <input type="text" [(ngModel)]="inviteForm.firstName" name="firstName" class="form-input w-full" required />
               </div>
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Nazwisko</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'COMMON.LAST_NAME' | translate }}</label>
                 <input type="text" [(ngModel)]="inviteForm.lastName" name="lastName" class="form-input w-full" required />
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-default-700 mb-2">Rola</label>
+              <label class="block text-sm font-medium text-default-700 mb-2">{{ 'SETTINGS.ROLE' | translate }}</label>
               <select [(ngModel)]="inviteForm.role" name="role" class="form-input w-full">
                 <option value="viewer">Viewer</option>
                 <option value="member">Member</option>
@@ -98,9 +98,9 @@
 
             <div class="flex gap-3 mt-6">
               <button type="button" (click)="showInviteModal = false" class="btn btn-sm flex-1 bg-default-100 text-default-600">
-                Anuluj
+                {{ 'COMMON.CANCEL' | translate }}
               </button>
-              <button type="submit" class="btn btn-sm flex-1 bg-primary text-white">Wyślij zaproszenie</button>
+              <button type="submit" class="btn btn-sm flex-1 bg-primary text-white">{{ 'SETTINGS.SEND_INVITATION' | translate }}</button>
             </div>
           </form>
         </div>

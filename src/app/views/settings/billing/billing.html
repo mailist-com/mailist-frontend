@@ -1,27 +1,27 @@
 <div class="space-y-6">
   <!-- Current Plan -->
   <div class="card p-6" *ngIf="subscription">
-    <h3 class="text-lg font-semibold text-default-900 mb-4">Aktualny plan</h3>
+    <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.CURRENT_PLAN' | translate }}</h3>
 
     <div class="flex items-center justify-between">
       <div>
         <h4 class="text-2xl font-bold text-default-900">{{ subscription.planName }}</h4>
         <p class="text-default-600 mt-1">
-          {{ subscription.price }} {{ subscription.currency }} / {{ subscription.interval === 'month' ? 'miesiąc' : 'rok' }}
+          {{ subscription.price }} {{ subscription.currency }} / {{ subscription.interval === 'month' ? ('COMMON.MONTH' | translate) : ('COMMON.YEAR' | translate) }}
         </p>
         <span class="inline-flex items-center py-1 px-2.5 mt-2 text-xs font-medium rounded" [class]="getStatusClass(subscription.status)">
-          {{ subscription.status === 'active' ? 'Aktywny' : subscription.status === 'canceled' ? 'Anulowany' : subscription.status }}
+          {{ subscription.status === 'active' ? ('COMMON.ACTIVE' | translate) : subscription.status === 'canceled' ? ('SETTINGS.CANCELED' | translate) : subscription.status }}
         </span>
       </div>
       <div class="text-right">
-        <p class="text-sm text-default-600">Następna płatność</p>
+        <p class="text-sm text-default-600">{{ 'SETTINGS.NEXT_PAYMENT' | translate }}</p>
         <p class="text-lg font-semibold text-default-900">{{ subscription.currentPeriodEnd | date:'dd.MM.yyyy' }}</p>
       </div>
     </div>
 
     <div class="mt-6 pt-6 border-t border-default-200">
       <button (click)="cancelSubscription()" *ngIf="!subscription.cancelAtPeriodEnd" class="btn btn-sm bg-danger text-white">
-        Anuluj subskrypcję
+        {{ 'SETTINGS.CANCEL_SUBSCRIPTION' | translate }}
       </button>
       <div *ngIf="subscription.cancelAtPeriodEnd" class="text-sm text-danger">
         Subskrypcja zostanie anulowana {{ subscription.currentPeriodEnd | date:'dd.MM.yyyy' }}
@@ -31,12 +31,12 @@
 
   <!-- Available Plans -->
   <div class="card p-6">
-    <h3 class="text-lg font-semibold text-default-900 mb-4">Dostępne plany</h3>
+    <h3 class="text-lg font-semibold text-default-900 mb-4">{{ 'SETTINGS.AVAILABLE_PLANS' | translate }}</h3>
 
     <!-- Contacts Slider -->
     <div class="mb-8 p-6 bg-default-50 rounded-lg">
       <div class="flex items-center justify-between mb-4">
-        <label class="text-sm font-medium text-default-700">Liczba kontaktów</label>
+        <label class="text-sm font-medium text-default-700">{{ 'SETTINGS.CONTACTS_LIMIT' | translate }}</label>
         <span class="text-2xl font-bold text-primary">{{ formatContacts(selectedContacts) }}</span>
       </div>
       <input
@@ -82,10 +82,10 @@
           [class.text-white]="plan.popular"
           [class.bg-default-100]="!plan.popular"
           [class.text-default-600]="!plan.popular">
-          Wybierz plan
+          {{ 'SETTINGS.CHOOSE_PLAN' | translate }}
         </button>
         <div *ngIf="subscription && subscription.planId === plan.id" class="w-full mt-6 py-2 text-center text-sm font-medium text-primary">
-          Aktualny plan
+          {{ 'SETTINGS.CURRENT_PLAN' | translate }}
         </div>
       </div>
     </div>
@@ -94,18 +94,18 @@
   <!-- Billing History -->
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Historia płatności</h3>
+      <h3 class="card-title">{{ 'SETTINGS.PAYMENT_HISTORY' | translate }}</h3>
     </div>
 
     <div class="overflow-x-auto">
       <table class="w-full">
         <thead class="bg-default-150">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Data</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'SETTINGS.DATE' | translate }}</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Opis</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Kwota</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">Status</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase">Akcje</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'SETTINGS.AMOUNT' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-600 uppercase">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-default-600 uppercase">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-default-200">
@@ -120,7 +120,7 @@
             </td>
             <td class="px-6 py-4 text-right">
               <a *ngIf="item.invoiceUrl" [href]="item.invoiceUrl" class="text-primary hover:underline text-sm">
-                Pobierz fakturę
+                {{ 'SETTINGS.DOWNLOAD' | translate }} {{ 'SETTINGS.INVOICE' | translate }}
               </a>
             </td>
           </tr>

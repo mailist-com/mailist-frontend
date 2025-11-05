@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideArrowRight, lucideSave, lucideCheck, lucideInfo, lucideTriangleAlert } from '@ng-icons/lucide';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CampaignService } from '../../../services/campaign.service';
@@ -13,7 +14,7 @@ import { Campaign } from '../../../models/campaign.model';
 @Component({
   selector: 'app-campaign-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
   providers: [provideIcons({ lucideArrowLeft, lucideArrowRight, lucideSave, lucideCheck, lucideInfo, lucideTriangleAlert })],
   templateUrl: './campaign-form.html',
   styleUrl: './campaign-form.css'
@@ -158,11 +159,11 @@ export class CampaignForm implements OnInit, OnDestroy {
 
   getStepTitle(step: number): string {
     const titles = {
-      1: 'Informacje podstawowe',
-      2: 'Odbiorcy',
-      3: 'Treść',
-      4: 'Planowanie',
-      5: 'Podsumowanie'
+      1: 'CAMPAIGNS.STEPS.BASIC_INFO',
+      2: 'CAMPAIGNS.STEPS.RECIPIENTS',
+      3: 'CAMPAIGNS.STEPS.CONTENT',
+      4: 'CAMPAIGNS.STEPS.SCHEDULE',
+      5: 'CAMPAIGNS.STEPS.REVIEW'
     };
     return titles[step as keyof typeof titles] || '';
   }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ApiKeyService } from '../../../services/api-key.service';
@@ -17,7 +18,7 @@ import {
 
 @Component({
   selector: 'app-integrations',
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
   templateUrl: './integrations.html',
   styleUrl: './integrations.css',
 })
@@ -38,15 +39,15 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
   newKeyName = '';
   newKeyPermissions: ApiKeyPermission[] = [];
   availablePermissions: { value: ApiKeyPermission; label: string }[] = [
-    { value: 'contacts.read', label: 'Odczyt kontaktów' },
-    { value: 'contacts.write', label: 'Zapis kontaktów' },
-    { value: 'contacts.delete', label: 'Usuwanie kontaktów' },
-    { value: 'lists.read', label: 'Odczyt list' },
-    { value: 'lists.write', label: 'Zapis list' },
-    { value: 'campaigns.read', label: 'Odczyt kampanii' },
-    { value: 'campaigns.write', label: 'Zapis kampanii' },
-    { value: 'automation.read', label: 'Odczyt automatyzacji' },
-    { value: 'automation.write', label: 'Zapis automatyzacji' },
+    { value: 'contacts.read', label: 'INTEGRATIONS.PERMISSIONS.CONTACTS_READ' },
+    { value: 'contacts.write', label: 'INTEGRATIONS.PERMISSIONS.CONTACTS_WRITE' },
+    { value: 'contacts.delete', label: 'INTEGRATIONS.PERMISSIONS.CONTACTS_DELETE' },
+    { value: 'lists.read', label: 'INTEGRATIONS.PERMISSIONS.LISTS_READ' },
+    { value: 'lists.write', label: 'INTEGRATIONS.PERMISSIONS.LISTS_WRITE' },
+    { value: 'campaigns.read', label: 'INTEGRATIONS.PERMISSIONS.CAMPAIGNS_READ' },
+    { value: 'campaigns.write', label: 'INTEGRATIONS.PERMISSIONS.CAMPAIGNS_WRITE' },
+    { value: 'automation.read', label: 'INTEGRATIONS.PERMISSIONS.AUTOMATION_READ' },
+    { value: 'automation.write', label: 'INTEGRATIONS.PERMISSIONS.AUTOMATION_WRITE' },
   ];
 
   constructor(private apiKeyService: ApiKeyService) {}

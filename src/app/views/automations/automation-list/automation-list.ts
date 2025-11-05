@@ -18,6 +18,7 @@ import {
   lucideCopy,
   lucideTrash2
 } from '@ng-icons/lucide';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 
@@ -27,7 +28,7 @@ import { Automation, AutomationStatus, AutomationType } from '../../../models/au
 @Component({
   selector: 'app-automation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
   providers: [provideIcons({
     lucideActivity,
     lucidePlay,
@@ -190,22 +191,22 @@ export class AutomationList implements OnInit, OnDestroy {
 
   getStatusLabel(status: AutomationStatus): string {
     const labels = {
-      'active': 'Aktywna',
-      'paused': 'Wstrzymana',
-      'draft': 'Szkic',
-      'inactive': 'Nieaktywna'
+      'active': 'AUTOMATIONS.STATUS.ACTIVE',
+      'paused': 'AUTOMATIONS.STATUS.PAUSED',
+      'draft': 'AUTOMATIONS.STATUS.DRAFT',
+      'inactive': 'AUTOMATIONS.STATUS.INACTIVE'
     };
     return labels[status] || status;
   }
 
   getTypeLabel(type: AutomationType): string {
     const labels = {
-      'welcome_series': 'Seria powitalna',
-      'drip_campaign': 'Kampania drip',
-      'behavioral': 'Behawioralna',
-      'date_based': 'Oparta na dacie',
-      'tag_based': 'Oparta na tagach',
-      'custom': 'Niestandardowa'
+      'welcome_series': 'AUTOMATIONS.TYPE.WELCOME_SERIES',
+      'drip_campaign': 'AUTOMATIONS.TYPE.DRIP_CAMPAIGN',
+      'behavioral': 'AUTOMATIONS.TYPE.BEHAVIORAL',
+      'date_based': 'AUTOMATIONS.TYPE.DATE_BASED',
+      'tag_based': 'AUTOMATIONS.TYPE.TAG_BASED',
+      'custom': 'AUTOMATIONS.TYPE.CUSTOM'
     };
     return labels[type] || type;
   }
