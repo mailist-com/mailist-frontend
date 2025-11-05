@@ -23,25 +23,25 @@ export class Settings {
     {
       title: 'Profil',
       icon: 'lucideUser',
-      route: '/settings/profile',
+      route: 'profile',
       description: 'Zarządzaj swoim profilem i preferencjami',
     },
     {
       title: 'Plan i Płatności',
       icon: 'lucideCreditCard',
-      route: '/settings/billing',
+      route: 'billing',
       description: 'Zarządzaj planem i metodami płatności',
     },
     {
       title: 'Zużycie',
       icon: 'lucideBarChart3',
-      route: '/settings/usage',
+      route: 'usage',
       description: 'Zobacz statystyki zużycia',
     },
     {
       title: 'Zespół',
       icon: 'lucideUsers',
-      route: '/settings/team',
+      route: 'team',
       description: 'Zarządzaj członkami zespołu',
     },
   ];

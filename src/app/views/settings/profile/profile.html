@@ -32,7 +32,7 @@
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="btn bg-primary text-white" [disabled]="saving">
+        <button type="submit" class="btn btn-sm bg-primary text-white" [disabled]="saving">
           {{ saving ? 'Zapisywanie...' : 'Zapisz zmiany' }}
         </button>
       </div>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="flex justify-end mt-6">
-      <button (click)="saveNotifications()" class="btn bg-primary text-white" [disabled]="saving">
+      <button (click)="saveNotifications()" class="btn btn-sm bg-primary text-white" [disabled]="saving">
         {{ saving ? 'Zapisywanie...' : 'Zapisz' }}
       </button>
     </div>
@@ -89,7 +89,7 @@
     </div>
 
     <div class="flex justify-end mt-6">
-      <button (click)="savePreferences()" class="btn bg-primary text-white" [disabled]="saving">
+      <button (click)="savePreferences()" class="btn btn-sm bg-primary text-white" [disabled]="saving">
         {{ saving ? 'Zapisywanie...' : 'Zapisz' }}
       </button>
     </div>
