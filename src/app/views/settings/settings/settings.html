@@ -9,9 +9,9 @@
     <div class="lg:col-span-1">
       <div class="card p-4">
         <nav class="space-y-1">
-          <a
+          <div
             *ngFor="let item of menuItems"
-            [routerLink]="item.route"
+            (click)="navigateTo(item.route)"
             [class.bg-primary/10]="isItemActive(item)"
             class="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-default-100 transition-colors group cursor-pointer"
           >
@@ -30,7 +30,7 @@
                 {{ item.description }}
               </p>
             </div>
-          </a>
+          </div>
         </nav>
       </div>
     </div>

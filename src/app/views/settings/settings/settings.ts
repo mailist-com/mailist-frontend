@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
@@ -14,7 +14,7 @@ interface SettingsMenuItem {
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, RouterLink, RouterOutlet, NgIcon, PageTitle],
+  imports: [CommonModule, RouterOutlet, NgIcon, PageTitle],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
@@ -50,5 +50,9 @@ export class Settings {
 
   isItemActive(item: SettingsMenuItem): boolean {
     return this.router.url === item.route;
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 }
