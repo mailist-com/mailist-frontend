@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -8,7 +9,7 @@ import { BillingPlan, CurrentSubscription, BillingHistory } from '../../../model
 
 @Component({
   selector: 'app-billing-settings',
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, FormsModule],
   templateUrl: './billing.html',
   styleUrl: './billing.css',
 })
@@ -18,6 +19,12 @@ export class BillingSettings implements OnInit, OnDestroy {
   plans: BillingPlan[] = [];
   subscription: CurrentSubscription | null = null;
   billingHistory: BillingHistory[] = [];
+
+  // Slider configuration
+  selectedContacts: number = 2500;
+  minContacts: number = 500;
+  maxContacts: number = 50000;
+  stepContacts: number = 500;
 
   constructor(private billingService: BillingService) {}
 
@@ -31,9 +38,51 @@ export class BillingSettings implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.billingService.getPlans().pipe(takeUntil(this.destroy$)).subscribe((plans) => (this.plans = plans));
-    this.billingService.getCurrentSubscription().pipe(takeUntil(this.destroy$)).subscribe((sub) => (this.subscription = sub));
+    this.billingService.getPlans().pipe(takeUntil(this.destroy$)).subscribe((plans) => {
+      this.plans = plans;
+    });
+    this.billingService.getCurrentSubscription().pipe(takeUntil(this.destroy$)).subscribe((sub) => {
+      this.subscription = sub;
+      if (sub && sub.contacts) {
+        this.selectedContacts = sub.contacts;
+      }
+    });
     this.billingService.getBillingHistory().pipe(takeUntil(this.destroy$)).subscribe((history) => (this.billingHistory = history));
+  }
+
+  /**
+   * Get price for plan based on selected contacts
+   */
+  getPriceForPlan(plan: BillingPlan): number {
+    if (plan.isFree || !plan.pricingTiers || plan.pricingTiers.length === 0) {
+      return plan.price;
+    }
+
+    // Find the appropriate tier
+    let selectedTier = plan.pricingTiers[0];
+    for (const tier of plan.pricingTiers) {
+      if (this.selectedContacts >= tier.contacts) {
+        selectedTier = tier;
+      } else {
+        break;
+      }
+    }
+
+    return selectedTier.price;
+  }
+
+  /**
+   * Format contacts number with thousands separator
+   */
+  formatContacts(value: number): string {
+    return value.toLocaleString('pl-PL');
+  }
+
+  /**
+   * Handle slider change
+   */
+  onContactsChange() {
+    // Update is handled by ngModel
   }
 
   changePlan(planId: string) {

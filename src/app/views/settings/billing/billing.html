@@ -33,13 +33,37 @@
   <div class="card p-6">
     <h3 class="text-lg font-semibold text-default-900 mb-4">Dostępne plany</h3>
 
+    <!-- Contacts Slider -->
+    <div class="mb-8 p-6 bg-default-50 rounded-lg">
+      <div class="flex items-center justify-between mb-4">
+        <label class="text-sm font-medium text-default-700">Liczba kontaktów</label>
+        <span class="text-2xl font-bold text-primary">{{ formatContacts(selectedContacts) }}</span>
+      </div>
+      <input
+        type="range"
+        [(ngModel)]="selectedContacts"
+        [min]="minContacts"
+        [max]="maxContacts"
+        [step]="stepContacts"
+        (input)="onContactsChange()"
+        class="w-full h-2 bg-default-200 rounded-lg appearance-none cursor-pointer accent-primary"
+      />
+      <div class="flex justify-between mt-2 text-xs text-default-500">
+        <span>{{ formatContacts(minContacts) }}</span>
+        <span>{{ formatContacts(maxContacts) }}</span>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div *ngFor="let plan of plans" class="border border-default-200 rounded-lg p-6" [class.border-primary]="plan.popular">
         <div *ngIf="plan.popular" class="text-xs font-medium text-primary mb-2">POPULARNY</div>
         <h4 class="text-xl font-bold text-default-900">{{ plan.name }}</h4>
         <div class="mt-4">
-          <span class="text-3xl font-bold text-default-900">{{ plan.price }}</span>
+          <span class="text-3xl font-bold text-default-900">{{ getPriceForPlan(plan) }}</span>
           <span class="text-default-600"> {{ plan.currency }}/{{ plan.interval === 'month' ? 'msc' : 'rok' }}</span>
+        </div>
+        <div *ngIf="!plan.isFree" class="text-xs text-default-500 mt-1">
+          dla {{ formatContacts(selectedContacts) }} kontaktów
         </div>
 
         <ul class="mt-6 space-y-3">

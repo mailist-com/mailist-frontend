@@ -7,6 +7,13 @@ export interface BillingPlan {
   features: PlanFeature[];
   limits: PlanLimits;
   popular?: boolean;
+  pricingTiers?: PricingTier[];
+  isFree?: boolean;
+}
+
+export interface PricingTier {
+  contacts: number;
+  price: number;
 }
 
 export interface PlanFeature {
@@ -34,6 +41,7 @@ export interface CurrentSubscription {
   price: number;
   currency: string;
   interval: 'month' | 'year';
+  contacts?: number;
 }
 
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing';
