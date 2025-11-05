@@ -9,6 +9,11 @@
               <p class="text-base text-default-500">Sign in to continue to Email Marketing Platform</p>
             </div>
 
+            <!-- Success Alert -->
+            <div *ngIf="success" class="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg">
+              <p class="text-sm text-success">{{ success }}</p>
+            </div>
+
             <!-- Error Alert -->
             <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
               <p class="text-sm text-danger">{{ error }}</p>

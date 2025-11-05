@@ -48,13 +48,15 @@ export class VerifyEmail implements OnInit {
       const code = this.verifyForm.value.code;
 
       this.authService.verifyEmail(this.email, code).subscribe({
-        next: (user) => {
+        next: (message) => {
           this.isLoading = false;
-          this.success = 'Email verified successfully! Redirecting to dashboard...';
+          this.success = message || 'Email verified successfully! Redirecting to login...';
 
-          // Redirect to dashboard after 2 seconds
+          // Redirect to login page after 2 seconds
           setTimeout(() => {
-            this.router.navigate(['/contacts']);
+            this.router.navigate(['/auth/login'], {
+              queryParams: { verified: 'true' }
+            });
           }, 2000);
         },
         error: (error) => {

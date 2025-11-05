@@ -317,36 +317,22 @@ export class AuthService {
   /**
    * Verify email with code
    */
-  verifyEmail(email: string, code: string): Observable<User> {
+  verifyEmail(email: string, code: string): Observable<string> {
     this.isLoadingSubject.next(true);
 
-    return this.api.post<ApiResponse<VerificationResponse>>('auth/verify-email', { email, verificationCode: code })
+    return this.api.post<ApiResponse<any>>('auth/verify-email', { email, verificationCode: code })
       .pipe(
         map(response => {
           // Validate response structure
-          if (!response || !response.success || !response.data) {
-            throw new Error('Invalid response format');
+          if (!response || !response.success) {
+            throw new Error('Email verification failed');
           }
-          if (!response.data.user) {
-            throw new Error('Invalid response format - missing user data');
-          }
-          if (!response.data.token) {
-            throw new Error('Invalid response format - missing authentication token');
-          }
-          return response;
+
+          // Backend returns only success message, no user data or token
+          // User needs to login after verification
+          return response.message || 'Email verified successfully. You can now login.';
         }),
-        map(response => {
-          // Store tokens
-          localStorage.setItem(environment.storage.authToken, response.data.token);
-          if (response.data.refreshToken) {
-            localStorage.setItem(environment.storage.refreshToken, response.data.refreshToken);
-          }
-          return response.data.user;
-        }),
-        tap(user => {
-          this.setUser(user, true);
-          this.isLoadingSubject.next(false);
-        }),
+        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
           this.isLoadingSubject.next(false);
 

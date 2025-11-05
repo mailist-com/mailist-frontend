@@ -15,6 +15,7 @@ export class Login {
   loginForm: FormGroup;
   isLoading = false;
   error = '';
+  success = '';
   returnUrl = '';
   showPassword = false;
 
@@ -32,12 +33,18 @@ export class Login {
 
     // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
+
+    // Check if user was redirected after email verification
+    if (this.route.snapshot.queryParams['verified'] === 'true') {
+      this.success = 'Email verified successfully! You can now login.';
+    }
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.error = '';
+      this.success = '';
 
       const email = this.loginForm.value.email;
 
