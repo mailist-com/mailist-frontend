@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
@@ -21,7 +21,7 @@ import {
   templateUrl: './integrations.html',
   styleUrl: './integrations.css',
 })
-export class Integrations implements OnInit, OnDestroy {
+export class Integrations implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   apiKeys: ApiKey[] = [];
@@ -56,6 +56,11 @@ export class Integrations implements OnInit, OnDestroy {
     this.loadStatistics();
   }
 
+  ngAfterViewInit() {
+    // Reinitialize Preline dropdowns after view is loaded
+    this.reinitializePreline();
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -67,6 +72,7 @@ export class Integrations implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((keys) => {
         this.apiKeys = keys;
+        this.reinitializePreline();
       });
   }
 
@@ -76,7 +82,16 @@ export class Integrations implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((stats) => {
         this.statistics = stats;
+        this.reinitializePreline();
       });
+  }
+
+  private reinitializePreline() {
+    setTimeout(() => {
+      if (typeof window !== 'undefined' && (window as any).HSStaticMethods) {
+        (window as any).HSStaticMethods.autoInit();
+      }
+    }, 100);
   }
 
   getFilteredKeys(): ApiKey[] {
