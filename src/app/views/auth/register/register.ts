@@ -59,10 +59,13 @@ export class Register {
       this.isLoading = true;
       this.error = '';
 
+      const email = this.registerForm.value.email;
+
       this.authService.register(this.registerForm.value).subscribe({
-        next: (user) => {
+        next: (response) => {
           this.isLoading = false;
-          this.router.navigate(['/contacts']);
+          // Redirect to verification page with email parameter
+          this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
         },
         error: (error) => {
           console.error('Registration error:', error);

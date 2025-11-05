@@ -39,6 +39,8 @@ export class Login {
       this.isLoading = true;
       this.error = '';
 
+      const email = this.loginForm.value.email;
+
       this.authService.login(this.loginForm.value).subscribe({
         next: (user) => {
           this.isLoading = false;
@@ -46,7 +48,19 @@ export class Login {
         },
         error: (error) => {
           console.error('Login error:', error);
-          this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Login failed. Please try again.');
+
+          // Check if the error is related to unverified email
+          const errorMessage = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Login failed. Please try again.');
+
+          if (errorMessage.toLowerCase().includes('verify') ||
+              errorMessage.toLowerCase().includes('verification') ||
+              errorMessage.toLowerCase().includes('not verified')) {
+            // Redirect to verification page
+            this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
+            return;
+          }
+
+          this.error = errorMessage;
           this.isLoading = false;
         }
       });
