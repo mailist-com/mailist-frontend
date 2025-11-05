@@ -17,7 +17,6 @@ export class Login {
   error = '';
   returnUrl = '';
   showPassword = false;
-  demoUsers: { email: string; password: string; role: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -25,7 +24,6 @@ export class Login {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.demoUsers = this.authService.getDemoUsers();
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -59,11 +57,6 @@ export class Login {
 
   togglePassword() {
     this.showPassword = !this.showPassword;
-  }
-
-  loginWithDemo(email: string, password: string) {
-    this.loginForm.patchValue({ email, password });
-    this.onSubmit();
   }
 
   getFieldError(fieldName: string): string | null {

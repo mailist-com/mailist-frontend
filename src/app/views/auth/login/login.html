@@ -9,21 +9,6 @@
               <p class="text-base text-default-500">Sign in to continue to Email Marketing Platform</p>
             </div>
 
-            <!-- Demo Users Info -->
-            <div class="mt-6 p-4 bg-info/10 border border-info/20 rounded-lg">
-              <h6 class="text-sm font-medium text-info mb-2">Demo Accounts</h6>
-              <div class="space-y-2 text-sm">
-                <div *ngFor="let user of demoUsers" class="flex items-center justify-between">
-                  <span class="text-default-600">{{ user.email }} ({{ user.role }})</span>
-                  <button type="button" 
-                          (click)="loginWithDemo(user.email, user.password)"
-                          class="text-primary hover:text-primary-600 underline text-xs">
-                    Use
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <!-- Error Alert -->
             <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
               <p class="text-sm text-danger">{{ error }}</p>

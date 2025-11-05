@@ -65,15 +65,59 @@ export class AuthService {
     if (!environment.features.enableMockData) {
       return this.api.post<ApiResponse<AuthResponse>>('auth/login', credentials)
         .pipe(
-          map(response => response.data.user),
+          map(response => {
+            // Validate response structure
+            if (!response) {
+              throw new Error('No response received from server');
+            }
+            if (!response.success) {
+              throw new Error(response.message || 'Login failed');
+            }
+            if (!response.data) {
+              throw new Error('Invalid response format - missing data');
+            }
+            if (!response.data.user) {
+              throw new Error('Invalid response format - missing user data');
+            }
+            if (!response.data.token) {
+              throw new Error('Invalid response format - missing authentication token');
+            }
+            return response;
+          }),
+          map(response => {
+            // Store tokens first
+            const storage = credentials.rememberMe ? localStorage : sessionStorage;
+            storage.setItem(environment.storage.authToken, response.data.token);
+            if (response.data.refreshToken) {
+              storage.setItem(environment.storage.refreshToken, response.data.refreshToken);
+            }
+            return response.data.user;
+          }),
           tap(user => {
             this.setUser(user, credentials.rememberMe);
-            this.setTokens(user, credentials.rememberMe);
           }),
           tap(() => this.isLoadingSubject.next(false)),
           catchError(error => {
             this.isLoadingSubject.next(false);
-            return throwError(() => error.message || 'Login failed');
+
+            // Handle different error scenarios
+            let errorMessage = 'An unexpected error occurred. Please try again.';
+
+            if (error.status === 0) {
+              errorMessage = 'Unable to connect to server. Please check your internet connection.';
+            } else if (error.status === 401) {
+              errorMessage = 'Invalid email or password. Please try again.';
+            } else if (error.status === 422) {
+              errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid input. Please check your credentials.';
+            } else if (error.status === 429) {
+              errorMessage = 'Too many login attempts. Please try again later.';
+            } else if (error.status >= 500) {
+              errorMessage = 'Server error. Please try again later.';
+            } else if (error.message) {
+              errorMessage = error.message;
+            }
+
+            return throwError(() => errorMessage);
           })
         );
     }
@@ -125,15 +169,58 @@ export class AuthService {
     if (!environment.features.enableMockData) {
       return this.api.post<ApiResponse<AuthResponse>>('auth/register', data)
         .pipe(
-          map(response => response.data.user),
+          map(response => {
+            // Validate response structure
+            if (!response) {
+              throw new Error('No response received from server');
+            }
+            if (!response.success) {
+              throw new Error(response.message || 'Registration failed');
+            }
+            if (!response.data) {
+              throw new Error('Invalid response format - missing data');
+            }
+            if (!response.data.user) {
+              throw new Error('Invalid response format - missing user data');
+            }
+            if (!response.data.token) {
+              throw new Error('Invalid response format - missing authentication token');
+            }
+            return response;
+          }),
+          map(response => {
+            // Store tokens first
+            localStorage.setItem(environment.storage.authToken, response.data.token);
+            if (response.data.refreshToken) {
+              localStorage.setItem(environment.storage.refreshToken, response.data.refreshToken);
+            }
+            return response.data.user;
+          }),
           tap(user => {
             this.setUser(user);
-            this.setTokens(user);
           }),
           tap(() => this.isLoadingSubject.next(false)),
           catchError(error => {
             this.isLoadingSubject.next(false);
-            return throwError(() => error.message || 'Registration failed');
+
+            // Handle different error scenarios
+            let errorMessage = 'An unexpected error occurred. Please try again.';
+
+            if (error.status === 0) {
+              errorMessage = 'Unable to connect to server. Please check your internet connection.';
+            } else if (error.status === 409) {
+              errorMessage = 'An account with this email already exists.';
+            } else if (error.status === 422) {
+              errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid input. Please check your information.';
+            } else if (error.status === 429) {
+              errorMessage = 'Too many registration attempts. Please try again later.';
+            } else if (error.status >= 500) {
+              errorMessage = 'Server error. Please try again later.';
+            } else if (error.message) {
+              errorMessage = error.message;
+            }
+
+            return throwError(() => errorMessage);
           })
         );
     }
@@ -275,16 +362,23 @@ export class AuthService {
     storage.setItem(environment.storage.currentUser, JSON.stringify(user));
   }
 
-  private setTokens(user: any, rememberMe: boolean = false): void {
-    const storage = rememberMe ? localStorage : sessionStorage;
+  /**
+   * Format validation errors from backend into a user-friendly message
+   */
+  private formatValidationErrors(errors: Record<string, string[]>): string {
+    const errorMessages: string[] = [];
 
-    // Store tokens if they exist in the response
-    if (user.token) {
-      storage.setItem(environment.storage.authToken, user.token);
+    for (const [field, messages] of Object.entries(errors)) {
+      if (messages && messages.length > 0) {
+        // Capitalize first letter of field name
+        const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+        errorMessages.push(`${fieldName}: ${messages[0]}`);
+      }
     }
-    if (user.refreshToken) {
-      storage.setItem(environment.storage.refreshToken, user.refreshToken);
-    }
+
+    return errorMessages.length > 0
+      ? errorMessages.join('. ')
+      : 'Validation failed. Please check your input.';
   }
 
   private getUserFromStorage(): User | null {
@@ -316,13 +410,5 @@ export class AuthService {
           storage.setItem(environment.storage.authToken, token);
         })
       );
-  }
-
-  // Demo users info for testing
-  getDemoUsers(): { email: string; password: string; role: string }[] {
-    return [
-      { email: 'admin@example.com', password: 'password', role: 'Admin' },
-      { email: 'user@example.com', password: 'password', role: 'User' }
-    ];
   }
 }
