@@ -46,7 +46,7 @@
       </div>
 
       <!-- Toolbar -->
-      <div class="px-6 py-3 border-b border-default-200 bg-default-50/50">
+      <div class="card-header">
         <app-flow-action-panel [viewModel]="model" (processAction)="processAction($event)" (resetFlow)="reset()"/>
       </div>
 
@@ -139,7 +139,7 @@
         <!-- Right Sidebar (Settings) -->
         @if (selectedNode(); as node) {
           <div class="w-96 border-s border-default-200 overflow-y-auto bg-white">
-            <div class="px-4 py-3 border-b border-default-200 flex justify-between items-center bg-default-50/50">
+            <div class="px-4 py-3 border-b border-default-200 flex justify-between items-center">
               <h3 class="text-sm font-semibold text-default-900">Ustawienia elementu</h3>
               <button class="btn btn-sm btn-ghost" (click)="closeSettings()" title="Zamknij">
                 <ng-icon name="lucideX"></ng-icon>

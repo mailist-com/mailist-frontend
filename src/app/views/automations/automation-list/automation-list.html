@@ -83,7 +83,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="px-6 py-4 border-b border-default-200 bg-default-50/50">
+    <div class="card-header">
       <div class="flex flex-wrap items-center gap-3">
         <!-- Search -->
         <div class="relative min-w-64">
@@ -158,7 +158,7 @@
       <!-- Automations Table -->
       <div *ngIf="filteredAutomations.length > 0" class="overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-default-50/50">
+          <thead class="bg-default-150">
             <tr class="border-b border-default-200">
               <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Nazwa</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">Status</th>
@@ -169,7 +169,7 @@
               <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">Akcje</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-default-200">
+          <tbody class="divide-y divide-default-200">
             <tr *ngFor="let automation of filteredAutomations" class="hover:bg-default-50/50 transition-colors">
               <td class="px-6 py-4">
                 <div>
