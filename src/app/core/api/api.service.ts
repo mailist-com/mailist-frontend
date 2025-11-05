@@ -171,11 +171,24 @@ export class ApiService {
   /**
    * Get request options with default headers
    */
-  private getOptions(options?: ApiRequestOptions): any {
-    return {
+  private getOptions(options?: ApiRequestOptions): {
+    headers: HttpHeaders;
+    params?: HttpParams | { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> };
+    observe?: 'body';
+    responseType?: 'json';
+    withCredentials?: boolean;
+  } {
+    const opts: any = {
       headers: this.getAuthHeaders(options?.headers),
-      ...options
+      observe: 'body' as const,
+      responseType: 'json' as const
     };
+
+    // Copy over other options if provided
+    if (options?.params) opts.params = options.params;
+    if (options?.withCredentials !== undefined) opts.withCredentials = options.withCredentials;
+
+    return opts;
   }
 
   /**
