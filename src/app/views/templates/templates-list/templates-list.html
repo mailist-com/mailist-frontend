@@ -1,1 +1,362 @@
-<p>templates-list works!</p>
+<app-page-title title="Szablony email" icon="lucideLayoutTemplate"></app-page-title>
+
+<div class="p-6">
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <!-- Total Templates -->
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Wszystkie szablony</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
+        </div>
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-primary">
+            <ng-icon name="lucideLayoutTemplate"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Templates -->
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Aktywne</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.active }}</p>
+        </div>
+        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-success">
+            <ng-icon name="lucideCheckCircle"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draft Templates -->
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Szkice</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+        </div>
+        <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-info">
+            <ng-icon name="lucideFileText"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archived Templates -->
+    <div class="bg-white border border-default-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-default-600 mb-1">Zarchiwizowane</p>
+          <p class="text-2xl font-semibold text-default-900">{{ stats.archived }}</p>
+        </div>
+        <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
+          <div class="size-6 text-default-600">
+            <ng-icon name="lucideArchive"></ng-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates List Card -->
+  <div class="bg-white border border-default-200 rounded-lg">
+    <!-- Header with Create Button -->
+    <div class="px-6 py-4 border-b border-default-200 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-default-900">Lista szablonów</h2>
+      <button
+        type="button"
+        (click)="createTemplate()"
+        class="btn btn-sm bg-primary text-white hover:bg-primary/90">
+        <div class="size-4">
+          <ng-icon name="lucidePlus"></ng-icon>
+        </div>
+        Nowy szablon
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="px-6 py-4 border-b border-default-200 bg-default-50/50">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Search Input -->
+        <div class="relative min-w-64">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="applyFilters()"
+            class="form-input form-input-sm ps-9 w-full"
+            placeholder="Szukaj po nazwie, temacie lub tagach..." />
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <div class="size-4 text-default-400">
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="applyFilters()"
+          class="form-input form-input-sm">
+          <option value="">Wszystkie statusy</option>
+          <option value="active">Aktywne</option>
+          <option value="draft">Szkice</option>
+          <option value="archived">Zarchiwizowane</option>
+        </select>
+
+        <!-- Category Filter -->
+        <select
+          [(ngModel)]="selectedCategory"
+          (change)="applyFilters()"
+          class="form-input form-input-sm">
+          <option value="">Wszystkie kategorie</option>
+          <option value="promotional">Promocyjny</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="welcome">Powitalny</option>
+          <option value="transactional">Transakcyjny</option>
+          <option value="announcement">Ogłoszenie</option>
+          <option value="event">Wydarzenie</option>
+          <option value="survey">Ankieta</option>
+          <option value="other">Inne</option>
+        </select>
+
+        <!-- Results Count -->
+        <div class="ms-auto text-sm text-default-600">
+          Wyświetlono: <span class="font-medium">{{ filteredTemplates.length }}</span> / {{ templates.length }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredTemplates.length === 0 && templates.length === 0" class="p-12 text-center">
+      <div class="size-16 mx-auto mb-4 text-default-400">
+        <ng-icon name="lucideLayoutTemplate"></ng-icon>
+      </div>
+      <h3 class="text-lg font-medium text-default-900 mb-2">Brak szablonów</h3>
+      <p class="text-default-600 mb-6 max-w-md mx-auto">
+        Nie masz jeszcze żadnych szablonów email. Stwórz pierwszy szablon, aby móc go wykorzystywać w kampaniach.
+      </p>
+      <button
+        type="button"
+        (click)="createTemplate()"
+        class="btn bg-primary text-white hover:bg-primary/90">
+        <div class="size-4">
+          <ng-icon name="lucidePlus"></ng-icon>
+        </div>
+        Stwórz pierwszy szablon
+      </button>
+    </div>
+
+    <!-- No Results from Filters -->
+    <div *ngIf="!isLoading && filteredTemplates.length === 0 && templates.length > 0" class="p-12 text-center">
+      <div class="size-16 mx-auto mb-4 text-default-400">
+        <ng-icon name="lucideFilter"></ng-icon>
+      </div>
+      <h3 class="text-lg font-medium text-default-900 mb-2">Brak wyników</h3>
+      <p class="text-default-600 mb-6 max-w-md mx-auto">
+        Nie znaleziono szablonów spełniających wybrane kryteria. Spróbuj zmienić filtry.
+      </p>
+    </div>
+
+    <!-- Templates Table -->
+    <div *ngIf="!isLoading && filteredTemplates.length > 0" class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-default-50/50">
+          <tr class="border-b border-default-200">
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">
+              Szablon
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">
+              Kategoria
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">
+              Wykorzystanie
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-default-500 uppercase tracking-wider">
+              Ostatnia modyfikacja
+            </th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-default-500 uppercase tracking-wider">
+              Akcje
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-default-200">
+          <tr
+            *ngFor="let template of filteredTemplates"
+            class="hover:bg-default-50/50 transition-colors">
+            <!-- Template Info -->
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  *ngIf="template.thumbnailUrl"
+                  class="w-16 h-16 rounded border border-default-200 overflow-hidden flex-shrink-0">
+                  <img
+                    [src]="template.thumbnailUrl"
+                    [alt]="template.name"
+                    class="w-full h-full object-cover" />
+                </div>
+                <div
+                  *ngIf="!template.thumbnailUrl"
+                  class="w-16 h-16 rounded border border-default-200 bg-default-50 flex items-center justify-center flex-shrink-0">
+                  <div class="size-6 text-default-400">
+                    <ng-icon name="lucideLayoutTemplate"></ng-icon>
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <h6 class="text-sm font-medium text-default-900 mb-1 truncate">
+                    {{ template.name }}
+                    <span
+                      *ngIf="template.isDefault"
+                      class="ms-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                      Domyślny
+                    </span>
+                  </h6>
+                  <p class="text-xs text-default-600 truncate mb-1">
+                    {{ template.subject }}
+                  </p>
+                  <div *ngIf="template.tags.length > 0" class="flex flex-wrap gap-1 mt-1">
+                    <span
+                      *ngFor="let tag of template.tags.slice(0, 3)"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-default-100 text-default-700">
+                      <div class="size-3 me-1">
+                        <ng-icon name="lucideTags"></ng-icon>
+                      </div>
+                      {{ tag }}
+                    </span>
+                    <span
+                      *ngIf="template.tags.length > 3"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs text-default-600">
+                      +{{ template.tags.length - 3 }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Category -->
+            <td class="px-6 py-4">
+              <span class="text-sm text-default-900">{{ getCategoryLabel(template.category) }}</span>
+            </td>
+
+            <!-- Status -->
+            <td class="px-6 py-4">
+              <span
+                class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [ngClass]="{
+                  'bg-success/10 text-success': template.status === 'active',
+                  'bg-info/10 text-info': template.status === 'draft',
+                  'bg-default-100 text-default-600': template.status === 'archived'
+                }">
+                {{ getStatusLabel(template.status) }}
+              </span>
+            </td>
+
+            <!-- Usage Stats -->
+            <td class="px-6 py-4">
+              <div class="text-sm">
+                <div class="text-default-900 font-medium">
+                  {{ formatNumber(template.statistics.usageCount) }}x
+                </div>
+                <div class="text-xs text-default-600">
+                  w {{ template.statistics.campaignsCount }} kampaniach
+                </div>
+              </div>
+            </td>
+
+            <!-- Last Modified -->
+            <td class="px-6 py-4">
+              <div class="text-sm text-default-600">
+                {{ formatDate(template.updatedAt) }}
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4">
+              <div class="flex items-center justify-center gap-1">
+                <!-- View -->
+                <button
+                  type="button"
+                  (click)="viewTemplate(template)"
+                  class="p-2 rounded-md bg-info/10 text-info hover:bg-info/20 transition-colors"
+                  title="Zobacz szczegóły">
+                  <div class="size-4">
+                    <ng-icon name="lucideEye"></ng-icon>
+                  </div>
+                </button>
+
+                <!-- Edit -->
+                <button
+                  type="button"
+                  (click)="editTemplate(template)"
+                  class="p-2 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  title="Edytuj">
+                  <div class="size-4">
+                    <ng-icon name="lucideEdit2"></ng-icon>
+                  </div>
+                </button>
+
+                <!-- Duplicate -->
+                <button
+                  type="button"
+                  (click)="duplicateTemplate(template)"
+                  class="p-2 rounded-md bg-warning/10 text-warning hover:bg-warning/20 transition-colors"
+                  title="Duplikuj">
+                  <div class="size-4">
+                    <ng-icon name="lucideCopy"></ng-icon>
+                  </div>
+                </button>
+
+                <!-- Archive/Activate -->
+                <button
+                  *ngIf="template.status !== 'archived'"
+                  type="button"
+                  (click)="archiveTemplate(template)"
+                  class="p-2 rounded-md bg-default-100 text-default-600 hover:bg-default-200 transition-colors"
+                  title="Archiwizuj">
+                  <div class="size-4">
+                    <ng-icon name="lucideArchive"></ng-icon>
+                  </div>
+                </button>
+
+                <button
+                  *ngIf="template.status === 'archived'"
+                  type="button"
+                  (click)="activateTemplate(template)"
+                  class="p-2 rounded-md bg-success/10 text-success hover:bg-success/20 transition-colors"
+                  title="Aktywuj">
+                  <div class="size-4">
+                    <ng-icon name="lucideCheckCircle"></ng-icon>
+                  </div>
+                </button>
+
+                <!-- Delete -->
+                <button
+                  type="button"
+                  (click)="deleteTemplate(template)"
+                  class="p-2 rounded-md bg-danger/10 text-danger hover:bg-danger/20 transition-colors"
+                  title="Usuń">
+                  <div class="size-4">
+                    <ng-icon name="lucideTrash2"></ng-icon>
+                  </div>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
