@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, of, delay } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, delay, tap, catchError } from 'rxjs';
 import { Contact, ContactFilter, ContactSegment, CustomField } from '../models/contact.model';
+import { ApiService, ApiResponse, PaginatedResponse } from '../core/api/api.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,21 +14,61 @@ export class ContactService {
   contacts$ = this.contactsSubject.asObservable();
   segments$ = this.segmentsSubject.asObservable();
 
-  constructor() {}
+  constructor(private api: ApiService) {}
 
   getContacts(filter?: ContactFilter): Observable<Contact[]> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      const params: any = {};
+      if (filter?.search) params.search = filter.search;
+      if (filter?.status) params.status = filter.status.join(',');
+      if (filter?.subscriptionStatus) params.subscriptionStatus = filter.subscriptionStatus.join(',');
+      if (filter?.lists) params.lists = filter.lists.join(',');
+      if (filter?.tags) params.tags = filter.tags.join(',');
+
+      return this.api.get<ApiResponse<Contact[]>>('contacts', { params })
+        .pipe(
+          map(response => response.data),
+          tap(contacts => this.contactsSubject.next(contacts))
+        );
+    }
+
+    // Fallback to mock data
     return this.contacts$.pipe(
       map(contacts => this.filterContacts(contacts, filter))
     );
   }
 
   getContact(id: string): Observable<Contact | undefined> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.get<ApiResponse<Contact>>(`contacts/${id}`)
+        .pipe(
+          map(response => response.data),
+          catchError(() => of(undefined))
+        );
+    }
+
+    // Fallback to mock data
     return this.contacts$.pipe(
       map(contacts => contacts.find(c => c.id === id))
     );
   }
 
   createContact(contact: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>): Observable<Contact> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.post<ApiResponse<Contact>>('contacts', contact)
+        .pipe(
+          map(response => response.data),
+          tap(newContact => {
+            const contacts = this.contactsSubject.value;
+            this.contactsSubject.next([...contacts, newContact]);
+          })
+        );
+    }
+
+    // Fallback to mock data
     const newContact: Contact = {
       ...contact,
       id: this.generateId(),
@@ -41,6 +83,23 @@ export class ContactService {
   }
 
   updateContact(id: string, updates: Partial<Contact>): Observable<Contact> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.put<ApiResponse<Contact>>(`contacts/${id}`, updates)
+        .pipe(
+          map(response => response.data),
+          tap(updatedContact => {
+            const contacts = this.contactsSubject.value;
+            const index = contacts.findIndex(c => c.id === id);
+            if (index !== -1) {
+              contacts[index] = updatedContact;
+              this.contactsSubject.next([...contacts]);
+            }
+          })
+        );
+    }
+
+    // Fallback to mock data
     const contacts = this.contactsSubject.value;
     const index = contacts.findIndex(c => c.id === id);
 
@@ -61,6 +120,20 @@ export class ContactService {
   }
 
   deleteContact(id: string): Observable<boolean> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.delete<ApiResponse<void>>(`contacts/${id}`)
+        .pipe(
+          map(() => true),
+          tap(() => {
+            const contacts = this.contactsSubject.value;
+            const filteredContacts = contacts.filter(c => c.id !== id);
+            this.contactsSubject.next(filteredContacts);
+          })
+        );
+    }
+
+    // Fallback to mock data
     const contacts = this.contactsSubject.value;
     const filteredContacts = contacts.filter(c => c.id !== id);
     this.contactsSubject.next(filteredContacts);
@@ -69,12 +142,26 @@ export class ContactService {
   }
 
   addTagToContact(contactId: string, tag: string): Observable<Contact> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.post<ApiResponse<Contact>>(`contacts/${contactId}/tags`, { tag })
+        .pipe(map(response => response.data));
+    }
+
+    // Fallback to mock data
     return this.updateContact(contactId, {
       tags: [...(this.getContactById(contactId)?.tags || []), tag]
     });
   }
 
   removeTagFromContact(contactId: string, tag: string): Observable<Contact> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.delete<ApiResponse<Contact>>(`contacts/${contactId}/tags/${tag}`)
+        .pipe(map(response => response.data));
+    }
+
+    // Fallback to mock data
     const contact = this.getContactById(contactId);
     if (!contact) throw new Error('Contact not found');
 
@@ -118,6 +205,13 @@ export class ContactService {
   }
 
   searchContacts(query: string): Observable<Contact[]> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.get<ApiResponse<Contact[]>>('contacts/search', { params: { q: query } })
+        .pipe(map(response => response.data));
+    }
+
+    // Fallback to mock data
     return this.contacts$.pipe(
       map(contacts => contacts.filter(contact =>
         contact.email.toLowerCase().includes(query.toLowerCase()) ||
@@ -136,6 +230,13 @@ export class ContactService {
     bounced: number;
     tagged: number;
   }> {
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.get<ApiResponse<any>>('contacts/statistics')
+        .pipe(map(response => response.data));
+    }
+
+    // Fallback to mock data
     return this.contacts$.pipe(
       map(contacts => ({
         total: contacts.length,
