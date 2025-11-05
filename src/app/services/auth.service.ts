@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, delay, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { map, tap, catchError } from 'rxjs/operators';
+import { ApiService, ApiResponse } from '../core/api/api.service';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: string;
@@ -26,6 +29,12 @@ export interface RegisterData {
   acceptTerms: boolean;
 }
 
+export interface AuthResponse {
+  user: User;
+  token: string;
+  refreshToken: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,7 +45,10 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
   public isLoading$ = this.isLoadingSubject.asObservable();
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private api: ApiService
+  ) {}
 
   get currentUserValue(): User | null {
     return this.currentUserSubject.value;
@@ -49,7 +61,24 @@ export class AuthService {
   login(credentials: LoginCredentials): Observable<User> {
     this.isLoadingSubject.next(true);
 
-    // Simulate API call
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.post<ApiResponse<AuthResponse>>('auth/login', credentials)
+        .pipe(
+          map(response => response.data.user),
+          tap(user => {
+            this.setUser(user, credentials.rememberMe);
+            this.setTokens(user, credentials.rememberMe);
+          }),
+          tap(() => this.isLoadingSubject.next(false)),
+          catchError(error => {
+            this.isLoadingSubject.next(false);
+            return throwError(() => error.message || 'Login failed');
+          })
+        );
+    }
+
+    // Fallback to mock data for development
     return new Observable(observer => {
       setTimeout(() => {
         // Mock validation
@@ -92,6 +121,24 @@ export class AuthService {
   register(data: RegisterData): Observable<User> {
     this.isLoadingSubject.next(true);
 
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.post<ApiResponse<AuthResponse>>('auth/register', data)
+        .pipe(
+          map(response => response.data.user),
+          tap(user => {
+            this.setUser(user);
+            this.setTokens(user);
+          }),
+          tap(() => this.isLoadingSubject.next(false)),
+          catchError(error => {
+            this.isLoadingSubject.next(false);
+            return throwError(() => error.message || 'Registration failed');
+          })
+        );
+    }
+
+    // Fallback to mock data for development
     return new Observable(observer => {
       setTimeout(() => {
         // Mock validation
@@ -125,8 +172,19 @@ export class AuthService {
   }
 
   logout(): void {
+    // Call API logout endpoint if not using mock data
+    if (!environment.features.enableMockData) {
+      this.api.post('auth/logout', {}).subscribe();
+    }
+
+    // Clear all auth data
     localStorage.removeItem('currentUser');
     sessionStorage.removeItem('currentUser');
+    localStorage.removeItem(environment.storage.authToken);
+    localStorage.removeItem(environment.storage.refreshToken);
+    sessionStorage.removeItem(environment.storage.authToken);
+    sessionStorage.removeItem(environment.storage.refreshToken);
+
     this.currentUserSubject.next(null);
     this.router.navigate(['/auth/login']);
   }
@@ -134,6 +192,20 @@ export class AuthService {
   resetPassword(email: string): Observable<string> {
     this.isLoadingSubject.next(true);
 
+    // Use real API if mock data is disabled
+    if (!environment.features.enableMockData) {
+      return this.api.post<ApiResponse<{ message: string }>>('auth/password-reset', { email })
+        .pipe(
+          map(response => response.data.message || response.message || 'Password reset instructions sent'),
+          tap(() => this.isLoadingSubject.next(false)),
+          catchError(error => {
+            this.isLoadingSubject.next(false);
+            return throwError(() => error.message || 'Password reset failed');
+          })
+        );
+    }
+
+    // Fallback to mock data
     return new Observable(observer => {
       setTimeout(() => {
         // Mock validation
@@ -198,21 +270,52 @@ export class AuthService {
 
   private setUser(user: User, rememberMe: boolean = false): void {
     this.currentUserSubject.next(user);
-    
-    if (rememberMe) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-    } else {
-      sessionStorage.setItem('currentUser', JSON.stringify(user));
+
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(environment.storage.currentUser, JSON.stringify(user));
+  }
+
+  private setTokens(user: any, rememberMe: boolean = false): void {
+    const storage = rememberMe ? localStorage : sessionStorage;
+
+    // Store tokens if they exist in the response
+    if (user.token) {
+      storage.setItem(environment.storage.authToken, user.token);
+    }
+    if (user.refreshToken) {
+      storage.setItem(environment.storage.refreshToken, user.refreshToken);
     }
   }
 
   private getUserFromStorage(): User | null {
     try {
-      const user = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+      const user = localStorage.getItem(environment.storage.currentUser) ||
+                   sessionStorage.getItem(environment.storage.currentUser);
       return user ? JSON.parse(user) : null;
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Refresh authentication token
+   */
+  refreshToken(): Observable<string> {
+    const refreshToken = localStorage.getItem(environment.storage.refreshToken) ||
+                        sessionStorage.getItem(environment.storage.refreshToken);
+
+    if (!refreshToken) {
+      return throwError(() => 'No refresh token available');
+    }
+
+    return this.api.post<ApiResponse<{ token: string }>>('auth/refresh-token', { refreshToken })
+      .pipe(
+        map(response => response.data.token),
+        tap(token => {
+          const storage = localStorage.getItem(environment.storage.refreshToken) ? localStorage : sessionStorage;
+          storage.setItem(environment.storage.authToken, token);
+        })
+      );
   }
 
   // Demo users info for testing
