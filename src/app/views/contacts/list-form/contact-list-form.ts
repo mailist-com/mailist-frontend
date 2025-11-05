@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,7 @@ export class ContactListFormComponent implements OnInit {
   isEditing = false;
   isLoading = false;
   listId?: string;
+  error: string | null = null;
 
   listTypes = [
     { value: 'regular', label: 'Regular List', description: 'Standard mailing list for manual contact management' },
@@ -44,7 +45,8 @@ export class ContactListFormComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private contactListService: ContactListService
+    private contactListService: ContactListService,
+    private cdr: ChangeDetectorRef
   ) {
     this.initializeForm();
   }
@@ -86,15 +88,21 @@ export class ContactListFormComponent implements OnInit {
     this.contactListService.getList(id).subscribe({
       next: (list) => {
         if (list) {
-          this.populateForm(list);
+          // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => {
+            this.populateForm(list);
+            this.isLoading = false;
+            this.cdr.markForCheck();
+          });
         } else {
+          this.isLoading = false;
           this.router.navigate(['/contacts/lists']);
         }
-        this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
-        this.router.navigate(['/contacts/lists']);
+        this.error = err.error?.message || 'Failed to load list. Please try again.';
+        console.error('Error loading list:', err);
       }
     });
   }
@@ -164,12 +172,13 @@ export class ContactListFormComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.error = null;
     const formValue = this.listForm.value;
 
     // Process custom fields
     const customFields = formValue.customFields.map((field: any) => ({
       ...field,
-      options: field.type === 'dropdown' && field.options 
+      options: field.type === 'dropdown' && field.options
         ? field.options.split(',').map((opt: string) => opt.trim()).filter((opt: string) => opt)
         : undefined
     }));
@@ -189,8 +198,26 @@ export class ContactListFormComponent implements OnInit {
         this.isLoading = false;
         this.router.navigate(['/contacts/lists']);
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
+
+        // Handle different error types
+        if (err.status === 403) {
+          this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';
+        } else if (err.status === 401) {
+          this.error = 'Your session has expired. Please log in again.';
+        } else if (err.status === 400) {
+          this.error = err.error?.message || 'Invalid data. Please check your input and try again.';
+        } else if (err.status === 0) {
+          this.error = 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else {
+          this.error = err.error?.message || 'Failed to save list. Please try again later.';
+        }
+
+        console.error('Error saving list:', err);
+
+        // Scroll to top to show error message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
   }
