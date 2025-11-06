@@ -1,15 +1,57 @@
 <main *ngIf="list$ | async as list">
   <app-page-title title="List Details" [subtitle]="list.name" />
 
+  <!-- Success/Error Messages -->
+  <div *ngIf="saveSuccess" class="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3">
+    <div class="size-5 text-success"><ng-icon name="lucideCircleCheck"></ng-icon></div>
+    <p class="text-success font-medium">List updated successfully!</p>
+  </div>
+
+  <div *ngIf="saveError" class="mb-6 p-4 bg-danger/10 border border-danger/20 rounded-lg flex items-center gap-3">
+    <div class="size-5 text-danger"><ng-icon name="lucideCircleX"></ng-icon></div>
+    <div class="flex-1">
+      <p class="text-danger font-medium">{{ saveError }}</p>
+    </div>
+    <button (click)="saveError = null" class="text-danger hover:text-danger/80">
+      <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
+    </button>
+  </div>
+
   <!-- List Details Section -->
   <div class="card mb-6">
     <div class="card-header">
       <h6 class="card-title">List Information</h6>
       <div class="flex items-center gap-3">
-        <a [routerLink]="['/contacts/lists/edit', list.id]" class="btn btn-sm bg-default-100 text-default-600">
+        <button *ngIf="!isEditMode"
+                (click)="toggleEditMode()"
+                class="btn btn-sm bg-default-100 text-default-600 hover:bg-primary hover:text-white">
           <div class="size-4 me-1"><ng-icon name="lucideFilePen"></ng-icon></div>
           Edit List
-        </a>
+        </button>
+
+        <button *ngIf="isEditMode"
+                (click)="saveChanges()"
+                [disabled]="isSaving"
+                class="btn btn-sm bg-primary text-white hover:bg-primary/90">
+          <div class="size-4 me-1"><ng-icon [name]="isSaving ? 'lucideLoader2' : 'lucideSave'" [class.animate-spin]="isSaving"></ng-icon></div>
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+        </button>
+
+        <button *ngIf="isEditMode"
+                (click)="toggleEditMode()"
+                [disabled]="isSaving"
+                class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
+          Cancel
+        </button>
+
+        <button *ngIf="!isEditMode"
+                (click)="deleteList()"
+                class="btn btn-sm bg-danger/10 text-danger hover:bg-danger hover:text-white">
+          <div class="size-4 me-1"><ng-icon name="lucideTrash2"></ng-icon></div>
+          Delete List
+        </button>
+
         <a routerLink="/contacts/lists" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
           <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
           Back to Lists
@@ -18,42 +60,97 @@
     </div>
 
     <div class="card-body">
-      <!-- Basic Info -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-              <div class="size-6 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>
+      <form [formGroup]="editForm">
+        <!-- Basic Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <!-- View Mode -->
+            <div *ngIf="!isEditMode">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <div class="size-6 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-default-900">{{ list.name }}</h3>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getTypeClass(list.type)">
+                      {{ list.type | titlecase }}
+                    </span>
+                    <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getListStatusClass(list.status)">
+                      {{ list.status | titlecase }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="list.description" class="mb-4">
+                <label class="text-sm font-medium text-default-700 mb-1 block">Description</label>
+                <p class="text-sm text-default-600">{{ list.description }}</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1 block">Created</label>
+                  <p class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1 block">Updated</label>
+                  <p class="text-sm text-default-600">{{ list.updatedAt | date:'MMM d, y' }}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 class="text-xl font-semibold text-default-900">{{ list.name }}</h3>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getTypeClass(list.type)">
-                  {{ list.type | titlecase }}
-                </span>
-                <span class="py-0.5 px-2.5 text-xs font-medium rounded" [class]="getListStatusClass(list.status)">
-                  {{ list.status | titlecase }}
-                </span>
+
+            <!-- Edit Mode -->
+            <div *ngIf="isEditMode" class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-default-700 mb-1.5 block">List Name *</label>
+                <input type="text"
+                       formControlName="name"
+                       class="form-input"
+                       placeholder="Enter list name">
+                <p *ngIf="getFieldError('name')" class="text-xs text-danger mt-1">{{ getFieldError('name') }}</p>
+              </div>
+
+              <div>
+                <label class="text-sm font-medium text-default-700 mb-1.5 block">Description</label>
+                <textarea formControlName="description"
+                          rows="3"
+                          class="form-input"
+                          placeholder="Enter list description"></textarea>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1.5 block">Type *</label>
+                  <select formControlName="type" class="form-input">
+                    <option *ngFor="let type of listTypes" [value]="type.value">
+                      {{ type.label }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1.5 block">Status *</label>
+                  <select formControlName="status" class="form-input">
+                    <option *ngFor="let status of listStatuses" [value]="status.value">
+                      {{ status.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1 block">Created</label>
+                  <p class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-default-700 mb-1 block">Updated</label>
+                  <p class="text-sm text-default-600">{{ list.updatedAt | date:'MMM d, y' }}</p>
+                </div>
               </div>
             </div>
           </div>
-
-          <div *ngIf="list.description" class="mb-4">
-            <label class="text-sm font-medium text-default-700 mb-1 block">Description</label>
-            <p class="text-sm text-default-600">{{ list.description }}</p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-sm font-medium text-default-700 mb-1 block">Created</label>
-              <p class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</p>
-            </div>
-            <div>
-              <label class="text-sm font-medium text-default-700 mb-1 block">Updated</label>
-              <p class="text-sm text-default-600">{{ list.updatedAt | date:'MMM d, y' }}</p>
-            </div>
-          </div>
-        </div>
 
         <!-- Statistics -->
         <div>
@@ -85,59 +182,150 @@
         </div>
       </div>
 
-      <!-- Settings -->
-      <div class="border-t border-default-200 pt-6">
-        <h4 class="text-sm font-medium text-default-700 mb-3">Settings</h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.doubleOptIn ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+        <!-- Settings -->
+        <div class="border-t border-default-200 pt-6" formGroupName="settings">
+          <h4 class="text-sm font-medium text-default-700 mb-3">
+            Settings
+            <span *ngIf="isEditMode" class="text-xs font-normal text-default-500 ml-2">(Click to toggle)</span>
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Double Opt-In -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('doubleOptIn')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.doubleOptIn')?.value" [class.text-default-400]="!editForm.get('settings.doubleOptIn')?.value">
+                <ng-icon [name]="editForm.get('settings.doubleOptIn')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Double Opt-In</span>
             </div>
-            <span class="text-sm text-default-700">Double Opt-In</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.welcomeEmail ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
-            </div>
-            <span class="text-sm text-default-700">Welcome Email</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.allowPublicSubscription ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
-            </div>
-            <span class="text-sm text-default-700">Public Subscription</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.notifyOnSubscribe ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
-            </div>
-            <span class="text-sm text-default-700">Subscribe Notifications</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.notifyOnUnsubscribe ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
-            </div>
-            <span class="text-sm text-default-700">Unsubscribe Notifications</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="size-5 text-default-600">
-              <ng-icon [name]="list.settings.requireNameOnSignup ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
-            </div>
-            <span class="text-sm text-default-700">Require Name</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tags -->
-      <div *ngIf="list.tags.length > 0" class="border-t border-default-200 pt-6 mt-6">
-        <h4 class="text-sm font-medium text-default-700 mb-3">Tags</h4>
-        <div class="flex flex-wrap gap-2">
-          <span *ngFor="let tag of list.tags"
-                class="py-1 px-3 text-xs font-medium rounded bg-secondary/10 text-secondary">
-            {{ tag }}
-          </span>
+            <!-- Welcome Email -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('welcomeEmail')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.welcomeEmail')?.value" [class.text-default-400]="!editForm.get('settings.welcomeEmail')?.value">
+                <ng-icon [name]="editForm.get('settings.welcomeEmail')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Welcome Email</span>
+            </div>
+
+            <!-- Public Subscription -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('allowPublicSubscription')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.allowPublicSubscription')?.value" [class.text-default-400]="!editForm.get('settings.allowPublicSubscription')?.value">
+                <ng-icon [name]="editForm.get('settings.allowPublicSubscription')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Public Subscription</span>
+            </div>
+
+            <!-- Subscribe Notifications -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('notifyOnSubscribe')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.notifyOnSubscribe')?.value" [class.text-default-400]="!editForm.get('settings.notifyOnSubscribe')?.value">
+                <ng-icon [name]="editForm.get('settings.notifyOnSubscribe')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Subscribe Notifications</span>
+            </div>
+
+            <!-- Unsubscribe Notifications -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('notifyOnUnsubscribe')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.notifyOnUnsubscribe')?.value" [class.text-default-400]="!editForm.get('settings.notifyOnUnsubscribe')?.value">
+                <ng-icon [name]="editForm.get('settings.notifyOnUnsubscribe')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Unsubscribe Notifications</span>
+            </div>
+
+            <!-- Require Name -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('requireNameOnSignup')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.requireNameOnSignup')?.value" [class.text-default-400]="!editForm.get('settings.requireNameOnSignup')?.value">
+                <ng-icon [name]="editForm.get('settings.requireNameOnSignup')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Require Name</span>
+            </div>
+
+            <!-- Require Phone -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('requirePhoneOnSignup')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.requirePhoneOnSignup')?.value" [class.text-default-400]="!editForm.get('settings.requirePhoneOnSignup')?.value">
+                <ng-icon [name]="editForm.get('settings.requirePhoneOnSignup')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Require Phone</span>
+            </div>
+
+            <!-- Respect Unsubscribes -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('respectUnsubscribes')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.respectUnsubscribes')?.value" [class.text-default-400]="!editForm.get('settings.respectUnsubscribes')?.value">
+                <ng-icon [name]="editForm.get('settings.respectUnsubscribes')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Respect Unsubscribes</span>
+            </div>
+
+            <!-- Respect Bounces -->
+            <div class="flex items-center gap-2"
+                 [class.cursor-pointer]="isEditMode"
+                 (click)="toggleSetting('respectBounces')">
+              <div class="size-5" [class.text-success]="editForm.get('settings.respectBounces')?.value" [class.text-default-400]="!editForm.get('settings.respectBounces')?.value">
+                <ng-icon [name]="editForm.get('settings.respectBounces')?.value ? 'lucideCircleCheck' : 'lucideCircleX'"></ng-icon>
+              </div>
+              <span class="text-sm text-default-700">Respect Bounces</span>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <!-- Tags -->
+        <div class="border-t border-default-200 pt-6 mt-6" formArrayName="tags">
+          <h4 class="text-sm font-medium text-default-700 mb-3">Tags</h4>
+
+          <!-- View Mode -->
+          <div *ngIf="!isEditMode">
+            <div *ngIf="list.tags.length > 0" class="flex flex-wrap gap-2">
+              <span *ngFor="let tag of list.tags"
+                    class="py-1 px-3 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                {{ tag }}
+              </span>
+            </div>
+            <p *ngIf="list.tags.length === 0" class="text-sm text-default-500 italic">No tags</p>
+          </div>
+
+          <!-- Edit Mode -->
+          <div *ngIf="isEditMode">
+            <div class="flex flex-wrap gap-2 mb-3">
+              <div *ngFor="let tag of tags.controls; let i = index" class="flex items-center gap-1 py-1 px-3 text-xs font-medium rounded bg-secondary/10 text-secondary">
+                <span>{{ tag.value }}</span>
+                <button type="button" (click)="removeTag(i)" class="hover:text-danger">
+                  <div class="size-3"><ng-icon name="lucideX"></ng-icon></div>
+                </button>
+              </div>
+              <span *ngIf="tags.length === 0" class="text-sm text-default-500 italic">No tags yet</span>
+            </div>
+
+            <div class="flex gap-2">
+              <input type="text"
+                     [(ngModel)]="newTag"
+                     [ngModelOptions]="{standalone: true}"
+                     (keyup.enter)="addTag()"
+                     class="form-input form-input-sm"
+                     placeholder="Add new tag...">
+              <button type="button"
+                      (click)="addTag()"
+                      [disabled]="!newTag.trim()"
+                      class="btn btn-sm bg-secondary text-white hover:bg-secondary/90">
+                <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
 
       <!-- Custom Fields -->
       <div *ngIf="list.customFields.length > 0" class="border-t border-default-200 pt-6 mt-6">
