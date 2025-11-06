@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -15,7 +15,9 @@ import { ContactList } from '../../../models/contact-list.model';
   templateUrl: './contact-lists.html'
 })
 export class ContactListsComponent implements OnInit {
-  lists$: Observable<ContactList[]>;
+  // Component manages its own state
+  private listsSubject = new BehaviorSubject<ContactList[]>([]);
+  lists$ = this.listsSubject.asObservable();
   statistics$!: Observable<any>;
 
   searchTerm = '';
@@ -24,10 +26,7 @@ export class ContactListsComponent implements OnInit {
   error: string | null = null;
   success: string | null = null;
 
-  constructor(private contactListService: ContactListService) {
-    // Subscribe to the service's BehaviorSubject to get automatic updates
-    this.lists$ = this.contactListService.lists$;
-  }
+  constructor(private contactListService: ContactListService) {}
 
   ngOnInit() {
     this.loadLists();
@@ -36,8 +35,17 @@ export class ContactListsComponent implements OnInit {
 
   loadLists() {
     this.error = null;
-    // Simple call - service handles everything
-    this.contactListService.loadLists();
+
+    // Call service and handle response in component
+    this.contactListService.getLists().subscribe({
+      next: (lists) => {
+        this.listsSubject.next(lists);
+      },
+      error: (error) => {
+        console.error('Error loading lists:', error);
+        this.error = error.message || 'Failed to load contact lists. Please try again later.';
+      }
+    });
   }
 
   private loadStatistics() {
@@ -75,21 +83,23 @@ export class ContactListsComponent implements OnInit {
       this.error = null;
       this.success = null;
 
-      // Simple callback-based approach
-      this.contactListService.deleteList(
-        list.id,
-        () => {
-          // Success callback
+      this.contactListService.deleteList(list.id).subscribe({
+        next: () => {
+          // Update local state - remove deleted list
+          const currentLists = this.listsSubject.value;
+          this.listsSubject.next(currentLists.filter(l => l.id !== list.id));
+
+          // Show success message
           this.success = `List "${list.name}" has been deleted successfully.`;
           this.loadStatistics();
           setTimeout(() => this.success = null, 5000);
         },
-        (error) => {
-          // Error callback
+        error: (error) => {
+          console.error('Error deleting list:', error);
           this.error = error.message || 'Failed to delete list. Please try again.';
           setTimeout(() => this.error = null, 8000);
         }
-      );
+      });
     }
   }
 
@@ -109,21 +119,23 @@ export class ContactListsComponent implements OnInit {
     delete (duplicatedList as any).createdAt;
     delete (duplicatedList as any).updatedAt;
 
-    // Simple callback-based approach
-    this.contactListService.createList(
-      duplicatedList,
-      () => {
-        // Success callback
+    this.contactListService.createList(duplicatedList).subscribe({
+      next: (newList) => {
+        // Update local state - add new list
+        const currentLists = this.listsSubject.value;
+        this.listsSubject.next([...currentLists, newList]);
+
+        // Show success message
         this.success = `List "${list.name}" has been duplicated successfully.`;
         this.loadStatistics();
         setTimeout(() => this.success = null, 5000);
       },
-      (error) => {
-        // Error callback
+      error: (error) => {
+        console.error('Error duplicating list:', error);
         this.error = error.message || 'Failed to duplicate list. Please try again.';
         setTimeout(() => this.error = null, 8000);
       }
-    );
+    });
   }
 
   getTypeIcon(type: string): string {

@@ -188,39 +188,37 @@ export class ContactListFormComponent implements OnInit {
       tags: formValue.tags.filter((tag: string) => tag.trim())
     };
 
-    // Success callback
-    const onSuccess = () => {
-      this.isLoading = false;
-      this.router.navigate(['/contacts/lists']);
-    };
+    // Choose service method based on editing state
+    const request$ = this.isEditing && this.listId
+      ? this.contactListService.updateList(this.listId, listData)
+      : this.contactListService.createList(listData);
 
-    // Error callback
-    const onError = (err: any) => {
-      this.isLoading = false;
+    // Handle response in component
+    request$.subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/contacts/lists']);
+      },
+      error: (err) => {
+        this.isLoading = false;
 
-      // Handle different error types
-      if (err.status === 403) {
-        this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';
-      } else if (err.status === 401) {
-        this.error = 'Your session has expired. Please log in again.';
-      } else if (err.status === 400) {
-        this.error = err.error?.message || 'Invalid data. Please check your input and try again.';
-      } else if (err.status === 0) {
-        this.error = 'Unable to connect to the server. Please check your internet connection and try again.';
-      } else {
-        this.error = err.message || err.error?.message || 'Failed to save list. Please try again later.';
+        // Handle different error types
+        if (err.status === 403) {
+          this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';
+        } else if (err.status === 401) {
+          this.error = 'Your session has expired. Please log in again.';
+        } else if (err.status === 400) {
+          this.error = err.error?.message || 'Invalid data. Please check your input and try again.';
+        } else if (err.status === 0) {
+          this.error = 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else {
+          this.error = err.message || err.error?.message || 'Failed to save list. Please try again later.';
+        }
+
+        console.error('Error saving list:', err);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      console.error('Error saving list:', err);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    // Call appropriate method based on editing state
-    if (this.isEditing && this.listId) {
-      this.contactListService.updateList(this.listId, listData, onSuccess, onError);
-    } else {
-      this.contactListService.createList(listData, onSuccess, onError);
-    }
+    });
   }
 
   onCancel() {
