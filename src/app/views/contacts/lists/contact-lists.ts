@@ -15,7 +15,7 @@ import { ContactList } from '../../../models/contact-list.model';
   templateUrl: './contact-lists.html'
 })
 export class ContactListsComponent implements OnInit {
-  lists$!: Observable<ContactList[]>;
+  lists$: Observable<ContactList[]>;
   statistics$!: Observable<any>;
 
   searchTerm = '';
@@ -24,7 +24,10 @@ export class ContactListsComponent implements OnInit {
   error: string | null = null;
   success: string | null = null;
 
-  constructor(private contactListService: ContactListService) {}
+  constructor(private contactListService: ContactListService) {
+    // Subscribe to the service's BehaviorSubject to get automatic updates
+    this.lists$ = this.contactListService.lists$;
+  }
 
   ngOnInit() {
     this.loadLists();
@@ -33,14 +36,16 @@ export class ContactListsComponent implements OnInit {
 
   loadLists() {
     this.error = null;
-    this.lists$ = this.contactListService.getLists()
+    // Load lists from API - this will update the BehaviorSubject in the service
+    this.contactListService.getLists()
       .pipe(
         catchError((error) => {
           console.error('Error loading lists:', error);
           this.error = error.message || 'Failed to load contact lists. Please try again later.';
           return of([]);
         })
-      );
+      )
+      .subscribe();
   }
 
   private loadStatistics() {
@@ -81,8 +86,8 @@ export class ContactListsComponent implements OnInit {
       this.contactListService.deleteList(list.id).subscribe({
         next: () => {
           this.success = `List "${list.name}" has been deleted successfully.`;
-          // Reload lists and statistics after successful deletion
-          this.loadLists();
+          // The service automatically updates the BehaviorSubject, so list will disappear
+          // We only need to reload statistics
           this.loadStatistics();
 
           // Auto-hide success message after 5 seconds
@@ -122,8 +127,8 @@ export class ContactListsComponent implements OnInit {
     this.contactListService.createList(duplicatedList).subscribe({
       next: () => {
         this.success = `List "${list.name}" has been duplicated successfully.`;
-        // Reload lists and statistics after successful duplication
-        this.loadLists();
+        // The service automatically updates the BehaviorSubject, so new list will appear
+        // We only need to reload statistics
         this.loadStatistics();
 
         // Auto-hide success message after 5 seconds
