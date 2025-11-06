@@ -26,6 +26,7 @@ export class ContactListsComponent implements OnInit {
   selectedStatus = '';
   error: string | null = null;
   success: string | null = null;
+  viewMode: 'grid' | 'list' = 'grid'; // View toggle: grid (cards) or list (table)
 
   constructor(private contactListService: ContactListService) {}
 

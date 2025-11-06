@@ -70,6 +70,22 @@
           Manage Contacts
         </a>
 
+        <!-- View Mode Toggle -->
+        <div class="flex items-center border border-default-200 rounded-md overflow-hidden">
+          <button type="button"
+                  (click)="viewMode = 'grid'"
+                  [class]="viewMode === 'grid' ? 'btn btn-sm bg-primary text-white' : 'btn btn-sm bg-transparent text-default-600 hover:bg-default-100'"
+                  class="rounded-none border-0">
+            <div class="size-4"><ng-icon name="lucideLayoutGrid"></ng-icon></div>
+          </button>
+          <button type="button"
+                  (click)="viewMode = 'list'"
+                  [class]="viewMode === 'list' ? 'btn btn-sm bg-primary text-white' : 'btn btn-sm bg-transparent text-default-600 hover:bg-default-100'"
+                  class="rounded-none border-0">
+            <div class="size-4"><ng-icon name="lucideList"></ng-icon></div>
+          </button>
+        </div>
+
         <!-- Export Dropdown -->
         <div class="hs-dropdown relative inline-flex">
           <button type="button" class="hs-dropdown-toggle btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10"
@@ -147,7 +163,8 @@
     <!-- Lists Grid -->
     <div class="card-body">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Grid View (Cards) -->
+      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div *ngFor="let list of lists$ | async; trackBy: trackByListId"
              class="border border-default-200 rounded-lg p-6 hover:border-primary/50 transition-colors">
 
@@ -248,6 +265,113 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- List View (Table) -->
+      <div *ngIf="viewMode === 'list'" class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-default-200">
+              <th class="text-left py-3 px-4 font-semibold text-sm text-default-700">List Name</th>
+              <th class="text-left py-3 px-4 font-semibold text-sm text-default-700">Type</th>
+              <th class="text-left py-3 px-4 font-semibold text-sm text-default-700">Status</th>
+              <th class="text-center py-3 px-4 font-semibold text-sm text-default-700">Subscribers</th>
+              <th class="text-center py-3 px-4 font-semibold text-sm text-default-700">Engagement</th>
+              <th class="text-center py-3 px-4 font-semibold text-sm text-default-700">Unsubscribed</th>
+              <th class="text-center py-3 px-4 font-semibold text-sm text-default-700">Bounced</th>
+              <th class="text-left py-3 px-4 font-semibold text-sm text-default-700">Created</th>
+              <th class="text-center py-3 px-4 font-semibold text-sm text-default-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let list of lists$ | async; trackBy: trackByListId"
+                class="border-b border-default-200 hover:bg-default-50 transition-colors">
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div class="size-5 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>
+                  </div>
+                  <div>
+                    <div class="font-medium text-default-900">{{ list.name }}</div>
+                    <div *ngIf="list.description" class="text-sm text-default-600 truncate max-w-xs">{{ list.description }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="py-4 px-4">
+                <span class="py-0.5 px-2 text-xs font-medium rounded" [class]="getTypeClass(list.type)">
+                  {{ list.type | titlecase }}
+                </span>
+              </td>
+              <td class="py-4 px-4">
+                <span class="py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded" [class]="getStatusClass(list.status)">
+                  {{ list.status | titlecase }}
+                </span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <div class="font-semibold text-default-900">{{ list.subscriberCount | number }}</div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <div class="font-semibold" [class]="getEngagementClass(getEngagementRate(list))">
+                  {{ getEngagementRate(list) | number:'1.0-0' }}%
+                </div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <div class="text-danger font-medium">{{ list.unsubscribedCount | number }}</div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <div class="text-warning font-medium">{{ list.bouncedCount | number }}</div>
+              </td>
+              <td class="py-4 px-4">
+                <div class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</div>
+              </td>
+              <td class="py-4 px-4">
+                <div class="flex items-center justify-center gap-2">
+                  <a [routerLink]="['/contacts/lists/view', list.id]"
+                     class="btn size-8 bg-default-100 text-default-600 hover:bg-primary hover:text-white"
+                     title="View Details">
+                    <div class="size-4"><ng-icon name="lucideEye"></ng-icon></div>
+                  </a>
+                  <a [routerLink]="['/contacts/lists/edit', list.id]"
+                     class="btn size-8 bg-default-100 text-default-600 hover:bg-primary hover:text-white"
+                     title="Edit">
+                    <div class="size-4"><ng-icon name="lucideFilePen"></ng-icon></div>
+                  </a>
+                  <div class="hs-dropdown relative inline-flex">
+                    <button type="button"
+                            class="hs-dropdown-toggle btn size-8 bg-default-100 text-default-600 hover:bg-default-600"
+                            aria-haspopup="menu" aria-expanded="false" aria-label="More actions">
+                      <div class="size-4"><ng-icon name="lucideMoreVertical"></ng-icon></div>
+                    </button>
+                    <div class="hs-dropdown-menu" role="menu">
+                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                              (click)="duplicateList(list)">
+                        <div class="size-3"><ng-icon name="lucideCopy"></ng-icon></div>
+                        Duplicate
+                      </button>
+                      <div class="border-t border-default-200 my-1"></div>
+                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                              (click)="exportList(list, 'csv')">
+                        <div class="size-3"><ng-icon name="lucideDownload"></ng-icon></div>
+                        Export CSV
+                      </button>
+                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
+                              (click)="exportList(list, 'xlsx')">
+                        <div class="size-3"><ng-icon name="lucideTable"></ng-icon></div>
+                        Export Excel
+                      </button>
+                      <div class="border-t border-default-200 my-1"></div>
+                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"
+                              (click)="deleteList(list)">
+                        <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- Empty State -->
