@@ -14,6 +14,8 @@ import {
   ApiKeyStatus,
   ApiKeyPermission,
   CreateApiKeyDTO,
+  CreateApiKeyResponse,
+  PermissionInfo,
 } from '../../../models/api-key.model';
 
 @Component({
@@ -37,6 +39,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   // Create form
   newKeyName = '';
+  newKeyDescription = '';
   newKeyPermissions: ApiKeyPermission[] = [];
   availablePermissions: { value: ApiKeyPermission; label: string }[] = [
     { value: 'contacts.read', label: 'INTEGRATIONS.PERMISSIONS.CONTACTS_READ' },
@@ -46,8 +49,10 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
     { value: 'lists.write', label: 'INTEGRATIONS.PERMISSIONS.LISTS_WRITE' },
     { value: 'campaigns.read', label: 'INTEGRATIONS.PERMISSIONS.CAMPAIGNS_READ' },
     { value: 'campaigns.write', label: 'INTEGRATIONS.PERMISSIONS.CAMPAIGNS_WRITE' },
+    { value: 'campaigns.send', label: 'INTEGRATIONS.PERMISSIONS.CAMPAIGNS_SEND' },
     { value: 'automation.read', label: 'INTEGRATIONS.PERMISSIONS.AUTOMATION_READ' },
     { value: 'automation.write', label: 'INTEGRATIONS.PERMISSIONS.AUTOMATION_WRITE' },
+    { value: '*', label: 'INTEGRATIONS.PERMISSIONS.FULL_ACCESS' },
   ];
 
   constructor(private apiKeyService: ApiKeyService) {}
@@ -131,7 +136,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
   revokeKey(key: ApiKey) {
     if (
       confirm(
-        `Czy na pewno chcesz odwołać klucz "${key.name}"? Tej operacji nie można cofnąć.`
+        `Czy na pewno chcesz odwołać klucz "${key.name}"? Klucz zostanie dezaktywowany.`
       )
     ) {
       this.apiKeyService
@@ -144,8 +149,24 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  deleteKey(key: ApiKey) {
+    if (
+      confirm(
+        `Czy na pewno chcesz usunąć klucz "${key.name}"? Tej operacji nie można cofnąć.`
+      )
+    ) {
+      this.apiKeyService
+        .deleteApiKey(key.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.loadApiKeys();
+          this.loadStatistics();
+        });
+    }
+  }
+
   toggleKeyStatus(key: ApiKey) {
-    const newStatus: ApiKeyStatus = key.status === 'active' ? 'inactive' : 'active';
+    const newStatus: ApiKeyStatus = key.status === 'ACTIVE' ? 'REVOKED' : 'ACTIVE';
     this.apiKeyService
       .updateApiKey(key.id, { status: newStatus })
       .pipe(takeUntil(this.destroy$))
@@ -164,20 +185,29 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   getStatusClass(status: ApiKeyStatus): string {
     const classes = {
-      active: 'bg-success/10 text-success',
-      inactive: 'bg-warning/10 text-warning',
-      expired: 'bg-danger/10 text-danger',
+      ACTIVE: 'bg-success/10 text-success',
+      REVOKED: 'bg-warning/10 text-warning',
+      EXPIRED: 'bg-danger/10 text-danger',
     };
     return classes[status] || 'bg-default-200 text-default-600';
   }
 
   getStatusIcon(status: ApiKeyStatus): string {
     const icons = {
-      active: 'lucideCircleCheck',
-      inactive: 'lucideCirclePause',
-      expired: 'lucideCircleX',
+      ACTIVE: 'lucideCircleCheck',
+      REVOKED: 'lucideCirclePause',
+      EXPIRED: 'lucideCircleX',
     };
     return icons[status] || 'lucideCircle';
+  }
+
+  getStatusLabel(status: ApiKeyStatus): string {
+    const labels = {
+      ACTIVE: 'Aktywny',
+      REVOKED: 'Odwołany',
+      EXPIRED: 'Wygasły',
+    };
+    return labels[status] || status;
   }
 
   getMethodClass(method: string): string {
@@ -242,15 +272,20 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
     const createDto: CreateApiKeyDTO = {
       name: this.newKeyName.trim(),
+      description: this.newKeyDescription.trim() || undefined,
       permissions: this.newKeyPermissions,
     };
 
     this.apiKeyService
       .createApiKey(createDto)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((newKey) => {
+      .subscribe((response: CreateApiKeyResponse) => {
         this.showCreateModal = false;
-        this.selectedKey = newKey;
+        // Use the apiKey from response but with the plainKey for display
+        this.selectedKey = {
+          ...response.apiKey,
+          key: response.plainKey, // Show the plainKey in modal
+        };
         this.showKeyModal = true;
         this.resetCreateForm();
         this.loadApiKeys();
@@ -260,6 +295,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   resetCreateForm() {
     this.newKeyName = '';
+    this.newKeyDescription = '';
     this.newKeyPermissions = [];
   }
 

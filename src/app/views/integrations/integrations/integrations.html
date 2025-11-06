@@ -65,7 +65,7 @@
         <div>
           <p class="text-sm text-default-600 mb-1">Całkowite żądania</p>
           <p class="text-2xl font-semibold text-info">
-            {{ statistics.totalRequests | number }}
+            {{ statistics.totalCalls | number }}
           </p>
         </div>
         <div
@@ -120,9 +120,9 @@
           class="form-input form-input-sm"
         >
           <option value="">Wszystkie statusy</option>
-          <option value="active">Aktywny</option>
-          <option value="inactive">Nieaktywny</option>
-          <option value="expired">Wygasły</option>
+          <option value="ACTIVE">Aktywny</option>
+          <option value="REVOKED">Odwołany</option>
+          <option value="EXPIRED">Wygasły</option>
         </select>
       </div>
 
@@ -229,11 +229,11 @@
                 <div class="size-3 me-1">
                   <ng-icon [name]="getStatusIcon(key.status)"></ng-icon>
                 </div>
-                {{ key.status === 'active' ? 'Aktywny' : key.status === 'inactive' ? 'Nieaktywny' : 'Wygasły' }}
+                {{ getStatusLabel(key.status) }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-default-900">
-              {{ key.requestCount | number }}
+              {{ key.totalCalls | number }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-default-600">
               <span *ngIf="key.lastUsedAt">
@@ -263,17 +263,19 @@
                   <button
                     class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
                     (click)="toggleKeyStatus(key)"
+                    *ngIf="key.status !== 'EXPIRED'"
                   >
                     <div class="size-3">
                       <ng-icon
-                        [name]="key.status === 'active' ? 'lucideCirclePause' : 'lucideCircleCheck'"
+                        [name]="key.status === 'ACTIVE' ? 'lucideCirclePause' : 'lucideCircleCheck'"
                       ></ng-icon>
                     </div>
-                    {{ key.status === 'active' ? 'Dezaktywuj' : 'Aktywuj' }}
+                    {{ key.status === 'ACTIVE' ? 'Dezaktywuj' : 'Aktywuj' }}
                   </button>
                   <button
                     class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
                     (click)="regenerateKey(key)"
+                    *ngIf="key.status === 'ACTIVE'"
                   >
                     <div class="size-3">
                       <ng-icon name="lucideRefreshCw"></ng-icon>
@@ -291,13 +293,23 @@
                   </button>
                   <div class="border-t border-default-200 my-1"></div>
                   <button
-                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-warning hover:bg-warning/10 rounded w-full text-left"
                     (click)="revokeKey(key)"
+                    *ngIf="key.status === 'ACTIVE'"
+                  >
+                    <div class="size-3">
+                      <ng-icon name="lucideCircleMinus"></ng-icon>
+                    </div>
+                    Odwołaj klucz
+                  </button>
+                  <button
+                    class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"
+                    (click)="deleteKey(key)"
                   >
                     <div class="size-3">
                       <ng-icon name="lucideTrash2"></ng-icon>
                     </div>
-                    Odwołaj klucz
+                    Usuń klucz
                   </button>
                 </div>
               </div>
@@ -601,6 +613,27 @@
                 />
                 <p class="mt-1 text-xs text-default-500">
                   Opisowa nazwa, która pomoże Ci zidentyfikować klucz
+                </p>
+              </div>
+
+              <!-- Description Field -->
+              <div>
+                <label
+                  for="keyDescription"
+                  class="block text-sm font-medium text-default-700 mb-2"
+                >
+                  Opis klucza (opcjonalnie)
+                </label>
+                <textarea
+                  id="keyDescription"
+                  [(ngModel)]="newKeyDescription"
+                  name="keyDescription"
+                  class="form-input w-full"
+                  rows="3"
+                  placeholder="np. Klucz dla produkcyjnego środowiska"
+                ></textarea>
+                <p class="mt-1 text-xs text-default-500">
+                  Dodatkowy opis, który pomoże zidentyfikować przeznaczenie klucza
                 </p>
               </div>
 
