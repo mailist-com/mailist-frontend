@@ -65,47 +65,6 @@
     <div class="card-header">
       <h6 class="card-title">Contact Lists</h6>
       <div class="flex items-center gap-3">
-        <a routerLink="/contacts/list" class="btn btn-sm bg-default-100 text-default-600">
-          <div class="size-4 me-1"><ng-icon name="lucideUsers"></ng-icon></div>
-          Manage Contacts
-        </a>
-
-        <!-- View Mode Toggle -->
-        <div class="flex items-center border border-default-200 rounded-md overflow-hidden">
-          <button type="button"
-                  (click)="viewMode = 'grid'"
-                  [class]="viewMode === 'grid' ? 'btn btn-sm bg-primary text-white' : 'btn btn-sm bg-transparent text-default-600 hover:bg-default-100'"
-                  class="rounded-none border-0">
-            <div class="size-4"><ng-icon name="lucideLayoutGrid"></ng-icon></div>
-          </button>
-          <button type="button"
-                  (click)="viewMode = 'list'"
-                  [class]="viewMode === 'list' ? 'btn btn-sm bg-primary text-white' : 'btn btn-sm bg-transparent text-default-600 hover:bg-default-100'"
-                  class="rounded-none border-0">
-            <div class="size-4"><ng-icon name="lucideList"></ng-icon></div>
-          </button>
-        </div>
-
-        <!-- Export Dropdown -->
-        <div class="hs-dropdown relative inline-flex">
-          <button type="button" class="hs-dropdown-toggle btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10"
-                  aria-haspopup="menu" aria-expanded="false" aria-label="Export">
-            <div class="size-4 me-1"><ng-icon name="lucideDownload"></ng-icon></div>
-            Export All
-          </button>
-          <div class="hs-dropdown-menu" role="menu">
-            <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                    (click)="exportAllLists('csv')">
-              <div class="size-3"><ng-icon name="lucideFileText"></ng-icon></div>
-              Export as CSV
-            </button>
-            <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                    (click)="exportAllLists('xlsx')">
-              <div class="size-3"><ng-icon name="lucideTable"></ng-icon></div>
-              Export as Excel
-            </button>
-          </div>
-        </div>
 
         <a routerLink="/contacts/lists/create" class="btn btn-sm bg-primary text-white">
           <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
@@ -148,127 +107,106 @@
         </select>
       </div>
 
-      <div class="flex gap-2 items-center flex-wrap">
-        <button type="button" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
-          <div class="size-4"><ng-icon name="lucideDownload"></ng-icon></div>
-          Export
-        </button>
-
-        <button type="button" (click)="clearFilters()" class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-1500 hover:text-white">
-          <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
-        </button>
-      </div>
     </div>
 
     <!-- Lists Grid -->
     <div class="card-body">
 
-      <!-- Grid View (Cards) -->
-      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let list of lists$ | async; trackBy: trackByListId"
-             class="border border-default-200 rounded-lg p-6 hover:border-primary/50 transition-colors">
+<!--      &lt;!&ndash; Grid View (Cards) &ndash;&gt;-->
+<!--      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">-->
+<!--        <div *ngFor="let list of lists$ | async; trackBy: trackByListId"-->
+<!--             class="border border-default-200 rounded-lg p-6 hover:border-primary/50 transition-colors">-->
 
-          <!-- Header -->
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <div class="size-5 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>
-              </div>
-              <div>
-                <h3 class="font-semibold text-default-900 mb-1">{{ list.name }}</h3>
-                <span class="py-0.5 px-2 text-xs font-medium rounded" [class]="getTypeClass(list.type)">
-                  {{ list.type | titlecase }}
-                </span>
-              </div>
-            </div>
+<!--          &lt;!&ndash; Header &ndash;&gt;-->
+<!--          <div class="flex items-start justify-between mb-4">-->
+<!--            <div class="flex items-center gap-3">-->
+<!--              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">-->
+<!--                <div class="size-5 text-primary"><ng-icon [name]="getTypeIcon(list.type)"></ng-icon></div>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <h3 class="font-semibold text-default-900 mb-1">{{ list.name }}</h3>-->
+<!--                <span class="py-0.5 px-2 text-xs font-medium rounded" [class]="getTypeClass(list.type)">-->
+<!--                  {{ list.type | titlecase }}-->
+<!--                </span>-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <div class="hs-dropdown relative inline-flex">
-              <button type="button" class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500"
-                      aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>
-              </button>
-              <div class="hs-dropdown-menu" role="menu">
-                <a [routerLink]="['/contacts/lists/view', list.id]" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded">
-                  <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
-                  View Details
-                </a>
-                <a [routerLink]="['/contacts/lists/edit', list.id]" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded">
-                  <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>
-                  Edit
-                </a>
-                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                        (click)="duplicateList(list)">
-                  <div class="size-3"><ng-icon name="lucideCopy"></ng-icon></div>
-                  Duplicate
-                </button>
-                <div class="border-t border-default-200 my-1"></div>
-                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                        (click)="exportList(list, 'csv')">
-                  <div class="size-3"><ng-icon name="lucideDownload"></ng-icon></div>
-                  Export CSV
-                </button>
-                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                        (click)="exportList(list, 'xlsx')">
-                  <div class="size-3"><ng-icon name="lucideTable"></ng-icon></div>
-                  Export Excel
-                </button>
-                <div class="border-t border-default-200 my-1"></div>
-                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"
-                        (click)="deleteList(list)">
-                  <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
+<!--            <div class="hs-dropdown relative inline-flex">-->
+<!--              <button type="button" class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500"-->
+<!--                      aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">-->
+<!--                <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>-->
+<!--              </button>-->
+<!--              <div class="hs-dropdown-menu" role="menu">-->
+<!--                <a [routerLink]="['/contacts/lists/view', list.id]" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded">-->
+<!--                  <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>-->
+<!--                  View Details-->
+<!--                </a>-->
+<!--                <a [routerLink]="['/contacts/lists/edit', list.id]" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded">-->
+<!--                  <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>-->
+<!--                  Edit-->
+<!--                </a>-->
+<!--                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"-->
+<!--                        (click)="duplicateList(list)">-->
+<!--                  <div class="size-3"><ng-icon name="lucideCopy"></ng-icon></div>-->
+<!--                  Duplicate-->
+<!--                </button>-->
+<!--                <div class="border-t border-default-200 my-1"></div>-->
+<!--                <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"-->
+<!--                        (click)="deleteList(list)">-->
+<!--                  <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>-->
+<!--                  Delete-->
+<!--                </button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
-          <!-- Description -->
-          <p *ngIf="list.description" class="text-sm text-default-600 mb-4">{{ list.description }}</p>
+<!--          &lt;!&ndash; Description &ndash;&gt;-->
+<!--          <p *ngIf="list.description" class="text-sm text-default-600 mb-4">{{ list.description }}</p>-->
 
-          <!-- Statistics -->
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="text-center p-3 bg-primary/5 rounded-lg">
-              <div class="text-xl font-bold text-primary">{{ list.subscriberCount | number }}</div>
-              <div class="text-xs text-default-600">Subscribers</div>
-            </div>
-            <div class="text-center p-3 rounded-lg" [class]="getEngagementRate(list) >= 80 ? 'bg-success/5' : getEngagementRate(list) >= 60 ? 'bg-warning/5' : 'bg-danger/5'">
-              <div class="text-xl font-bold" [class]="getEngagementClass(getEngagementRate(list))">
-                {{ getEngagementRate(list) | number:'1.0-0' }}%
-              </div>
-              <div class="text-xs text-default-600">Engagement</div>
-            </div>
-          </div>
+<!--          &lt;!&ndash; Statistics &ndash;&gt;-->
+<!--          <div class="grid grid-cols-2 gap-4 mb-4">-->
+<!--            <div class="text-center p-3 bg-primary/5 rounded-lg">-->
+<!--              <div class="text-xl font-bold text-primary">{{ list.subscriberCount | number }}</div>-->
+<!--              <div class="text-xs text-default-600">Subscribers</div>-->
+<!--            </div>-->
+<!--            <div class="text-center p-3 rounded-lg" [class]="getEngagementRate(list) >= 80 ? 'bg-success/5' : getEngagementRate(list) >= 60 ? 'bg-warning/5' : 'bg-danger/5'">-->
+<!--              <div class="text-xl font-bold" [class]="getEngagementClass(getEngagementRate(list))">-->
+<!--                {{ getEngagementRate(list) | number:'1.0-0' }}%-->
+<!--              </div>-->
+<!--              <div class="text-xs text-default-600">Engagement</div>-->
+<!--            </div>-->
+<!--          </div>-->
 
-          <!-- Status and Date -->
-          <div class="flex items-center justify-between pt-4 border-t border-default-200">
-            <span class="py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded" [class]="getStatusClass(list.status)">
-              {{ list.status | titlecase }}
-            </span>
-            <span class="text-xs text-default-500">
-              {{ list.createdAt | date:'MMM d, y' }}
-            </span>
-          </div>
+<!--          &lt;!&ndash; Status and Date &ndash;&gt;-->
+<!--          <div class="flex items-center justify-between pt-4 border-t border-default-200">-->
+<!--            <span class="py-0.5 px-2.5 inline-flex items-center text-xs font-medium rounded" [class]="getStatusClass(list.status)">-->
+<!--              {{ list.status | titlecase }}-->
+<!--            </span>-->
+<!--            <span class="text-xs text-default-500">-->
+<!--              {{ list.createdAt | date:'MMM d, y' }}-->
+<!--            </span>-->
+<!--          </div>-->
 
-          <!-- Quick Stats -->
-          <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
-            <div class="text-center p-2 bg-danger/5 rounded">
-              <div class="font-medium text-danger">{{ list.unsubscribedCount }}</div>
-              <div class="text-default-500">Unsub.</div>
-            </div>
-            <div class="text-center p-2 bg-warning/5 rounded">
-              <div class="font-medium text-warning">{{ list.bouncedCount }}</div>
-              <div class="text-default-500">Bounced</div>
-            </div>
-            <div class="text-center p-2 bg-info/5 rounded">
-              <div class="font-medium text-info">{{ list.cleanedCount }}</div>
-              <div class="text-default-500">Cleaned</div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!--          &lt;!&ndash; Quick Stats &ndash;&gt;-->
+<!--          <div class="mt-3 grid grid-cols-3 gap-2 text-xs">-->
+<!--            <div class="text-center p-2 bg-danger/5 rounded">-->
+<!--              <div class="font-medium text-danger">{{ list.unsubscribedCount }}</div>-->
+<!--              <div class="text-default-500">Unsub.</div>-->
+<!--            </div>-->
+<!--            <div class="text-center p-2 bg-warning/5 rounded">-->
+<!--              <div class="font-medium text-warning">{{ list.bouncedCount }}</div>-->
+<!--              <div class="text-default-500">Bounced</div>-->
+<!--            </div>-->
+<!--            <div class="text-center p-2 bg-info/5 rounded">-->
+<!--              <div class="font-medium text-info">{{ list.cleanedCount }}</div>-->
+<!--              <div class="text-default-500">Cleaned</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
       <!-- List View (Table) -->
-      <div *ngIf="viewMode === 'list'" class="overflow-x-auto">
+      <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr class="border-b border-default-200">
@@ -347,17 +285,6 @@
                               (click)="duplicateList(list)">
                         <div class="size-3"><ng-icon name="lucideCopy"></ng-icon></div>
                         Duplicate
-                      </button>
-                      <div class="border-t border-default-200 my-1"></div>
-                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                              (click)="exportList(list, 'csv')">
-                        <div class="size-3"><ng-icon name="lucideDownload"></ng-icon></div>
-                        Export CSV
-                      </button>
-                      <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
-                              (click)="exportList(list, 'xlsx')">
-                        <div class="size-3"><ng-icon name="lucideTable"></ng-icon></div>
-                        Export Excel
                       </button>
                       <div class="border-t border-default-200 my-1"></div>
                       <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-danger hover:bg-danger/10 rounded w-full text-left"

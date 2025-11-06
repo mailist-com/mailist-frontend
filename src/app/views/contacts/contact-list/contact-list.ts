@@ -10,9 +10,11 @@ import { ContactService } from '../../../services/contact.service';
 import { ContactListService } from '../../../services/contact-list.service';
 import { Contact, ContactFilter } from '../../../models/contact.model';
 import { ContactList } from '../../../models/contact-list.model';
+import { PagedData } from '../../../core/api/api.service';
 
 @Component({
   selector: 'app-contact-list',
+  standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle],
   templateUrl: './contact-list.html'
 })
@@ -22,6 +24,7 @@ export class ContactListComponent implements OnInit {
   statistics$!: Observable<any>;
 
   private filterSubject = new BehaviorSubject<ContactFilter>({});
+  private pageSubject = new BehaviorSubject<{page: number, size: number}>({page: 0, size: 20});
 
   searchTerm = '';
   selectedStatus = '';
@@ -29,8 +32,15 @@ export class ContactListComponent implements OnInit {
   selectedTags: string[] = [];
 
   availableTags = ['premium', 'developer', 'designer', 'angular', 'asp.net', 'senior'];
-  itemsPerPage = 10;
-  currentPage = 1;
+
+  // Pagination properties
+  currentPage = 0;
+  pageSize = 20;
+  totalPages = 0;
+  totalElements = 0;
+
+  // Expose Math to template
+  Math = Math;
 
   constructor(
     private contactService: ContactService,
@@ -38,15 +48,44 @@ export class ContactListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.lists$ = this.contactListService.getLists();
-    this.statistics$ = this.contactService.getContactStatistics();
+    this.loadLists();
+    this.loadStatistics();
 
     this.contacts$ = combineLatest([
-      this.contactService.getContacts(),
-      this.filterSubject.asObservable()
+      this.filterSubject.asObservable(),
+      this.pageSubject.asObservable()
     ]).pipe(
-      map(([contacts, filter]) => this.applyFilter(contacts, filter))
+      switchMap(([filter, page]) => this.contactService.getContacts(filter, page.page, page.size)),
+      map(pagedData => {
+        this.currentPage = pagedData.page.number;
+        this.pageSize = pagedData.page.size;
+        this.totalPages = pagedData.page.totalPages;
+        this.totalElements = pagedData.page.totalElements;
+        return pagedData.content;
+      })
     );
+  }
+
+  private loadStatistics() {
+    this.statistics$ = this.contactService.getContactStatistics();
+  }
+
+  private loadLists() {
+    this.lists$ = this.contactListService.getLists();
+  }
+
+// Pagination methods
+  onPageChange(page: number) {
+    this.pageSubject.next({page, size: this.pageSize});
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.pageSubject.next({page: 0, size});
+  }
+
+  get pages(): number[] {
+    return Array.from({length: this.totalPages}, (_, i) => i);
   }
 
   onSearch() {
@@ -76,7 +115,12 @@ export class ContactListComponent implements OnInit {
 
   deleteContact(contact: Contact) {
     if (confirm(`Are you sure you want to delete ${contact.firstName} ${contact.lastName}?`)) {
-      this.contactService.deleteContact(contact.id).subscribe();
+      this.contactService.deleteContact(contact.id).subscribe({
+        next: () => {
+          this.loadLists();
+          this.loadStatistics();
+        }
+      });
     }
   }
 
@@ -118,38 +162,8 @@ export class ContactListComponent implements OnInit {
       tags: this.selectedTags.length > 0 ? this.selectedTags : undefined
     };
 
+    // Reset to first page when filter changes
+    this.currentPage = 0;
     this.filterSubject.next(filter);
-  }
-
-  private applyFilter(contacts: Contact[], filter: ContactFilter): Contact[] {
-    let filtered = contacts;
-
-    if (filter.search) {
-      const searchLower = filter.search.toLowerCase();
-      filtered = filtered.filter(contact =>
-        contact.email.toLowerCase().includes(searchLower) ||
-        contact.firstName.toLowerCase().includes(searchLower) ||
-        contact.lastName.toLowerCase().includes(searchLower) ||
-        contact.organization?.toLowerCase().includes(searchLower)
-      );
-    }
-
-    if (filter.status?.length) {
-      filtered = filtered.filter(contact => filter.status!.includes(contact.status));
-    }
-
-    if (filter.lists?.length) {
-      filtered = filtered.filter(contact =>
-        filter.lists!.some(listId => contact.lists.includes(listId))
-      );
-    }
-
-    if (filter.tags?.length) {
-      filtered = filtered.filter(contact =>
-        filter.tags!.some(tag => contact.tags.includes(tag))
-      );
-    }
-
-    return filtered;
   }
 }

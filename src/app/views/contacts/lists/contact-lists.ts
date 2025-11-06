@@ -156,35 +156,4 @@ export class ContactListsComponent implements OnInit {
   trackByListId(index: number, list: ContactList): string {
     return list.id;
   }
-
-  exportList(list: ContactList, format: 'csv' | 'xlsx' = 'csv') {
-    this.contactListService.exportList(list.id, format).subscribe({
-      next: (data) => {
-        this.downloadFile(data, `${list.name}-export.${format}`, format);
-      },
-      error: (error) => {
-        console.error('Export failed:', error);
-      }
-    });
-  }
-
-  exportAllLists(format: 'csv' | 'xlsx' = 'csv') {
-    this.contactListService.exportAllLists(format).subscribe({
-      next: (data) => {
-        this.downloadFile(data, `all-lists-export.${format}`, format);
-      },
-      error: (error) => {
-        console.error('Export failed:', error);
-      }
-    });
-  }
-
-  private downloadFile(data: Blob, filename: string, format: string) {
-    const url = window.URL.createObjectURL(data);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
 }
