@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -189,37 +188,39 @@ export class ContactListFormComponent implements OnInit {
       tags: formValue.tags.filter((tag: string) => tag.trim())
     };
 
-    const request$ = this.isEditing && this.listId
-      ? this.contactListService.updateList(this.listId, listData)
-      : this.contactListService.createList(listData);
+    // Success callback
+    const onSuccess = () => {
+      this.isLoading = false;
+      this.router.navigate(['/contacts/lists']);
+    };
 
-    request$.subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.router.navigate(['/contacts/lists']);
-      },
-      error: (err) => {
-        this.isLoading = false;
+    // Error callback
+    const onError = (err: any) => {
+      this.isLoading = false;
 
-        // Handle different error types
-        if (err.status === 403) {
-          this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';
-        } else if (err.status === 401) {
-          this.error = 'Your session has expired. Please log in again.';
-        } else if (err.status === 400) {
-          this.error = err.error?.message || 'Invalid data. Please check your input and try again.';
-        } else if (err.status === 0) {
-          this.error = 'Unable to connect to the server. Please check your internet connection and try again.';
-        } else {
-          this.error = err.error?.message || 'Failed to save list. Please try again later.';
-        }
-
-        console.error('Error saving list:', err);
-
-        // Scroll to top to show error message
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Handle different error types
+      if (err.status === 403) {
+        this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';
+      } else if (err.status === 401) {
+        this.error = 'Your session has expired. Please log in again.';
+      } else if (err.status === 400) {
+        this.error = err.error?.message || 'Invalid data. Please check your input and try again.';
+      } else if (err.status === 0) {
+        this.error = 'Unable to connect to the server. Please check your internet connection and try again.';
+      } else {
+        this.error = err.message || err.error?.message || 'Failed to save list. Please try again later.';
       }
-    });
+
+      console.error('Error saving list:', err);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Call appropriate method based on editing state
+    if (this.isEditing && this.listId) {
+      this.contactListService.updateList(this.listId, listData, onSuccess, onError);
+    } else {
+      this.contactListService.createList(listData, onSuccess, onError);
+    }
   }
 
   onCancel() {

@@ -15,6 +15,19 @@ export class ContactListService {
 
   constructor(private api: ApiService) {}
 
+  // Simple method - just load and update BehaviorSubject
+  loadLists(): void {
+    this.api.get<ApiResponse<ContactList[]>>('lists').subscribe({
+      next: (response) => {
+        this.listsSubject.next(response.data);
+      },
+      error: (error) => {
+        console.error('Error loading lists:', error);
+      }
+    });
+  }
+
+  // Keep this for backward compatibility if needed
   getLists(): Observable<ContactList[]> {
     return this.api.get<ApiResponse<ContactList[]>>('lists')
       .pipe(
@@ -28,42 +41,51 @@ export class ContactListService {
       .pipe(map(response => response.data));
   }
 
-  createList(list: Omit<ContactList, 'id' | 'createdAt' | 'updatedAt' | 'subscriberCount' | 'unsubscribedCount' | 'cleanedCount' | 'bouncedCount'>): Observable<ContactList> {
-    return this.api.post<ApiResponse<ContactList>>('lists', list)
-      .pipe(
-        map(response => response.data),
-        tap(newList => {
-          const lists = this.listsSubject.value;
-          this.listsSubject.next([...lists, newList]);
-        })
-      );
+  createList(list: Omit<ContactList, 'id' | 'createdAt' | 'updatedAt' | 'subscriberCount' | 'unsubscribedCount' | 'cleanedCount' | 'bouncedCount'>, onSuccess?: () => void, onError?: (error: any) => void): void {
+    this.api.post<ApiResponse<ContactList>>('lists', list).subscribe({
+      next: (response) => {
+        const lists = this.listsSubject.value;
+        this.listsSubject.next([...lists, response.data]);
+        if (onSuccess) onSuccess();
+      },
+      error: (error) => {
+        console.error('Error creating list:', error);
+        if (onError) onError(error);
+      }
+    });
   }
 
-  updateList(id: string, updates: Partial<ContactList>): Observable<ContactList> {
-    return this.api.put<ApiResponse<ContactList>>(`lists/${id}`, updates)
-      .pipe(
-        map(response => response.data),
-        tap(updatedList => {
-          const lists = this.listsSubject.value;
-          const index = lists.findIndex(l => l.id === id);
-          if (index !== -1) {
-            lists[index] = updatedList;
-            this.listsSubject.next([...lists]);
-          }
-        })
-      );
+  updateList(id: string, updates: Partial<ContactList>, onSuccess?: () => void, onError?: (error: any) => void): void {
+    this.api.put<ApiResponse<ContactList>>(`lists/${id}`, updates).subscribe({
+      next: (response) => {
+        const lists = this.listsSubject.value;
+        const index = lists.findIndex(l => l.id === id);
+        if (index !== -1) {
+          lists[index] = response.data;
+          this.listsSubject.next([...lists]);
+        }
+        if (onSuccess) onSuccess();
+      },
+      error: (error) => {
+        console.error('Error updating list:', error);
+        if (onError) onError(error);
+      }
+    });
   }
 
-  deleteList(id: string): Observable<boolean> {
-    return this.api.delete<ApiResponse<void>>(`lists/${id}`)
-      .pipe(
-        map(() => true),
-        tap(() => {
-          const lists = this.listsSubject.value;
-          const filteredLists = lists.filter(l => l.id !== id);
-          this.listsSubject.next(filteredLists);
-        })
-      );
+  deleteList(id: string, onSuccess?: () => void, onError?: (error: any) => void): void {
+    this.api.delete<ApiResponse<void>>(`lists/${id}`).subscribe({
+      next: () => {
+        const lists = this.listsSubject.value;
+        const filteredLists = lists.filter(l => l.id !== id);
+        this.listsSubject.next(filteredLists);
+        if (onSuccess) onSuccess();
+      },
+      error: (error) => {
+        console.error('Error deleting list:', error);
+        if (onError) onError(error);
+      }
+    });
   }
 
   subscribeContact(contactId: string, listId: string, source: 'manual' | 'import' | 'form' | 'api' = 'manual'): Observable<ContactListSubscription> {
@@ -115,7 +137,7 @@ export class ContactListService {
     }) as Observable<Blob>;
   }
 
-  createSmartList(name: string, description: string, conditions: SmartListCondition[]): Observable<ContactList> {
+  createSmartList(name: string, description: string, conditions: SmartListCondition[], onSuccess?: () => void, onError?: (error: any) => void): void {
     const smartList = {
       name,
       description,
@@ -137,7 +159,7 @@ export class ContactListService {
       tags: []
     };
 
-    return this.createList(smartList);
+    this.createList(smartList, onSuccess, onError);
   }
 
   getListStatistics(): Observable<{

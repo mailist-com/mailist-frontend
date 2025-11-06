@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable, of, catchError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -36,16 +36,8 @@ export class ContactListsComponent implements OnInit {
 
   loadLists() {
     this.error = null;
-    // Load lists from API - this will update the BehaviorSubject in the service
-    this.contactListService.getLists()
-      .pipe(
-        catchError((error) => {
-          console.error('Error loading lists:', error);
-          this.error = error.message || 'Failed to load contact lists. Please try again later.';
-          return of([]);
-        })
-      )
-      .subscribe();
+    // Simple call - service handles everything
+    this.contactListService.loadLists();
   }
 
   private loadStatistics() {
@@ -83,28 +75,21 @@ export class ContactListsComponent implements OnInit {
       this.error = null;
       this.success = null;
 
-      this.contactListService.deleteList(list.id).subscribe({
-        next: () => {
+      // Simple callback-based approach
+      this.contactListService.deleteList(
+        list.id,
+        () => {
+          // Success callback
           this.success = `List "${list.name}" has been deleted successfully.`;
-          // The service automatically updates the BehaviorSubject, so list will disappear
-          // We only need to reload statistics
           this.loadStatistics();
-
-          // Auto-hide success message after 5 seconds
-          setTimeout(() => {
-            this.success = null;
-          }, 5000);
+          setTimeout(() => this.success = null, 5000);
         },
-        error: (error) => {
-          console.error('Error deleting list:', error);
+        (error) => {
+          // Error callback
           this.error = error.message || 'Failed to delete list. Please try again.';
-
-          // Auto-hide error message after 8 seconds
-          setTimeout(() => {
-            this.error = null;
-          }, 8000);
+          setTimeout(() => this.error = null, 8000);
         }
-      });
+      );
     }
   }
 
@@ -124,28 +109,21 @@ export class ContactListsComponent implements OnInit {
     delete (duplicatedList as any).createdAt;
     delete (duplicatedList as any).updatedAt;
 
-    this.contactListService.createList(duplicatedList).subscribe({
-      next: () => {
+    // Simple callback-based approach
+    this.contactListService.createList(
+      duplicatedList,
+      () => {
+        // Success callback
         this.success = `List "${list.name}" has been duplicated successfully.`;
-        // The service automatically updates the BehaviorSubject, so new list will appear
-        // We only need to reload statistics
         this.loadStatistics();
-
-        // Auto-hide success message after 5 seconds
-        setTimeout(() => {
-          this.success = null;
-        }, 5000);
+        setTimeout(() => this.success = null, 5000);
       },
-      error: (error) => {
-        console.error('Error duplicating list:', error);
+      (error) => {
+        // Error callback
         this.error = error.message || 'Failed to duplicate list. Please try again.';
-
-        // Auto-hide error message after 8 seconds
-        setTimeout(() => {
-          this.error = null;
-        }, 8000);
+        setTimeout(() => this.error = null, 8000);
       }
-    });
+    );
   }
 
   getTypeIcon(type: string): string {
