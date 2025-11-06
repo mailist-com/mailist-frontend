@@ -1,18 +1,94 @@
-# Contact Lists - REST API Specification for Backend
+# REST API Specification for Backend
 
-This document describes the REST API endpoints that the backend needs to implement for the Contact Lists feature.
+This document describes the REST API endpoints that the backend needs to implement.
 
 **Base URL**: `/api/v1`
 
 ---
 
-## Authentication
+## Table of Contents
 
-All endpoints require authentication via JWT Bearer token:
+1. [Authentication Endpoints](#authentication-endpoints)
+2. [Contact Lists Endpoints](#contact-lists-endpoints)
+
+---
+
+## Authentication Endpoints
+
+### Refresh Token
+
+**Endpoint**: `POST /auth/refresh-token`
+
+**Description**: Refreshes an expired access token using a valid refresh token. This endpoint is automatically called by the frontend when a 401 error is received.
+
+**Request Headers**:
+```
+Content-Type: application/json
+X-API-Version: v1
+```
+
+**Request Body**:
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // Optional: new refresh token
+  },
+  "message": "Token refreshed successfully"
+}
+```
+
+**Error Responses**:
+
+- `400 Bad Request`: Missing or invalid refresh token
+- `401 Unauthorized`: Refresh token expired or invalid
+- `500 Internal Server Error`: Server error
+
+```json
+{
+  "success": false,
+  "message": "Invalid or expired refresh token",
+  "errors": null
+}
+```
+
+**Notes**:
+- The refresh token should have a longer expiration time than the access token (e.g., 7 days vs 15 minutes)
+- Optionally, the backend can implement token rotation by returning a new refresh token with each refresh
+- The frontend automatically handles token refresh when receiving 401 errors on protected endpoints
+
+**Example cURL**:
+```bash
+curl -X POST http://localhost:3000/api/v1/auth/refresh-token \
+  -H "Content-Type: application/json" \
+  -H "X-API-Version: v1" \
+  -d '{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }'
+```
+
+---
+
+## Contact Lists Endpoints
+
+### Authentication Required
+
+All contact lists endpoints require authentication via JWT Bearer token:
 
 ```
 Authorization: Bearer <token>
 ```
+
+When the access token expires (401 error), the frontend will automatically attempt to refresh it using the refresh token endpoint above.
 
 ---
 

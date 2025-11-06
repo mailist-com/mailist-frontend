@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, tap, catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { ApiService, ApiResponse } from '../core/api/api.service';
 import { environment } from '../../environments/environment';
 
@@ -59,7 +60,8 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private api: ApiService
+    private api: ApiService,
+    private http: HttpClient
   ) {}
 
   get currentUserValue(): User | null {
@@ -189,14 +191,9 @@ export class AuthService {
     this.api.post('auth/logout', {}).subscribe();
 
     // Clear all auth data
-    localStorage.removeItem('currentUser');
-    sessionStorage.removeItem('currentUser');
-    localStorage.removeItem(environment.storage.authToken);
-    localStorage.removeItem(environment.storage.refreshToken);
-    sessionStorage.removeItem(environment.storage.authToken);
-    sessionStorage.removeItem(environment.storage.refreshToken);
+    this.clearAuthData();
 
-    this.currentUserSubject.next(null);
+    // Navigate to login
     this.router.navigate(['/auth/login']);
   }
 
@@ -296,6 +293,7 @@ export class AuthService {
 
   /**
    * Refresh authentication token
+   * Uses HttpClient directly to avoid interceptor recursion
    */
   refreshToken(): Observable<string> {
     const refreshToken = localStorage.getItem(environment.storage.refreshToken) ||
@@ -305,14 +303,59 @@ export class AuthService {
       return throwError(() => 'No refresh token available');
     }
 
-    return this.api.post<ApiResponse<{ token: string }>>('auth/refresh-token', { refreshToken })
-      .pipe(
-        map(response => response.data.token),
-        tap(token => {
-          const storage = localStorage.getItem(environment.storage.refreshToken) ? localStorage : sessionStorage;
-          storage.setItem(environment.storage.authToken, token);
-        })
-      );
+    // Use HttpClient directly to bypass the auth interceptor
+    // This prevents infinite loops when refresh token itself returns 401
+    const url = `${environment.apiUrl}/auth/refresh-token`;
+
+    return this.http.post<ApiResponse<{ token: string; refreshToken?: string }>>(
+      url,
+      { refreshToken },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Version': environment.apiVersion
+        }
+      }
+    ).pipe(
+      map(response => {
+        if (!response || !response.success || !response.data || !response.data.token) {
+          throw new Error('Invalid refresh token response');
+        }
+        return response.data;
+      }),
+      tap(data => {
+        // Determine which storage to use based on where refresh token was found
+        const storage = localStorage.getItem(environment.storage.refreshToken) ? localStorage : sessionStorage;
+
+        // Update access token
+        storage.setItem(environment.storage.authToken, data.token);
+
+        // Update refresh token if a new one was provided
+        if (data.refreshToken) {
+          storage.setItem(environment.storage.refreshToken, data.refreshToken);
+        }
+      }),
+      map(data => data.token),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        // Clear tokens on refresh failure
+        this.clearAuthData();
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Clear all authentication data from storage
+   */
+  private clearAuthData(): void {
+    localStorage.removeItem(environment.storage.authToken);
+    localStorage.removeItem(environment.storage.refreshToken);
+    localStorage.removeItem(environment.storage.currentUser);
+    sessionStorage.removeItem(environment.storage.authToken);
+    sessionStorage.removeItem(environment.storage.refreshToken);
+    sessionStorage.removeItem(environment.storage.currentUser);
+    this.currentUserSubject.next(null);
   }
 
   /**

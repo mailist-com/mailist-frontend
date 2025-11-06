@@ -38,6 +38,11 @@ export class Login {
     if (this.route.snapshot.queryParams['verified'] === 'true') {
       this.success = 'Email verified successfully! You can now login.';
     }
+
+    // Check if user was redirected due to session expiration
+    if (this.route.snapshot.queryParams['sessionExpired'] === 'true') {
+      this.error = 'Your session has expired. Please login again.';
+    }
   }
 
   onSubmit() {
