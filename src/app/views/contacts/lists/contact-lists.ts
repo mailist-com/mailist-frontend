@@ -22,6 +22,7 @@ export class ContactListsComponent implements OnInit {
   selectedType = '';
   selectedStatus = '';
   error: string | null = null;
+  success: string | null = null;
 
   constructor(private contactListService: ContactListService) {}
 
@@ -74,11 +75,38 @@ export class ContactListsComponent implements OnInit {
 
   deleteList(list: ContactList) {
     if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
-      this.contactListService.deleteList(list.id).subscribe();
+      this.error = null;
+      this.success = null;
+
+      this.contactListService.deleteList(list.id).subscribe({
+        next: () => {
+          this.success = `List "${list.name}" has been deleted successfully.`;
+          // Reload lists and statistics after successful deletion
+          this.loadLists();
+          this.loadStatistics();
+
+          // Auto-hide success message after 5 seconds
+          setTimeout(() => {
+            this.success = null;
+          }, 5000);
+        },
+        error: (error) => {
+          console.error('Error deleting list:', error);
+          this.error = error.message || 'Failed to delete list. Please try again.';
+
+          // Auto-hide error message after 8 seconds
+          setTimeout(() => {
+            this.error = null;
+          }, 8000);
+        }
+      });
     }
   }
 
   duplicateList(list: ContactList) {
+    this.error = null;
+    this.success = null;
+
     const duplicatedList = {
       ...list,
       name: `${list.name} (Copy)`,
@@ -90,8 +118,29 @@ export class ContactListsComponent implements OnInit {
     delete (duplicatedList as any).id;
     delete (duplicatedList as any).createdAt;
     delete (duplicatedList as any).updatedAt;
-    
-    this.contactListService.createList(duplicatedList).subscribe();
+
+    this.contactListService.createList(duplicatedList).subscribe({
+      next: () => {
+        this.success = `List "${list.name}" has been duplicated successfully.`;
+        // Reload lists and statistics after successful duplication
+        this.loadLists();
+        this.loadStatistics();
+
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          this.success = null;
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('Error duplicating list:', error);
+        this.error = error.message || 'Failed to duplicate list. Please try again.';
+
+        // Auto-hide error message after 8 seconds
+        setTimeout(() => {
+          this.error = null;
+        }, 8000);
+      }
+    });
   }
 
   getTypeIcon(type: string): string {
