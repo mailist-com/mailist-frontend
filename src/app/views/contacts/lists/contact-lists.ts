@@ -11,6 +11,7 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-lists',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle],
   templateUrl: './contact-lists.html'
 })
@@ -50,17 +51,6 @@ export class ContactListsComponent implements OnInit {
 
   private loadStatistics() {
     this.statistics$ = this.contactListService.getListStatistics()
-      .pipe(
-        catchError((error) => {
-          console.error('Error loading statistics:', error);
-          return of({
-            totalLists: 0,
-            activeLists: 0,
-            totalSubscribers: 0,
-            averageEngagement: 0
-          });
-        })
-      );
   }
 
   onSearch() {
@@ -80,24 +70,10 @@ export class ContactListsComponent implements OnInit {
 
   deleteList(list: ContactList) {
     if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
-      this.error = null;
-      this.success = null;
-
       this.contactListService.deleteList(list.id).subscribe({
         next: () => {
-          // Update local state - remove deleted list
-          const currentLists = this.listsSubject.value;
-          this.listsSubject.next(currentLists.filter(l => l.id !== list.id));
-
-          // Show success message
-          this.success = `List "${list.name}" has been deleted successfully.`;
+          this.loadLists();
           this.loadStatistics();
-          setTimeout(() => this.success = null, 5000);
-        },
-        error: (error) => {
-          console.error('Error deleting list:', error);
-          this.error = error.message || 'Failed to delete list. Please try again.';
-          setTimeout(() => this.error = null, 8000);
         }
       });
     }

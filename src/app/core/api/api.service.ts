@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, retry, timeout, retryWhen, mergeMap, timer } from 'rxjs/operators';
+import { catchError, retry, timeout, retryWhen, mergeMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -65,15 +65,11 @@ export class ApiService {
         timeout(this.defaultTimeout),
         retryWhen(errors =>
           errors.pipe(
-            mergeMap((error, index) => {
+            mergeMap((error) => {
               // Only retry on network errors or 5xx server errors, not on client errors (4xx)
               if (error instanceof HttpErrorResponse && error.status >= 400 && error.status < 500) {
                 // Don't retry client errors (400, 401, 403, 404, etc.)
                 return throwError(() => error);
-              }
-              // Retry once for network errors or server errors
-              if (index < 1) {
-                return timer(1000); // Wait 1 second before retry
               }
               return throwError(() => error);
             })
