@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ContactList, ContactListSubscription, ListImportResult, ListImportMapping, SmartListCondition } from '../models/contact-list.model';
 import { ApiService, ApiResponse } from '../core/api/api.service';
 
@@ -7,20 +7,12 @@ import { ApiService, ApiResponse } from '../core/api/api.service';
   providedIn: 'root'
 })
 export class ContactListService {
-  private listsSubject = new BehaviorSubject<ContactList[]>([]);
-  private subscriptionsSubject = new BehaviorSubject<ContactListSubscription[]>([]);
-
-  lists$ = this.listsSubject.asObservable();
-  subscriptions$ = this.subscriptionsSubject.asObservable();
-
   constructor(private api: ApiService) {}
 
+  // Simple Observable methods - just return data from API
   getLists(): Observable<ContactList[]> {
     return this.api.get<ApiResponse<ContactList[]>>('lists')
-      .pipe(
-        map(response => response.data),
-        tap(lists => this.listsSubject.next(lists))
-      );
+      .pipe(map(response => response.data));
   }
 
   getList(id: string): Observable<ContactList> {
@@ -30,67 +22,27 @@ export class ContactListService {
 
   createList(list: Omit<ContactList, 'id' | 'createdAt' | 'updatedAt' | 'subscriberCount' | 'unsubscribedCount' | 'cleanedCount' | 'bouncedCount'>): Observable<ContactList> {
     return this.api.post<ApiResponse<ContactList>>('lists', list)
-      .pipe(
-        map(response => response.data),
-        tap(newList => {
-          const lists = this.listsSubject.value;
-          this.listsSubject.next([...lists, newList]);
-        })
-      );
+      .pipe(map(response => response.data));
   }
 
   updateList(id: string, updates: Partial<ContactList>): Observable<ContactList> {
     return this.api.put<ApiResponse<ContactList>>(`lists/${id}`, updates)
-      .pipe(
-        map(response => response.data),
-        tap(updatedList => {
-          const lists = this.listsSubject.value;
-          const index = lists.findIndex(l => l.id === id);
-          if (index !== -1) {
-            lists[index] = updatedList;
-            this.listsSubject.next([...lists]);
-          }
-        })
-      );
+      .pipe(map(response => response.data));
   }
 
-  deleteList(id: string): Observable<boolean> {
+  deleteList(id: string): Observable<void> {
     return this.api.delete<ApiResponse<void>>(`lists/${id}`)
-      .pipe(
-        map(() => true),
-        tap(() => {
-          const lists = this.listsSubject.value;
-          const filteredLists = lists.filter(l => l.id !== id);
-          this.listsSubject.next(filteredLists);
-        })
-      );
+      .pipe(map(() => undefined));
   }
 
   subscribeContact(contactId: string, listId: string, source: 'manual' | 'import' | 'form' | 'api' = 'manual'): Observable<ContactListSubscription> {
     return this.api.post<ApiResponse<ContactListSubscription>>(`lists/${listId}/subscribe`, { contactId, source })
-      .pipe(
-        map(response => response.data),
-        tap(subscription => {
-          const subscriptions = this.subscriptionsSubject.value;
-          this.subscriptionsSubject.next([...subscriptions, subscription]);
-        })
-      );
+      .pipe(map(response => response.data));
   }
 
-  unsubscribeContact(contactId: string, listId: string): Observable<boolean> {
+  unsubscribeContact(contactId: string, listId: string): Observable<void> {
     return this.api.post<ApiResponse<void>>(`lists/${listId}/unsubscribe`, { contactId })
-      .pipe(
-        map(() => true),
-        tap(() => {
-          const subscriptions = this.subscriptionsSubject.value;
-          const subscription = subscriptions.find(s => s.contactId === contactId && s.listId === listId);
-          if (subscription) {
-            subscription.status = 'unsubscribed';
-            subscription.unsubscribedAt = new Date();
-            this.subscriptionsSubject.next([...subscriptions]);
-          }
-        })
-      );
+      .pipe(map(() => undefined));
   }
 
   getListSubscriptions(listId: string): Observable<ContactListSubscription[]> {

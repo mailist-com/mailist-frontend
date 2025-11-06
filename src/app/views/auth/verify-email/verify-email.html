@@ -1,79 +1,71 @@
-<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] min-h-screen flex justify-center items-center">
+<div class="bg-cover bg-no-repeat bg-[url('/assets/images/auth-bg.jpg')] dark:bg-[url('/assets/images/auth-bg-dark.jpg')] h-screen w-full flex justify-center items-center">
   <div class="relative">
-    <div class="bg-card/70 rounded-lg w-2/3 mx-auto">
-      <div class="grid lg:grid-cols-12 grid-cols-1 items-center gap-0">
-        <div class="lg:col-span-5">
-          <div class="text-center px-10 py-12">
-            <div class="text-center">
-              <h4 class="mb-3 text-xl font-semibold text-purple-500">Verify Your Email</h4>
-              <p class="text-base text-default-500">We've sent a verification code to <strong>{{ email }}</strong></p>
-            </div>
-
-            <!-- Success Alert -->
-            <div *ngIf="success" class="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg">
-              <p class="text-sm text-success">{{ success }}</p>
-            </div>
-
-            <!-- Error Alert -->
-            <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
-              <p class="text-sm text-danger">{{ error }}</p>
-            </div>
-
-            <!-- Verification Form -->
-            <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-6">
-              <div class="mb-4">
-                <label for="code" class="block font-medium text-default-900 text-sm mb-2">Verification Code</label>
-                <input
-                  type="text"
-                  id="code"
-                  formControlName="code"
-                  maxlength="6"
-                  class="form-input text-center text-2xl tracking-widest"
-                  [class.border-danger]="getFieldError('code')"
-                  placeholder="000000" />
-                <div *ngIf="getFieldError('code')" class="text-sm text-danger mt-1">
-                  {{ getFieldError('code') }}
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <button
-                  type="submit"
-                  class="btn bg-purple-500 border-purple-500 hover:bg-purple-600 hover:border-purple-600 text-white w-full"
-                  [disabled]="isLoading">
-                  <span *ngIf="!isLoading">Verify Email</span>
-                  <span *ngIf="isLoading">Verifying...</span>
-                </button>
-              </div>
-
-              <div class="text-center">
-                <p class="text-sm text-default-600 mb-4">
-                  Didn't receive the code?
-                </p>
-                <button
-                  type="button"
-                  (click)="resendCode()"
-                  class="text-sm text-purple-500 hover:text-purple-600 font-medium"
-                  [disabled]="isResending">
-                  <span *ngIf="!isResending">Resend Code</span>
-                  <span *ngIf="isResending">Sending...</span>
-                </button>
-              </div>
-            </form>
-
-            <div class="mt-6 text-center">
-              <p class="text-sm text-default-600">
-                Already verified?
-                <a [routerLink]="['/auth/login']" class="text-purple-500 hover:text-purple-600 font-medium">
-                  Sign In
-                </a>
-              </p>
-            </div>
-          </div>
+    <div class="bg-card/70 rounded-lg w-lg relative">
+      <div class="text-center px-10 py-12">
+        <div class="text-center">
+          <h4 class="mb-2.5 text-xl font-semibold text-primary">Verify Your Email</h4>
+          <p class="text-base text-default-500">We've sent a verification code to <strong>{{ email }}</strong></p>
         </div>
 
-        <div class="lg:col-span-7 hidden lg:block">
-          <img src="assets/images/auth-img.png" alt="Auth" class="w-full h-full object-cover" />
+        <!-- Success Alert -->
+        <div *ngIf="success" class="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg">
+          <p class="text-sm text-success">{{ success }}</p>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="error" class="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
+          <p class="text-sm text-danger">{{ error }}</p>
+        </div>
+
+        <!-- Verification Form -->
+        <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-10">
+          <div class="mb-4">
+            <label for="code" class="block font-medium text-default-900 text-sm mb-2">Verification Code</label>
+            <input
+              type="text"
+              id="code"
+              formControlName="code"
+              maxlength="6"
+              class="form-input text-center text-2xl tracking-widest"
+              [class.border-danger]="getFieldError('code')"
+              placeholder="000000" />
+            <div *ngIf="getFieldError('code')" class="text-sm text-danger mt-1">
+              {{ getFieldError('code') }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <button
+              type="submit"
+              class="btn bg-purple-500 border-purple-500 hover:bg-purple-600 hover:border-purple-600 text-white w-full"
+              [disabled]="isLoading">
+              <span *ngIf="!isLoading">Verify Email</span>
+              <span *ngIf="isLoading">Verifying...</span>
+            </button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-sm text-default-600 mb-4">
+              Didn't receive the code?
+            </p>
+            <button
+              type="button"
+              (click)="resendCode()"
+              class="text-sm text-purple-500 hover:text-purple-600 font-medium"
+              [disabled]="isResending">
+              <span *ngIf="!isResending">Resend Code</span>
+              <span *ngIf="isResending">Sending...</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-sm text-default-600">
+            Already verified?
+            <a [routerLink]="['/auth/login']" class="text-purple-500 hover:text-purple-600 font-medium">
+              Sign In
+            </a>
+          </p>
         </div>
       </div>
     </div>

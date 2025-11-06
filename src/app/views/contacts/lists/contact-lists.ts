@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -11,22 +11,47 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-lists',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle],
   templateUrl: './contact-lists.html'
 })
 export class ContactListsComponent implements OnInit {
-  lists$!: Observable<ContactList[]>;
+  // Component manages its own state
+  private listsSubject = new BehaviorSubject<ContactList[]>([]);
+  lists$ = this.listsSubject.asObservable();
   statistics$!: Observable<any>;
-  
+
   searchTerm = '';
   selectedType = '';
   selectedStatus = '';
-  
+  error: string | null = null;
+  success: string | null = null;
+  viewMode: 'grid' | 'list' = 'grid'; // View toggle: grid (cards) or list (table)
+
   constructor(private contactListService: ContactListService) {}
 
   ngOnInit() {
-    this.lists$ = this.contactListService.getLists();
-    this.statistics$ = this.contactListService.getListStatistics();
+    this.loadLists();
+    this.loadStatistics();
+  }
+
+  loadLists() {
+    this.error = null;
+
+    // Call service and handle response in component
+    this.contactListService.getLists().subscribe({
+      next: (lists) => {
+        this.listsSubject.next(lists);
+      },
+      error: (error) => {
+        console.error('Error loading lists:', error);
+        this.error = error.message || 'Failed to load contact lists. Please try again later.';
+      }
+    });
+  }
+
+  private loadStatistics() {
+    this.statistics$ = this.contactListService.getListStatistics()
   }
 
   onSearch() {
@@ -46,11 +71,19 @@ export class ContactListsComponent implements OnInit {
 
   deleteList(list: ContactList) {
     if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
-      this.contactListService.deleteList(list.id).subscribe();
+      this.contactListService.deleteList(list.id).subscribe({
+        next: () => {
+          this.loadLists();
+          this.loadStatistics();
+        }
+      });
     }
   }
 
   duplicateList(list: ContactList) {
+    this.error = null;
+    this.success = null;
+
     const duplicatedList = {
       ...list,
       name: `${list.name} (Copy)`,
@@ -62,8 +95,24 @@ export class ContactListsComponent implements OnInit {
     delete (duplicatedList as any).id;
     delete (duplicatedList as any).createdAt;
     delete (duplicatedList as any).updatedAt;
-    
-    this.contactListService.createList(duplicatedList).subscribe();
+
+    this.contactListService.createList(duplicatedList).subscribe({
+      next: (newList) => {
+        // Update local state - add new list
+        const currentLists = this.listsSubject.value;
+        this.listsSubject.next([...currentLists, newList]);
+
+        // Show success message
+        this.success = `List "${list.name}" has been duplicated successfully.`;
+        this.loadStatistics();
+        setTimeout(() => this.success = null, 5000);
+      },
+      error: (error) => {
+        console.error('Error duplicating list:', error);
+        this.error = error.message || 'Failed to duplicate list. Please try again.';
+        setTimeout(() => this.error = null, 8000);
+      }
+    });
   }
 
   getTypeIcon(type: string): string {

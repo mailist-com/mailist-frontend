@@ -39,25 +39,27 @@
     <div class="border-t border-t-default-200 -mx-2 my-2"></div>
 
     <div class="flex flex-col gap-y-1">
-      <a class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded" routerLink="/contacts">
-        <div class="size-4"><ng-icon name="lucideUsers"></ng-icon></div>
-        My Contacts
+      <a class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded" routerLink="/settings">
+        <div class="size-4"><ng-icon name="lucideSettings"></ng-icon></div>
+        Settings
       </a>
 
-      <a class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded" routerLink="/contacts/lists">
-        <div class="size-4"><ng-icon name="lucideList"></ng-icon></div>
-        Contact Lists
-      </a>
-
-      <a class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded" routerLink="/contacts/import">
-        <div class="size-4"><ng-icon name="lucideUpload"></ng-icon></div>
-        Import Contacts
+      <a *ngIf="user.plan === 'free'"
+         class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded bg-gradient-to-r from-primary/5 to-purple-500/5 border border-primary/20"
+         routerLink="/settings/billing">
+        <div class="size-4"><ng-icon name="lucideZap" class="text-primary"></ng-icon></div>
+        <span class="flex items-center gap-2">
+          Upgrade Plan
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold bg-primary/10 text-primary">
+            Pro
+          </span>
+        </span>
       </a>
 
       <div class="border-t border-default-200 -mx-2 my-1"></div>
 
-      <button type="button" 
-              (click)="logout()" 
+      <button type="button"
+              (click)="logout()"
               class="flex items-center gap-x-3.5 py-1.5 font-medium px-3 text-default-600 hover:bg-default-150 rounded w-full text-left">
         <div class="size-4"><ng-icon name="lucideLogOut"></ng-icon></div>
         Sign Out
