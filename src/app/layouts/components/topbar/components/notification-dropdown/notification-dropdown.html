@@ -1,244 +1,107 @@
   <div class="topbar-item hs-dropdown [--auto-close:inside] relative inline-flex">
                 <button type="button" class="hs-dropdown-toggle btn btn-icon size-8 hover:bg-default-150 rounded-full relative" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                     <div class="size-4.5"><ng-icon name="tablerBellRinging"  ></ng-icon></div>
-                    <span class="absolute end-0 top-0 size-1.5 bg-primary/90 rounded-full"></span>
+                    <span *ngIf="(stats$ | async)?.unread ?? 0 > 0" class="absolute end-0 top-0 size-1.5 bg-primary/90 rounded-full"></span>
                 </button>
 
                 <div class="hs-dropdown-menu max-w-100 p-0" role="menu">
                     <!-- Header -->
                     <div class="p-4 border-b border-default-200">
                         <div class="flex items-center gap-2">
-                            <h3 class="text-base text-default-800">Notifications</h3>
-                            <span class="size-5 font-semibold bg-orange-500 rounded text-white flex items-center justify-center text-xs">15</span>
+                            <h3 class="text-base text-default-800">Powiadomienia</h3>
+                            <span *ngIf="(stats$ | async)?.unread ?? 0 > 0" class="size-5 font-semibold bg-orange-500 rounded text-white flex items-center justify-center text-xs">
+                                {{ (stats$ | async)?.unread }}
+                            </span>
                         </div>
                     </div>
 
                     <!-- Tabs -->
                     <nav class="flex gap-x-1 bg-default-150 p-2 border-b border-default-200" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                        <button data-hs-tab="#tabsAll" type="button" class="hs-tab-active:bg-card hs-tab-active:text-primary py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600 active" aria-selected="true" aria-controls="tabsAll" role="tab">
+                        <button (click)="setActiveTab('all')" type="button" [class.bg-card]="activeTab === 'all'" [class.text-primary]="activeTab === 'all'" class="py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600" [attr.aria-selected]="activeTab === 'all'" role="tab">
                             Wszystkie
                         </button>
-                        <button data-hs-tab="#tabsAdded" type="button" class="hs-tab-active:bg-card hs-tab-active:text-primary py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600" aria-selected="false" aria-controls="tabsAdded" role="tab">
+                        <button (click)="setActiveTab('added')" type="button" [class.bg-card]="activeTab === 'added'" [class.text-primary]="activeTab === 'added'" class="py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600" [attr.aria-selected]="activeTab === 'added'" role="tab">
                             Dodano do listy
                         </button>
-                        <button data-hs-tab="#tabsRemoved" type="button" class="hs-tab-active:bg-card hs-tab-active:text-primary py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600" aria-selected="false" aria-controls="tabsRemoved" role="tab">
+                        <button (click)="setActiveTab('removed')" type="button" [class.bg-card]="activeTab === 'removed'" [class.text-primary]="activeTab === 'removed'" class="py-0.5 px-4 rounded font-semibold inline-flex items-center gap-x-2 border-b-2 border-transparent text-xs whitespace-nowrap text-default-500 hover:text-blue-600" [attr.aria-selected]="activeTab === 'removed'" role="tab">
                             Usunięto z listy
                         </button>
                     </nav>
 
                     <!-- Tabs content -->
                     <ngx-simplebar class="h-80">
-                        <!-- All -->
-                        <div id="tabsAll" role="tabpanel" aria-labelledby="tabsAll-item">
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-center hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-green-100 flex justify-center items-center">
-                                        <div class="size-5 text-green-600"><ng-icon name="lucideUserPlus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between w-full text-sm">
+                        <!-- Dynamic notifications -->
+                        <div *ngIf="notifications$ | async as notifications; else loading">
+                            <div *ngIf="getFilteredNotifications(notifications).length > 0; else empty">
+                                <!-- Loop through filtered notifications -->
+                                <a *ngFor="let notification of getFilteredNotifications(notifications)"
+                                   [routerLink]="[]"
+                                   (click)="markAsRead(notification.id)"
+                                   class="flex gap-3 p-4 items-start hover:bg-default-150"
+                                   [class.bg-blue-50]="notification.status === 'unread'">
+                                    <!-- Icon based on notification type -->
                                     <div>
-                                        <h6 class="mb-2 font-medium text-default-800">Kontakt <b>john.doe@example.com</b> dodany do listy <b>Newsletter 2024</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span class="align-middle size-3.5"><ng-icon name="lucideClock"></ng-icon></span>
-                                            <span>Dziś 15:30</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center  gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>4 min
+                                        <div class="size-10 rounded-md flex justify-center items-center"
+                                             [class.bg-green-100]="notification.type === NotificationType.CONTACT_ADDED"
+                                             [class.bg-red-100]="notification.type === NotificationType.CONTACT_REMOVED">
+                                            <div class="size-5"
+                                                 [class.text-green-600]="notification.type === NotificationType.CONTACT_ADDED"
+                                                 [class.text-red-600]="notification.type === NotificationType.CONTACT_REMOVED">
+                                                <ng-icon [name]="notification.type === NotificationType.CONTACT_ADDED ? 'lucideUserPlus' : 'lucideUserMinus'"></ng-icon>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
 
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-start hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-red-100 flex justify-center items-center">
-                                        <div class="size-5 text-red-600"><ng-icon name="lucideUserMinus"></ng-icon></div>
-                                    </div>
-                                </div>
+                                    <!-- Notification content -->
+                                    <div class="flex justify-between w-full">
+                                        <div class="text-sm">
+                                            <h6 class="mb-2 font-medium text-default-800" [innerHTML]="notification.title"></h6>
+                                            <p class="flex items-center gap-1 text-default-500 text-xs">
+                                                <span class="align-middle size-3.5"><ng-icon name="lucideClock"></ng-icon></span>
+                                                <span>{{ formatDate(notification.createdAt) }}</span>
+                                            </p>
+                                        </div>
 
-                                <div class="flex justify-between w-full">
-                                    <div class="text-sm">
-                                        <h6 class="mb-2 font-medium text-default-800">Kontakt <b>anna.kowalska@test.pl</b> usunięty z listy <b>Marketing Q4</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span>
-                                            <span>Dziś 14:20</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center gap-2 text-xs text-default-500">
-                                            <div>
-                                                <div class="size-1.5 bg-primary rounded-full"></div>
-                                            </div>1 godz
+                                        <div>
+                                            <div class="flex items-center gap-2 text-xs text-default-500">
+                                                <div *ngIf="notification.status === 'unread'" class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                                                {{ getRelativeTime(notification.createdAt) }}
+                                            </div>
                                         </div>
                                     </div>
+                                </a>
+                            </div>
+
+                            <!-- Empty state -->
+                            <ng-template #empty>
+                                <div class="p-8 text-center">
+                                    <div class="size-16 mx-auto mb-4 bg-default-100 rounded-full flex items-center justify-center">
+                                        <div class="size-8 text-default-400"><ng-icon name="tablerBellOff"></ng-icon></div>
+                                    </div>
+                                    <h6 class="text-sm font-medium text-default-800 mb-1">Brak powiadomień</h6>
+                                    <p class="text-xs text-default-500">Nie ma żadnych powiadomień do wyświetlenia</p>
                                 </div>
-                            </a>
-
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-start hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-green-100 flex justify-center items-center">
-                                        <div class="size-5 text-green-600"><ng-icon name="lucideUserPlus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between gap-2 w-full">
-                                    <div>
-                                        <h6 class="mb-1 font-medium text-default-800 text-sm">Kontakt <b>marketing@firma.pl</b> dodany do listy <b>Klienci VIP</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span>
-                                            <span>Wczoraj 16:45</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center  gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>1 dzień
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-center hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-red-100 flex justify-center items-center">
-                                        <div class="size-5 text-red-600"><ng-icon name="lucideUserMinus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between w-full">
-                                    <div>
-                                        <h6 class="mb-1 font-medium text-default-800  text-sm">Kontakt <b>spam@example.com</b> usunięty z listy <b>Newsletter 2024</b></h6>
-                                        <p class="flex gap-1 items-center text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span><span>3 dni temu</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>3 dni
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            </ng-template>
                         </div>
 
-                        <!-- Added to list -->
-                        <div id="tabsAdded" class="hidden" role="tabpanel" aria-labelledby="tabsAdded-item">
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-start hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-green-100 flex justify-center items-center">
-                                        <div class="size-5 text-green-600"><ng-icon name="lucideUserPlus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between w-full">
-                                    <div class="text-sm">
-                                        <h6 class="mb-2 font-medium text-default-800">Kontakt <b>john.doe@example.com</b> dodany do listy <b>Newsletter 2024</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span>
-                                            <span>Dziś 15:30</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center gap-2 text-xs text-default-500">
-                                            <div>
-                                                <div class="size-1.5 bg-primary rounded-full"></div>
-                                            </div>4 min
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-center hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-green-100 flex justify-center items-center">
-                                        <div class="size-5 text-green-600"><ng-icon name="lucideUserPlus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between w-full">
-                                    <div>
-                                        <h6 class="mb-1 font-medium text-default-800  text-sm">Kontakt <b>marketing@firma.pl</b> dodany do listy <b>Klienci VIP</b></h6>
-                                        <p class="flex gap-1 items-center text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span><span>Wczoraj 16:45</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>1 dzień
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Removed from list -->
-                        <div id="tabsRemoved" class="hidden" role="tabpanel" aria-labelledby="tabsRemoved-item">
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-center hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-red-100 flex justify-center items-center">
-                                        <div class="size-5 text-red-600"><ng-icon name="lucideUserMinus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between w-full text-sm">
-                                    <div>
-                                        <h6 class="mb-2 font-medium text-default-800">Kontakt <b>anna.kowalska@test.pl</b> usunięty z listy <b>Marketing Q4</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span>
-                                            <span>Dziś 14:20</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center  gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>1 godz
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a [routerLink]="[]" class="flex gap-3 p-4 items-start hover:bg-default-150">
-                                <div>
-                                    <div class="size-10 rounded-md bg-red-100 flex justify-center items-center">
-                                        <div class="size-5 text-red-600"><ng-icon name="lucideUserMinus"></ng-icon></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-between gap-2 w-full">
-                                    <div>
-                                        <h6 class="mb-1 font-medium text-default-800 text-sm">Kontakt <b>spam@example.com</b> usunięty z listy <b>Newsletter 2024</b></h6>
-                                        <p class="flex items-center gap-1 text-default-500 text-xs">
-                                            <span  class="align-middle size-3.5"><ng-icon name="lucideClock" ></ng-icon></span>
-                                            <span>3 dni temu</span>
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <div class="flex items-center  gap-2 text-xs text-default-500">
-                                            <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>3 dni
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                        <!-- Loading state -->
+                        <ng-template #loading>
+                            <div class="p-8 text-center">
+                                <div class="size-8 mx-auto mb-2 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                <p class="text-xs text-default-500">Ładowanie powiadomień...</p>
+                            </div>
+                        </ng-template>
                     </ngx-simplebar>
 
                     <!-- Footer -->
                     <div class="flex items-center justify-between p-4 border-t border-default-200">
-                        <a [routerLink]="[]" class="text-sm font-medium text-default-900">Manage Notification</a>
-                        <button type="button" class="btn btn-sm text-white bg-primary">
-                            View All
-                            <div class="size-4"><ng-icon name="lucideMoveRight" ></ng-icon></div>
+                        <button (click)="markAllAsRead()" type="button" class="text-sm font-medium text-primary hover:text-primary-600">
+                            Oznacz jako przeczytane
                         </button>
+                        <a [routerLink]="['/notifications']" class="btn btn-sm text-white bg-primary">
+                            Zobacz wszystkie
+                            <div class="size-4"><ng-icon name="lucideMoveRight" ></ng-icon></div>
+                        </a>
                     </div>
                 </div>
             </div>
