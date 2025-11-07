@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, delay, map } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import {
   Automation,
   AutomationAction,
@@ -10,131 +11,137 @@ import {
   TriggerType,
   ActionType
 } from '../models/automation.model';
+import { environment } from '../../environments/environment';
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AutomationService {
-  private automationsSubject = new BehaviorSubject<Automation[]>(this.getMockAutomations());
-  private runsSubject = new BehaviorSubject<AutomationRun[]>(this.getMockRuns());
-
-  automations$ = this.automationsSubject.asObservable();
-  runs$ = this.runsSubject.asObservable();
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/automation-rules`;
 
   constructor() {}
 
+  /**
+   * Get all automations
+   */
   getAutomations(): Observable<Automation[]> {
-    return this.automations$.pipe();
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}`)
+      .pipe(map(response => response.data.map(item => this.mapBackendToFrontend(item))));
   }
 
+  /**
+   * Get automation by ID
+   */
   getAutomationById(id: string): Observable<Automation | null> {
-    return this.automations$.pipe(
-      map(automations => automations.find(a => a.id === id) || null),
-      delay(300)
-    );
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/${id}`)
+      .pipe(map(response => this.mapBackendToFrontend(response.data)));
   }
 
+  /**
+   * Create a new automation
+   */
   createAutomation(automation: Partial<Automation>): Observable<Automation> {
-    const newAutomation: Automation = {
-      id: this.generateId(),
-      name: automation.name || 'Nowa automatyzacja',
-      description: automation.description || '',
-      status: 'draft',
-      type: automation.type || 'custom',
-      trigger: automation.trigger || {
-        type: 'contact_subscribed',
-        conditions: [],
-        settings: {}
-      },
-      actions: automation.actions || [],
-      conditions: automation.conditions || [],
-      settings: {
-        timezone: 'Europe/Warsaw',
-        respectUnsubscribes: true,
-        respectBounces: true,
-        ...automation.settings
-      },
-      statistics: {
-        totalRuns: 0,
-        activeContacts: 0,
-        completedContacts: 0,
-        emailsSent: 0,
-        emailsOpened: 0,
-        emailsClicked: 0,
-        conversions: 0,
-        performance: {
-          openRate: 0,
-          clickRate: 0,
-          conversionRate: 0
-        }
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    const currentAutomations = this.automationsSubject.value;
-    this.automationsSubject.next([...currentAutomations, newAutomation]);
-
-    return of(newAutomation).pipe(delay(500));
+    const backendPayload = this.mapFrontendToBackend(automation);
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}`, backendPayload)
+      .pipe(map(response => this.mapBackendToFrontend(response.data)));
   }
 
+  /**
+   * Update an existing automation
+   */
   updateAutomation(id: string, updates: Partial<Automation>): Observable<Automation> {
-    const currentAutomations = this.automationsSubject.value;
-    const index = currentAutomations.findIndex(a => a.id === id);
-
-    if (index === -1) {
-      throw new Error('Automation not found');
-    }
-
-    const updatedAutomation = {
-      ...currentAutomations[index],
-      ...updates,
-      updatedAt: new Date()
-    };
-
-    const updatedAutomations = [...currentAutomations];
-    updatedAutomations[index] = updatedAutomation;
-
-    this.automationsSubject.next(updatedAutomations);
-
-    return of(updatedAutomation).pipe(delay(500));
+    const backendPayload = this.mapFrontendToBackend(updates);
+    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/${id}`, backendPayload)
+      .pipe(map(response => this.mapBackendToFrontend(response.data)));
   }
 
+  /**
+   * Delete an automation
+   */
   deleteAutomation(id: string): Observable<boolean> {
-    const currentAutomations = this.automationsSubject.value;
-    const filteredAutomations = currentAutomations.filter(a => a.id !== id);
-
-    this.automationsSubject.next(filteredAutomations);
-
-    return of(true).pipe(delay(500));
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`)
+      .pipe(map(response => response.success));
   }
 
+  /**
+   * Toggle automation status (active <-> inactive)
+   */
   toggleAutomationStatus(id: string): Observable<Automation> {
-    const currentAutomations = this.automationsSubject.value;
-    const automation = currentAutomations.find(a => a.id === id);
-
-    if (!automation) {
-      throw new Error('Automation not found');
-    }
-
-    const newStatus: AutomationStatus = automation.status === 'active' ? 'paused' : 'active';
-
-    return this.updateAutomation(id, { status: newStatus });
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${id}/toggle-status`, {})
+      .pipe(map(response => this.mapBackendToFrontend(response.data)));
   }
 
+  /**
+   * Duplicate an automation
+   */
   duplicateAutomation(id: string): Observable<Automation> {
-    const currentAutomations = this.automationsSubject.value;
-    const original = currentAutomations.find(a => a.id === id);
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${id}/duplicate`, {})
+      .pipe(map(response => this.mapBackendToFrontend(response.data)));
+  }
 
-    if (!original) {
-      throw new Error('Automation not found');
-    }
+  /**
+   * Get automation runs (not implemented in backend yet)
+   */
+  getAutomationRuns(automationId: string): Observable<AutomationRun[]> {
+    // TODO: Implement when backend endpoint is ready
+    return new Observable(observer => {
+      observer.next([]);
+      observer.complete();
+    });
+  }
 
-    const duplicate = {
-      ...original,
-      id: this.generateId(),
-      name: `${original.name} (kopia)`,
-      status: 'draft' as AutomationStatus,
+  /**
+   * Get automation statistics
+   */
+  getAutomationStats(): Observable<{total: number, active: number, draft: number, paused: number, inactive?: number}> {
+    return this.http.get<ApiResponse<{total: number, active: number, draft: number, paused: number, inactive: number}>>(`${this.apiUrl}/statistics`)
+      .pipe(map(response => response.data));
+  }
+
+  /**
+   * Map backend response to frontend Automation model
+   */
+  private mapBackendToFrontend(backendData: any): Automation {
+    return {
+      id: backendData.id?.toString() || '',
+      name: backendData.name || '',
+      description: backendData.description,
+      status: backendData.isActive ? 'active' : 'inactive',
+      type: 'custom' as AutomationType,
+      trigger: {
+        type: this.mapTriggerType(backendData.triggerType),
+        conditions: backendData.conditions || [],
+        settings: {
+          once_per_contact: true,
+          run_once: false
+        }
+      },
+      actions: (backendData.actions || []).map((action: any, index: number) => ({
+        id: `action-${index}`,
+        type: this.mapActionType(action.type),
+        settings: {
+          emailTemplate: action.target || action.value,
+          tagIds: action.type === 'ADD_TAG' ? [action.value] : undefined
+        },
+        order: index,
+        delay: action.delayMinutes ? {
+          amount: action.delayMinutes,
+          unit: 'minutes' as const
+        } : undefined
+      })),
+      conditions: backendData.conditions || [],
+      settings: {
+        timezone: 'UTC',
+        respectUnsubscribes: true,
+        respectBounces: true
+      },
       statistics: {
         totalRuns: 0,
         activeContacts: 0,
@@ -149,277 +156,102 @@ export class AutomationService {
           conversionRate: 0
         }
       },
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: backendData.createdAt ? new Date(backendData.createdAt) : new Date(),
+      updatedAt: backendData.updatedAt ? new Date(backendData.updatedAt) : new Date(),
+      flowData: backendData.flowJson ? JSON.parse(backendData.flowJson) : undefined
     };
-
-    this.automationsSubject.next([...currentAutomations, duplicate]);
-
-    return of(duplicate).pipe(delay(500));
   }
 
-  getAutomationRuns(automationId: string): Observable<AutomationRun[]> {
-    return this.runs$.pipe(
-      map(runs => runs.filter(run => run.automationId === automationId)),
-      delay(300)
-    );
-  }
-
-  getAutomationStats(): Observable<{total: number, active: number, draft: number, paused: number}> {
-    return this.automations$.pipe(
-      map(automations => ({
-        total: automations.length,
-        active: automations.filter(a => a.status === 'active').length,
-        draft: automations.filter(a => a.status === 'draft').length,
-        paused: automations.filter(a => a.status === 'paused').length
+  /**
+   * Map frontend Automation model to backend payload
+   */
+  private mapFrontendToBackend(frontendData: Partial<Automation>): any {
+    return {
+      name: frontendData.name,
+      description: frontendData.description,
+      triggerType: this.mapTriggerTypeToBackend(frontendData.trigger?.type),
+      isActive: frontendData.status === 'active',
+      conditions: (frontendData.conditions || []).map(condition => ({
+        type: 'CONTACT',
+        field: condition.field,
+        operator: condition.operator?.toUpperCase(),
+        value: condition.value
       })),
-      delay(200)
-    );
+      actions: (frontendData.actions || []).map(action => ({
+        type: this.mapActionTypeToBackend(action.type),
+        target: action.settings?.emailTemplate || action.settings?.tagIds?.[0] || '',
+        parameters: JSON.stringify(action.settings || {})
+      })),
+      flowJson: frontendData.flowData ? JSON.stringify(frontendData.flowData) : null
+    };
   }
 
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+  /**
+   * Map backend trigger type to frontend
+   */
+  private mapTriggerType(backendType: string): TriggerType {
+    const mapping: Record<string, TriggerType> = {
+      'TAG_ADDED': 'contact_tagged',
+      'EMAIL_OPENED': 'email_opened',
+      'EMAIL_CLICKED': 'email_clicked',
+      'CONTACT_CREATED': 'contact_subscribed',
+      'FIELD_CHANGED': 'custom_field_changed',
+      'DATE_REACHED': 'date_reached'
+    };
+    return mapping[backendType] || 'contact_tagged';
   }
 
-  private getMockAutomations(): Automation[] {
-    return [
-      {
-        id: '1',
-        name: 'Seria powitalna',
-        description: 'Automatyczna seria email powitalna dla nowych subskrybentów',
-        status: 'active',
-        type: 'welcome_series',
-        trigger: {
-          type: 'contact_subscribed',
-          conditions: [],
-          settings: {
-            listIds: ['list-1'],
-            once_per_contact: true
-          }
-        },
-        actions: [
-          {
-            id: 'action-1',
-            type: 'wait',
-            settings: {
-              waitDuration: { amount: 1, unit: 'hours' }
-            },
-            order: 1
-          },
-          {
-            id: 'action-2',
-            type: 'send_email',
-            settings: {
-              emailTemplate: 'Witaj w naszej społeczności!'
-            },
-            order: 2
-          },
-          {
-            id: 'action-3',
-            type: 'wait',
-            settings: {
-              waitDuration: { amount: 3, unit: 'days' }
-            },
-            order: 3
-          },
-          {
-            id: 'action-4',
-            type: 'send_email',
-            settings: {
-              emailTemplate: 'Poznaj nasze najlepsze produkty'
-            },
-            order: 4
-          }
-        ],
-        conditions: [],
-        settings: {
-          timezone: 'Europe/Warsaw',
-          respectUnsubscribes: true,
-          respectBounces: true,
-          sendTime: { hour: 10, minute: 0 },
-          sendDays: [1, 2, 3, 4, 5]
-        },
-        statistics: {
-          totalRuns: 156,
-          activeContacts: 23,
-          completedContacts: 133,
-          emailsSent: 312,
-          emailsOpened: 243,
-          emailsClicked: 89,
-          conversions: 12,
-          performance: {
-            openRate: 77.9,
-            clickRate: 28.5,
-            conversionRate: 7.7
-          }
-        },
-        createdAt: new Date('2024-10-15'),
-        updatedAt: new Date('2024-10-30'),
-        lastRunAt: new Date('2024-10-31')
-      },
-      {
-        id: '2',
-        name: 'Reaktywacja nieaktywnych',
-        description: 'Kampania dla kontaktów, które nie otwierały email przez ostatnie 30 dni',
-        status: 'active',
-        type: 'behavioral',
-        trigger: {
-          type: 'date_reached',
-          conditions: [
-            {
-              field: 'last_email_opened',
-              operator: 'less',
-              value: '30 days ago'
-            }
-          ],
-          settings: {
-            run_once: false
-          }
-        },
-        actions: [
-          {
-            id: 'action-1',
-            type: 'send_email',
-            settings: {
-              emailTemplate: 'Tęsknimy za Tobą!'
-            },
-            order: 1
-          },
-          {
-            id: 'action-2',
-            type: 'wait',
-            settings: {
-              waitDuration: { amount: 1, unit: 'weeks' }
-            },
-            order: 2
-          },
-          {
-            id: 'action-3',
-            type: 'send_email',
-            settings: {
-              emailTemplate: 'Ostatnia szansa - specjalna oferta'
-            },
-            order: 3
-          }
-        ],
-        conditions: [],
-        settings: {
-          timezone: 'Europe/Warsaw',
-          respectUnsubscribes: true,
-          respectBounces: true,
-          maxRunsPerContact: 1
-        },
-        statistics: {
-          totalRuns: 89,
-          activeContacts: 12,
-          completedContacts: 77,
-          emailsSent: 178,
-          emailsOpened: 67,
-          emailsClicked: 23,
-          conversions: 5,
-          performance: {
-            openRate: 37.6,
-            clickRate: 12.9,
-            conversionRate: 5.6
-          }
-        },
-        createdAt: new Date('2024-10-20'),
-        updatedAt: new Date('2024-10-28')
-      },
-      {
-        id: '3',
-        name: 'Urodzinowa kampania',
-        description: 'Wysyłanie życzeń urodzinowych z kodem rabatowym',
-        status: 'draft',
-        type: 'date_based',
-        trigger: {
-          type: 'date_reached',
-          conditions: [
-            {
-              field: 'birthday',
-              operator: 'equals',
-              value: 'today'
-            }
-          ],
-          settings: {}
-        },
-        actions: [
-          {
-            id: 'action-1',
-            type: 'send_email',
-            settings: {
-              emailTemplate: 'Wszystkiego najlepszego! Mamy dla Ciebie prezent'
-            },
-            order: 1
-          },
-          {
-            id: 'action-2',
-            type: 'add_tag',
-            settings: {
-              tagIds: ['birthday-2024']
-            },
-            order: 2
-          }
-        ],
-        conditions: [],
-        settings: {
-          timezone: 'Europe/Warsaw',
-          respectUnsubscribes: true,
-          respectBounces: true,
-          sendTime: { hour: 9, minute: 0 }
-        },
-        statistics: {
-          totalRuns: 0,
-          activeContacts: 0,
-          completedContacts: 0,
-          emailsSent: 0,
-          emailsOpened: 0,
-          emailsClicked: 0,
-          conversions: 0,
-          performance: {
-            openRate: 0,
-            clickRate: 0,
-            conversionRate: 0
-          }
-        },
-        createdAt: new Date('2024-10-25'),
-        updatedAt: new Date('2024-10-25')
-      }
-    ];
+  /**
+   * Map frontend trigger type to backend
+   */
+  private mapTriggerTypeToBackend(frontendType?: TriggerType): string {
+    const mapping: Record<TriggerType, string> = {
+      'contact_tagged': 'TAG_ADDED',
+      'email_opened': 'EMAIL_OPENED',
+      'email_clicked': 'EMAIL_CLICKED',
+      'contact_subscribed': 'CONTACT_CREATED',
+      'custom_field_changed': 'FIELD_CHANGED',
+      'date_reached': 'DATE_REACHED',
+      'form_submitted': 'FORM_SUBMITTED',
+      'website_visited': 'WEBSITE_VISITED',
+      'purchase_made': 'PURCHASE_MADE',
+      'automation_completed': 'AUTOMATION_COMPLETED'
+    };
+    return mapping[frontendType || 'contact_tagged'] || 'TAG_ADDED';
   }
 
-  private getMockRuns(): AutomationRun[] {
-    return [
-      {
-        id: 'run-1',
-        automationId: '1',
-        contactId: 'contact-1',
-        status: 'running',
-        currentActionIndex: 2,
-        startedAt: new Date('2024-10-31T08:00:00'),
-        nextActionAt: new Date('2024-11-03T10:00:00'),
-        data: {}
-      },
-      {
-        id: 'run-2',
-        automationId: '1',
-        contactId: 'contact-2',
-        status: 'completed',
-        currentActionIndex: 4,
-        startedAt: new Date('2024-10-28T09:00:00'),
-        completedAt: new Date('2024-10-31T10:00:00'),
-        data: {}
-      },
-      {
-        id: 'run-3',
-        automationId: '2',
-        contactId: 'contact-3',
-        status: 'running',
-        currentActionIndex: 1,
-        startedAt: new Date('2024-10-30T14:00:00'),
-        nextActionAt: new Date('2024-11-06T14:00:00'),
-        data: {}
-      }
-    ];
+  /**
+   * Map backend action type to frontend
+   */
+  private mapActionType(backendType: string): ActionType {
+    const mapping: Record<string, ActionType> = {
+      'SEND_EMAIL': 'send_email',
+      'ADD_TAG': 'add_tag',
+      'REMOVE_TAG': 'remove_tag',
+      'UPDATE_FIELD': 'update_custom_field',
+      'UPDATE_LEAD_SCORE': 'update_contact'
+    };
+    return mapping[backendType] || 'send_email';
+  }
+
+  /**
+   * Map frontend action type to backend
+   */
+  private mapActionTypeToBackend(frontendType: ActionType): string {
+    const mapping: Record<ActionType, string> = {
+      'send_email': 'SEND_EMAIL',
+      'add_tag': 'ADD_TAG',
+      'remove_tag': 'REMOVE_TAG',
+      'update_custom_field': 'UPDATE_FIELD',
+      'update_contact': 'UPDATE_LEAD_SCORE',
+      'add_to_list': 'ADD_TO_LIST',
+      'remove_from_list': 'REMOVE_FROM_LIST',
+      'wait': 'WAIT',
+      'send_sms': 'SEND_SMS',
+      'webhook': 'WEBHOOK',
+      'create_deal': 'CREATE_DEAL',
+      'end_automation': 'END_AUTOMATION'
+    };
+    return mapping[frontendType] || 'SEND_EMAIL';
   }
 }

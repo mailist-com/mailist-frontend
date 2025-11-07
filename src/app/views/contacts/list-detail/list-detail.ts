@@ -42,17 +42,17 @@ export class ListDetailComponent implements OnInit {
 
     this.contacts$ = combineLatest([
       listId$,
-      this.contactService.getContacts(),
+      this.contactService.getContacts(undefined, 0, 1000), // Get large page to show all contacts in list
       this.filterSubject.asObservable()
     ]).pipe(
-      map(([listId, contacts, filter]) => {
+      map(([listId, pagedData, filter]) => {
         // Filter contacts that belong to this list
-        let filtered = contacts.filter(contact => contact.lists.includes(listId));
+        let filtered = pagedData.content.filter((contact: Contact) => contact.lists.includes(listId));
 
         // Apply search filter
         if (filter.search) {
           const searchLower = filter.search.toLowerCase();
-          filtered = filtered.filter(contact =>
+          filtered = filtered.filter((contact: Contact) =>
             contact.email.toLowerCase().includes(searchLower) ||
             contact.firstName.toLowerCase().includes(searchLower) ||
             contact.lastName.toLowerCase().includes(searchLower) ||
@@ -62,7 +62,7 @@ export class ListDetailComponent implements OnInit {
 
         // Apply status filter
         if (filter.status?.length) {
-          filtered = filtered.filter(contact => filter.status!.includes(contact.status));
+          filtered = filtered.filter((contact: Contact) => filter.status!.includes(contact.status));
         }
 
         return filtered;

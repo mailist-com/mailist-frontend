@@ -30,6 +30,19 @@ export interface PaginatedResponse<T> {
 }
 
 /**
+ * Paged data structure (matches backend PagedResponse)
+ */
+export interface PagedData<T> {
+  content: T[];
+  page: {
+    size: number;
+    number: number;
+    totalPages: number;
+    totalElements: number;
+  };
+}
+
+/**
  * API request options
  */
 export interface ApiRequestOptions {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -65,7 +65,8 @@ export class AutomationList implements OnInit, OnDestroy {
 
   constructor(
     private automationService: AutomationService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -87,10 +88,12 @@ export class AutomationList implements OnInit, OnDestroy {
           this.automations = automations;
           this.applyFilters();
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error loading automations:', error);
           this.isLoading = false;
+          alert('Wystąpił błąd podczas ładowania automatyzacji');
         }
       });
   }
@@ -101,6 +104,7 @@ export class AutomationList implements OnInit, OnDestroy {
       .subscribe({
         next: (stats) => {
           this.stats = stats;
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error loading stats:', error);

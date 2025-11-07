@@ -140,7 +140,7 @@
       </div>
 
       <!-- Custom Fields -->
-      <div *ngIf="list.customFields.length > 0" class="border-t border-default-200 pt-6 mt-6">
+      <div *ngIf="list.customFields && list.customFields.length > 0" class="border-t border-default-200 pt-6 mt-6">
         <h4 class="text-sm font-medium text-default-700 mb-3">Custom Fields</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div *ngFor="let field of list.customFields" class="p-3 bg-default-50 rounded-lg">
@@ -172,35 +172,35 @@
     </div>
 
     <!-- Filters -->
-    <div class="card-header">
-      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
-        <!-- Search -->
-        <div class="relative">
-          <input type="text"
-                 [(ngModel)]="searchTerm"
-                 (input)="onSearch()"
-                 class="form-input form-input-sm ps-9"
-                 placeholder="Search contacts...">
-          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
-            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
-              <ng-icon name="lucideSearch"></ng-icon>
+    <div class="p-4 border-b border-default-200">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3 flex-wrap">
+          <!-- Search -->
+          <div class="relative">
+            <input type="text"
+                   [(ngModel)]="searchTerm"
+                   (input)="onSearch()"
+                   class="form-input form-input-sm ps-9"
+                   placeholder="Search contacts...">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+              <div class="size-3.5 flex items-center text-default-500 fill-default-100">
+                <ng-icon name="lucideSearch"></ng-icon>
+              </div>
             </div>
           </div>
+
+          <!-- Status Filter -->
+          <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="unconfirmed">Unconfirmed</option>
+            <option value="unsubscribed">Unsubscribed</option>
+            <option value="bounced">Bounced</option>
+            <option value="blocked">Blocked</option>
+          </select>
         </div>
 
-        <!-- Status Filter -->
-        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="unconfirmed">Unconfirmed</option>
-          <option value="unsubscribed">Unsubscribed</option>
-          <option value="bounced">Bounced</option>
-          <option value="blocked">Blocked</option>
-        </select>
-      </div>
-
-      <div class="flex gap-2 items-center flex-wrap">
-        <button type="button" (click)="clearFilters()" class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-1500 hover:text-white">
+        <button type="button" (click)="clearFilters()" class="btn btn-sm size-7.5 bg-default-100 text-default-500 hover:bg-default-200">
           <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
         </button>
       </div>

@@ -1,16 +1,20 @@
 export interface ApiKey {
   id: string;
   name: string;
+  description?: string;
   key: string;
+  prefix?: string;
   status: ApiKeyStatus;
   permissions: ApiKeyPermission[];
   lastUsedAt?: Date;
-  requestCount: number;
+  lastUsedIpAddress?: string;
+  totalCalls: number;
   createdAt: Date;
+  updatedAt?: Date;
   expiresAt?: Date;
 }
 
-export type ApiKeyStatus = 'active' | 'inactive' | 'expired';
+export type ApiKeyStatus = 'ACTIVE' | 'REVOKED' | 'EXPIRED';
 
 export type ApiKeyPermission =
   | 'contacts.read'
@@ -20,15 +24,16 @@ export type ApiKeyPermission =
   | 'lists.write'
   | 'campaigns.read'
   | 'campaigns.write'
+  | 'campaigns.send'
   | 'automation.read'
-  | 'automation.write';
+  | 'automation.write'
+  | '*';
 
 export interface ApiKeyStatistics {
   totalKeys: number;
   activeKeys: number;
-  inactiveKeys: number;
-  totalRequests: number;
-  recentActivity: ApiKeyActivity[];
+  totalCalls: number;
+  topEndpoints: Record<string, number>;
 }
 
 export interface ApiKeyActivity {
@@ -38,12 +43,27 @@ export interface ApiKeyActivity {
   endpoint: string;
   method: string;
   statusCode: number;
-  timestamp: Date;
+  responseTime?: number;
   ipAddress: string;
+  userAgent?: string;
+  errorMessage?: string;
+  timestamp: Date;
 }
 
 export interface CreateApiKeyDTO {
   name: string;
+  description?: string;
   permissions: ApiKeyPermission[];
   expiresAt?: Date;
+}
+
+export interface CreateApiKeyResponse {
+  apiKey: ApiKey;
+  plainKey: string;
+  message: string;
+}
+
+export interface PermissionInfo {
+  permission: ApiKeyPermission;
+  description: string;
 }

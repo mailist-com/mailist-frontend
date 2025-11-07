@@ -71,10 +71,20 @@ export class ContactListsComponent implements OnInit {
 
   deleteList(list: ContactList) {
     if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
+      this.error = null;
+      this.success = null;
+
       this.contactListService.deleteList(list.id).subscribe({
         next: () => {
+          this.success = `List "${list.name}" has been deleted successfully.`;
           this.loadLists();
           this.loadStatistics();
+          setTimeout(() => this.success = null, 5000);
+        },
+        error: (error) => {
+          console.error('Error deleting list:', error);
+          this.error = error.message || 'Failed to delete list. Please try again.';
+          setTimeout(() => this.error = null, 8000);
         }
       });
     }

@@ -7,6 +7,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Basic Information -->
       <div class="lg:col-span-2">
+        <div class="space-y-6">
         <div class="card">
           <div class="card-header">
             <h6 class="card-title">Basic Information</h6>
@@ -108,7 +109,7 @@
         </div>
 
         <!-- Location Information -->
-        <div class="card mt-6">
+        <div class="card">
           <div class="card-header">
             <h6 class="card-title">Location Information</h6>
           </div>
@@ -154,7 +155,7 @@
         </div>
 
         <!-- Custom Fields -->
-        <div class="card mt-6">
+        <div class="card">
           <div class="card-header">
             <h6 class="card-title">Custom Fields</h6>
             <button type="button" (click)="addCustomField()" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
@@ -204,10 +205,12 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
 
       <!-- Sidebar -->
       <div class="lg:col-span-1">
+        <div class="space-y-6">
         <!-- Lists -->
         <div class="card">
           <div class="card-header">
@@ -239,7 +242,7 @@
         </div>
 
         <!-- Tags -->
-        <div class="card mt-6">
+        <div class="card">
           <div class="card-header">
             <h6 class="card-title">Tags</h6>
             <span class="text-xs text-default-500">{{ tags.length }} selected</span>
@@ -272,7 +275,7 @@
         </div>
 
         <!-- Save Actions -->
-        <div class="card mt-6">
+        <div class="card">
           <div class="card-header">
             <h6 class="card-title">Actions</h6>
           </div>
@@ -294,6 +297,7 @@
               Cancel
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>
