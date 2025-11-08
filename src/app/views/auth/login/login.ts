@@ -32,7 +32,7 @@ export class Login {
     });
 
     // Get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
 
     // Check if user was redirected after email verification
     if (this.route.snapshot.queryParams['verified'] === 'true') {
