@@ -62,7 +62,6 @@ export class CampaignList implements OnInit, OnDestroy {
 
   campaigns: Campaign[] = [];
   filteredCampaigns: Campaign[] = [];
-  isLoading = false;
 
   searchTerm = '';
   selectedStatus = '';
@@ -100,18 +99,15 @@ export class CampaignList implements OnInit, OnDestroy {
   }
 
   loadCampaigns(): void {
-    this.isLoading = true;
     this.campaignService.getCampaigns()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (campaigns) => {
           this.campaigns = campaigns;
           this.applyFilters();
-          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading campaigns:', error);
-          this.isLoading = false;
         }
       });
   }

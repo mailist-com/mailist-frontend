@@ -135,13 +135,8 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-
     <!-- Empty State -->
-    <div *ngIf="!isLoading && filteredTemplates.length === 0 && templates.length === 0" class="p-12 text-center">
+    <div *ngIf="filteredTemplates.length === 0 && templates.length === 0" class="p-12 text-center">
       <div class="size-16 mx-auto mb-4 text-default-400">
         <ng-icon name="lucideLayoutTemplate"></ng-icon>
       </div>
@@ -161,7 +156,7 @@
     </div>
 
     <!-- No Results from Filters -->
-    <div *ngIf="!isLoading && filteredTemplates.length === 0 && templates.length > 0" class="p-12 text-center">
+    <div *ngIf="filteredTemplates.length === 0 && templates.length > 0" class="p-12 text-center">
       <div class="size-16 mx-auto mb-4 text-default-400">
         <ng-icon name="lucideSearch"></ng-icon>
       </div>
@@ -172,7 +167,7 @@
     </div>
 
     <!-- Templates Table -->
-    <div *ngIf="!isLoading && filteredTemplates.length > 0" class="overflow-x-auto">
+    <div *ngIf="filteredTemplates.length > 0" class="overflow-x-auto">
       <table class="w-full">
         <thead class="bg-default-150">
           <tr class="border-b border-default-200">

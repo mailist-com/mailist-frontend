@@ -6,11 +6,12 @@ import * as tablerIconsFill from '@ng-icons/tabler-icons/fill';
 import {  provideIcons } from '@ng-icons/core';
 import { TitleService } from './core/services/title.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalLoaderComponent } from './components/global-loader/global-loader';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, GlobalLoaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
    providers: [provideIcons({...LucideIcons,...tablerIcons, ...tablerIconsFill})],

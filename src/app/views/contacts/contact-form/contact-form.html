@@ -16,12 +16,9 @@
                 {{ 'COMMON.CANCEL' | translate }}
               </button>
               <button type="submit"
-                      [disabled]="isLoading || contactForm.invalid"
+                      [disabled]="contactForm.invalid"
                       class="btn btn-sm bg-primary text-white">
-                <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
-                  <ng-icon name="lucideLoader"></ng-icon>
-                </div>
-                <div *ngIf="!isLoading" class="size-4 me-1">
+                <div class="size-4 me-1">
                   <ng-icon name="lucideSave"></ng-icon>
                 </div>
                 {{ (isEditing ? 'CONTACTS.UPDATE_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate }}
@@ -281,12 +278,9 @@
           </div>
           <div class="card-body space-y-3">
             <button type="submit"
-                    [disabled]="isLoading || contactForm.invalid"
+                    [disabled]="contactForm.invalid"
                     class="btn bg-primary text-white w-full">
-              <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
-                <ng-icon name="lucideLoader"></ng-icon>
-              </div>
-              <div *ngIf="!isLoading" class="size-4 me-1">
+              <div class="size-4 me-1">
                 <ng-icon name="lucideSave"></ng-icon>
               </div>
               {{ (isEditing ? 'CONTACTS.UPDATE_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate }}

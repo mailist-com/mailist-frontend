@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class ResetPassword {
   resetForm: FormGroup;
-  isLoading = false;
   error = '';
   success = '';
 
@@ -30,14 +29,12 @@ export class ResetPassword {
 
   onSubmit() {
     if (this.resetForm.valid) {
-      this.isLoading = true;
       this.error = '';
       this.success = '';
 
       this.authService.resetPassword(this.resetForm.get('email')?.value).subscribe({
         next: (message) => {
           this.success = typeof message === 'string' ? message : 'Password reset instructions sent to your email';
-          this.isLoading = false;
 
           // Redirect to login after 3 seconds
           setTimeout(() => {
@@ -47,7 +44,6 @@ export class ResetPassword {
         error: (error) => {
           console.error('Reset password error:', error);
           this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Password reset failed. Please try again.');
-          this.isLoading = false;
         }
       });
     } else {
