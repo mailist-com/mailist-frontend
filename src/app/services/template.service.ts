@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, map, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, throwError } from 'rxjs';
 import {
   Template,
   TemplateStats,
@@ -23,7 +23,7 @@ export class TemplateService {
    * Get all templates
    */
   getTemplates(): Observable<Template[]> {
-    return of(this.templatesSubject.value).pipe(delay(500));
+    return of(this.templatesSubject.value);
   }
 
   /**
@@ -31,8 +31,7 @@ export class TemplateService {
    */
   getTemplateById(id: string): Observable<Template | null> {
     return this.templates$.pipe(
-      map((templates) => templates.find((t) => t.id === id) || null),
-      delay(300)
+      map((templates) => templates.find((t) => t.id === id) || null)
     );
   }
 
@@ -55,7 +54,7 @@ export class TemplateService {
     const currentTemplates = this.templatesSubject.value;
     this.templatesSubject.next([newTemplate, ...currentTemplates]);
 
-    return of(newTemplate).pipe(delay(800));
+    return of(newTemplate);
   }
 
   /**
@@ -82,7 +81,7 @@ export class TemplateService {
     updatedTemplates[templateIndex] = updatedTemplate;
     this.templatesSubject.next(updatedTemplates);
 
-    return of(updatedTemplate).pipe(delay(800));
+    return of(updatedTemplate);
   }
 
   /**
@@ -97,7 +96,7 @@ export class TemplateService {
     }
 
     this.templatesSubject.next(filteredTemplates);
-    return of(true).pipe(delay(500));
+    return of(true);
   }
 
   /**
@@ -126,7 +125,7 @@ export class TemplateService {
     const currentTemplates = this.templatesSubject.value;
     this.templatesSubject.next([duplicatedTemplate, ...currentTemplates]);
 
-    return of(duplicatedTemplate).pipe(delay(800));
+    return of(duplicatedTemplate);
   }
 
   /**
@@ -136,8 +135,7 @@ export class TemplateService {
     category: TemplateCategory
   ): Observable<Template[]> {
     return this.templates$.pipe(
-      map((templates) => templates.filter((t) => t.category === category)),
-      delay(300)
+      map((templates) => templates.filter((t) => t.category === category))
     );
   }
 
@@ -169,8 +167,7 @@ export class TemplateService {
         });
 
         return stats;
-      }),
-      delay(300)
+      })
     );
   }
 

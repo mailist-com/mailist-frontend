@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, delay, map } from 'rxjs';
+import { BehaviorSubject, Observable, of, map } from 'rxjs';
 import { Campaign, CampaignStatus, CampaignType } from '../models/campaign.model';
 
 @Injectable({
@@ -12,13 +12,12 @@ export class CampaignService {
   constructor() {}
 
   getCampaigns(): Observable<Campaign[]> {
-    return this.campaigns$.pipe(delay(300));
+    return this.campaigns$;
   }
 
   getCampaignById(id: string): Observable<Campaign | null> {
     return this.campaigns$.pipe(
-      map(campaigns => campaigns.find(c => c.id === id) || null),
-      delay(300)
+      map(campaigns => campaigns.find(c => c.id === id) || null)
     );
   }
 
@@ -68,7 +67,7 @@ export class CampaignService {
     const currentCampaigns = this.campaignsSubject.value;
     this.campaignsSubject.next([...currentCampaigns, newCampaign]);
 
-    return of(newCampaign).pipe(delay(500));
+    return of(newCampaign);
   }
 
   updateCampaign(id: string, updates: Partial<Campaign>): Observable<Campaign> {
@@ -90,7 +89,7 @@ export class CampaignService {
 
     this.campaignsSubject.next(updatedCampaigns);
 
-    return of(updatedCampaign).pipe(delay(500));
+    return of(updatedCampaign);
   }
 
   deleteCampaign(id: string): Observable<boolean> {
@@ -99,7 +98,7 @@ export class CampaignService {
 
     this.campaignsSubject.next(filteredCampaigns);
 
-    return of(true).pipe(delay(500));
+    return of(true);
   }
 
   duplicateCampaign(id: string): Observable<Campaign> {
@@ -143,7 +142,7 @@ export class CampaignService {
 
     this.campaignsSubject.next([...currentCampaigns, duplicate]);
 
-    return of(duplicate).pipe(delay(500));
+    return of(duplicate);
   }
 
   sendCampaign(id: string): Observable<Campaign> {
@@ -175,8 +174,7 @@ export class CampaignService {
         draft: campaigns.filter(c => c.status === 'draft').length,
         scheduled: campaigns.filter(c => c.status === 'scheduled').length,
         sent: campaigns.filter(c => c.status === 'sent').length
-      })),
-      delay(200)
+      }))
     );
   }
 

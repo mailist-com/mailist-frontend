@@ -1,52 +1,60 @@
-<main class="p-6">
+<main>
   <app-page-title [title]="'AUTOMATIONS.TITLE' | translate" [subtitle]="'AUTOMATIONS.SUBTITLE' | translate" />
 
   <!-- Statistics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.TOTAL' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
-        </div>
-        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-primary"><ng-icon name="lucideActivity"></ng-icon></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.ACTIVE' | translate }}</p>
-          <p class="text-2xl font-semibold text-success">{{ stats.active }}</p>
-        </div>
-        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-success"><ng-icon name="lucidePlay"></ng-icon></div>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.TOTAL' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
+          </div>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary"><ng-icon name="lucideActivity"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.PAUSED' | translate }}</p>
-          <p class="text-2xl font-semibold text-warning">{{ stats.paused }}</p>
-        </div>
-        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-warning"><ng-icon name="lucidePause"></ng-icon></div>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.ACTIVE' | translate }}</p>
+            <p class="text-2xl font-semibold text-success">{{ stats.active }}</p>
+          </div>
+          <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success"><ng-icon name="lucidePlay"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.DRAFT' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.PAUSED' | translate }}</p>
+            <p class="text-2xl font-semibold text-warning">{{ stats.paused }}</p>
+          </div>
+          <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-warning"><ng-icon name="lucidePause"></ng-icon></div>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-default-600"><ng-icon name="lucideFileText"></ng-icon></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'AUTOMATIONS.DRAFT' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+          </div>
+          <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-default-600"><ng-icon name="lucideFileText"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
