@@ -251,7 +251,7 @@
 
             <!-- Category -->
             <td class="px-6 py-4">
-              <span class="text-sm text-default-900">{{ getCategoryLabel(template.category) }}</span>
+              <span class="text-sm text-default-900">{{ getCategoryLabel(template.category) | translate }}</span>
             </td>
 
             <!-- Status -->
@@ -263,7 +263,7 @@
                   'bg-info/10 text-info': template.status === 'draft',
                   'bg-default-100 text-default-600': template.status === 'archived'
                 }">
-                {{ getStatusLabel(template.status) }}
+                {{ getStatusLabel(template.status) | translate }}
               </span>
             </td>
 
