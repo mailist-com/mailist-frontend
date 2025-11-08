@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   lucideLayoutTemplate,
   lucideArrowLeft,
@@ -27,7 +28,7 @@ import {
 @Component({
   selector: 'app-template-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslatePipe],
   providers: [
     provideIcons({
       lucideLayoutTemplate,

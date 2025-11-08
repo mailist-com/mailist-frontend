@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   lucideArrowLeft,
   lucidePencil,
@@ -25,7 +26,7 @@ import { Campaign, CampaignStatus } from '../../../models/campaign.model';
 @Component({
   selector: 'app-campaign-details',
   standalone: true,
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, TranslatePipe],
   providers: [provideIcons({
     lucideArrowLeft,
     lucidePencil,

@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { Observable } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -11,7 +12,7 @@ import { ContactList, ListImportMapping, ListImportResult } from '../../../model
 
 @Component({
   selector: 'app-contact-import',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-import.html'
 })
 export class ContactImport implements OnInit {

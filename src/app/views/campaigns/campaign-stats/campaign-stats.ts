@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   lucideArrowLeft,
   lucideSend,
@@ -29,7 +30,7 @@ interface LinkClick {
 @Component({
   selector: 'app-campaign-stats',
   standalone: true,
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, TranslatePipe],
   providers: [provideIcons({
     lucideArrowLeft,
     lucideSend,

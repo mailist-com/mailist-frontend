@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Observable, BehaviorSubject, combineLatest, map, switchMap } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactService } from '../../../services/contact.service';
@@ -15,7 +16,7 @@ import { PagedData } from '../../../core/api/api.service';
 @Component({
   selector: 'app-contact-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-list.html'
 })
 export class ContactListComponent implements OnInit {

@@ -6,10 +6,11 @@ import { ThemeToggler } from "./components/theme-toggler/theme-toggler";
 import { NotificationDropdown } from "./components/notification-dropdown/notification-dropdown";
 import { CustomizerToggler } from './components/customizer-toggler/customizer-toggler';
 import { LayoutService } from '../../../core/services/layout-store.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-topbar',
-  imports: [NgIcon, UserProfile, LanguageDropdown, ThemeToggler, CustomizerToggler, NotificationDropdown],
+  imports: [NgIcon, UserProfile, LanguageDropdown, ThemeToggler, CustomizerToggler, NotificationDropdown, TranslatePipe],
   templateUrl: './topbar.html',
   styles: ``
 })

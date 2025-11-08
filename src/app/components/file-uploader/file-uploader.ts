@@ -3,6 +3,7 @@ import { DROPZONE_CONFIG, DropzoneConfigInterface, DropzoneModule, } from 'ngx-d
 import { NgIcon } from "@ng-icons/core";
 import { formatFileSize } from '../../utils/file-utils';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 type UploadedFile = {
   name: string;
@@ -20,7 +21,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
 
 @Component({
   selector: 'app-file-uploader',
-  imports: [DropzoneModule, NgIcon, RouterLink],
+  imports: [DropzoneModule, NgIcon, RouterLink, TranslatePipe],
   templateUrl: './file-uploader.html',
   providers: [
     {
