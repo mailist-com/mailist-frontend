@@ -9,27 +9,6 @@ export const VIEWS_ROUTES: Routes = [
     path: '',
     loadChildren: () => import('./dashboards/dashboards.routes').then((mod) => mod.DASHBOARDS_ROUTES)
   },
-
-  {
-    path: '',
-    loadChildren: () => import('./apps/apps.routes').then((mod) => mod.APPS_ROUTES)
-  },
-  {
-    path: '',
-    loadChildren: () => import('./ecommerce/ecommerce.routes').then((mod) => mod.ECOMMERCE_ROUTES)
-  },
-  {
-    path: '',
-    loadChildren: () => import('./hr-management/management.routes').then((mod) => mod.MANAGEMENT_ROUTES)
-  },
-  {
-    path: '',
-    loadChildren: () => import('./invoice/invoice.routes').then((mod) => mod.INVOICE_ROUTES)
-  },
-  {
-    path: '',
-    loadChildren: () => import('./users/users.routes').then((mod) => mod.USERS_ROUTES)
-  },
   {
     path: '',
     loadChildren: () => import('./contacts/contacts.routes').then((mod) => mod.CONTACTS_ROUTES)
@@ -53,10 +32,6 @@ export const VIEWS_ROUTES: Routes = [
   {
     path: 'integrations',
     loadChildren: () => import('./integrations/integrations.routes').then((mod) => mod.INTEGRATIONS_ROUTES)
-  },
-  {
-    path: '',
-    loadChildren: () => import('./extra/extra.routes').then((mod) => mod.EXTRA_ROUTES)
   },
   {
     path: '',

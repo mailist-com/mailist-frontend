@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { NgIcon } from "@ng-icons/core";
-import { TranslateModule } from '@ngx-translate/core';
+import {CommonModule} from '@angular/common';
+import {Component} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
+import {NgIcon} from "@ng-icons/core";
+import {TranslateModule} from '@ngx-translate/core';
 
 
 type MenuItem = {
@@ -60,7 +60,7 @@ export class SidebarMenu {
       icon: 'lucideNotepadText',
       link: '/templates',
     },
-        {
+    {
       type: 'title',
       label: ''
     },
@@ -308,8 +308,8 @@ export class SidebarMenu {
   ]
 
 
-
-   constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
 
   isItemActive(item: any): boolean {
     const url = this.router.url;
@@ -319,9 +319,6 @@ export class SidebarMenu {
     }
     return false;
   }
-
-
-
 
 
 }

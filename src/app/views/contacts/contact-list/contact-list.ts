@@ -14,6 +14,7 @@ import { PagedData } from '../../../core/api/api.service';
 
 @Component({
   selector: 'app-contact-list',
+  standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle],
   templateUrl: './contact-list.html'
 })
