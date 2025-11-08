@@ -84,16 +84,16 @@
 
     <!-- Filters -->
     <div class="card-header">
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
         <!-- Search -->
-        <div class="relative min-w-64">
+        <div class="relative">
           <input type="text"
                  [(ngModel)]="searchTerm"
                  (input)="applyFilters()"
-                 class="form-input form-input-sm ps-9 w-full"
+                 class="form-input form-input-sm ps-9"
                  [placeholder]="'CAMPAIGNS.SEARCH_CAMPAIGNS' | translate">
           <div class="absolute inset-y-0 start-0 flex items-center ps-3">
-            <div class="size-3.5 flex items-center text-default-500">
+            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
               <ng-icon name="lucideSearch"></ng-icon>
             </div>
           </div>
@@ -117,13 +117,6 @@
           <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
           <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
         </select>
-
-        <button
-          type="button"
-          (click)="clearFilters()"
-          class="btn btn-sm bg-transparent border border-dashed border-default-300 text-default-600 hover:bg-default-50">
-          {{ 'COMMON.CLEAR_FILTERS' | translate }}
-        </button>
       </div>
     </div>
 
