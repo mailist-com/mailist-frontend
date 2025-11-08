@@ -198,7 +198,7 @@
         </thead>
         <tbody class="divide-y divide-default-200">
           <tr
-            *ngFor="let template of filteredTemplates"
+            *ngFor="let template of paginatedTemplates"
             class="hover:bg-default-50/50 transition-colors">
             <!-- Template Info -->
             <td class="px-6 py-4">
@@ -360,6 +360,60 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Footer with Pagination -->
+    <div *ngIf="filteredTemplates.length > 0" class="card-footer">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <p class="text-default-500 text-sm">
+          {{ 'COMMON.SHOWING' | translate }} <b>{{ currentPage * pageSize + 1 }}</b> {{ 'COMMON.TO' | translate }} <b>{{ Math.min((currentPage + 1) * pageSize, totalElements) }}</b> {{ 'COMMON.OF' | translate }} <b>{{ totalElements }}</b> {{ 'TEMPLATES.TEMPLATES_LOWERCASE' | translate }}
+        </p>
+
+        <div class="flex items-center gap-2">
+          <!-- Page Size Selector -->
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
+            <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
+            <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
+            <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
+            <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
+          </select>
+
+          <!-- Pagination Buttons -->
+          <div class="flex gap-1">
+            <button type="button"
+                    (click)="onPageChange(0)"
+                    [disabled]="currentPage === 0"
+                    class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="size-4"><ng-icon name="lucideChevronsLeft"></ng-icon></div>
+            </button>
+
+            <button type="button"
+                    (click)="onPageChange(currentPage - 1)"
+                    [disabled]="currentPage === 0"
+                    class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="size-4"><ng-icon name="lucideChevronLeft"></ng-icon></div>
+            </button>
+
+            <span class="flex items-center px-3 text-sm text-default-600">
+              {{ 'COMMON.PAGE' | translate }} {{ currentPage + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }}
+            </span>
+
+            <button type="button"
+                    (click)="onPageChange(currentPage + 1)"
+                    [disabled]="currentPage >= totalPages - 1"
+                    class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="size-4"><ng-icon name="lucideChevronRight"></ng-icon></div>
+            </button>
+
+            <button type="button"
+                    (click)="onPageChange(totalPages - 1)"
+                    [disabled]="currentPage >= totalPages - 1"
+                    class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              <div class="size-4"><ng-icon name="lucideChevronsRight"></ng-icon></div>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>

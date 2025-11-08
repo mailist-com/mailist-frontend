@@ -16,7 +16,11 @@ import {
   lucideWorkflow,
   lucidePencil,
   lucideCopy,
-  lucideTrash2
+  lucideTrash2,
+  lucideChevronsLeft,
+  lucideChevronLeft,
+  lucideChevronRight,
+  lucideChevronsRight,
 } from '@ng-icons/lucide';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -41,7 +45,11 @@ import { Automation, AutomationStatus, AutomationType } from '../../../models/au
     lucideWorkflow,
     lucidePencil,
     lucideCopy,
-    lucideTrash2
+    lucideTrash2,
+    lucideChevronsLeft,
+    lucideChevronLeft,
+    lucideChevronRight,
+    lucideChevronsRight,
   })],
   templateUrl: './automation-list.html'
 })
@@ -62,6 +70,15 @@ export class AutomationList implements OnInit, OnDestroy {
     paused: 0,
     draft: 0
   };
+
+  // Pagination properties
+  currentPage = 0;
+  pageSize = 20;
+  totalPages = 0;
+  totalElements = 0;
+
+  // Expose Math to template
+  Math = Math;
 
   constructor(
     private automationService: AutomationService,
@@ -123,6 +140,15 @@ export class AutomationList implements OnInit, OnDestroy {
 
       return matchesSearch && matchesStatus && matchesType;
     });
+
+    // Update pagination
+    this.totalElements = this.filteredAutomations.length;
+    this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+
+    // Reset to first page if current page is out of bounds
+    if (this.currentPage >= this.totalPages && this.totalPages > 0) {
+      this.currentPage = 0;
+    }
   }
 
   clearFilters(): void {
@@ -221,5 +247,26 @@ export class AutomationList implements OnInit, OnDestroy {
       month: 'short',
       day: 'numeric'
     }).format(new Date(date));
+  }
+
+  // Pagination methods
+  get paginatedAutomations(): Automation[] {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredAutomations.slice(start, end);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 0;
+    this.applyFilters();
+  }
+
+  get pages(): number[] {
+    return Array.from({length: this.totalPages}, (_, i) => i);
   }
 }
