@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { CommonModule } from '@angular/common';
+import { DashboardService } from '../../../../../services/dashboard.service';
+import { ActivityItem } from '../../../../../models/dashboard.model';
 
 type Activity = {
   icon: string;
@@ -17,47 +19,68 @@ type Activity = {
   templateUrl: './activity-feed.html',
   styles: ``
 })
-export class ActivityFeed {
-  activities: Activity[] = [
-    {
-      icon: "lucideMail",
-      title: "Kampania wysłana",
-      description: "Newsletter Grudzień 2024",
-      time: "5 min temu",
-      iconBg: "bg-blue-50 dark:bg-blue-500/10",
-      iconColor: "text-blue-600 dark:text-blue-400"
-    },
-    {
-      icon: "lucideUserPlus",
-      title: "Nowe kontakty",
-      description: "45 kontaktów dodanych",
-      time: "2 godziny temu",
-      iconBg: "bg-green-50 dark:bg-green-500/10",
-      iconColor: "text-green-600 dark:text-green-400"
-    },
-    {
-      icon: "lucideWorkflow",
-      title: "Automatyzacja uruchomiona",
-      description: "Welcome Series",
-      time: "4 godziny temu",
-      iconBg: "bg-purple-50 dark:bg-purple-500/10",
-      iconColor: "text-purple-600 dark:text-purple-400"
-    },
-    {
-      icon: "lucideNotepadText",
-      title: "Szablon utworzony",
-      description: "Promocja Black Friday",
-      time: "Wczoraj",
-      iconBg: "bg-orange-50 dark:bg-orange-500/10",
-      iconColor: "text-orange-600 dark:text-orange-400"
-    },
-    {
-      icon: "lucideListChecks",
-      title: "Lista zaktualizowana",
-      description: "Aktywni subskrybenci",
-      time: "2 dni temu",
-      iconBg: "bg-pink-50 dark:bg-pink-500/10",
-      iconColor: "text-pink-600 dark:text-pink-400"
+export class ActivityFeed implements OnInit {
+  private dashboardService = inject(DashboardService);
+
+  activities: Activity[] = [];
+  loading = true;
+  error: string | null = null;
+
+  ngOnInit() {
+    this.loadActivities();
+  }
+
+  private loadActivities() {
+    this.dashboardService.getActivityFeed(10).subscribe({
+      next: (data) => {
+        this.activities = data.activities.map((item: ActivityItem) => this.mapActivity(item));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading activity feed:', err);
+        this.error = 'Nie udało się załadować aktywności';
+        this.loading = false;
+        this.activities = [];
+      }
+    });
+  }
+
+  private mapActivity(item: ActivityItem): Activity {
+    const typeMap: { [key: string]: { bg: string; color: string } } = {
+      'campaign_sent': { bg: 'bg-blue-50 dark:bg-blue-500/10', color: 'text-blue-600 dark:text-blue-400' },
+      'contact_added': { bg: 'bg-green-50 dark:bg-green-500/10', color: 'text-green-600 dark:text-green-400' },
+      'automation_triggered': { bg: 'bg-purple-50 dark:bg-purple-500/10', color: 'text-purple-600 dark:text-purple-400' }
+    };
+
+    const mapping = typeMap[item.type] || { bg: 'bg-gray-50 dark:bg-gray-500/10', color: 'text-gray-600 dark:text-gray-400' };
+
+    return {
+      icon: item.icon,
+      title: item.type === 'campaign_sent' ? 'Kampania wysłana' : item.message,
+      description: item.message,
+      time: this.formatTime(item.timestamp),
+      iconBg: mapping.bg,
+      iconColor: mapping.color
+    };
+  }
+
+  private formatTime(timestamp: string): string {
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Przed chwilą';
+      if (diffMins < 60) return `${diffMins} min temu`;
+      if (diffHours < 24) return `${diffHours}h temu`;
+      if (diffDays < 7) return `${diffDays} dni temu`;
+
+      return date.toLocaleDateString('pl-PL');
+    } catch {
+      return timestamp;
     }
-  ];
+  }
 }

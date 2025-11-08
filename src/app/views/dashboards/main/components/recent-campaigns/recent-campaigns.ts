@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from "@ng-icons/core";
+import { DashboardService } from '../../../../../services/dashboard.service';
+import { CampaignStats } from '../../../../../models/dashboard.model';
 
 type Campaign = {
   id: number;
@@ -24,77 +26,55 @@ type Campaign = {
   templateUrl: './recent-campaigns.html',
   styles: ``
 })
-export class RecentCampaigns {
-  campaigns: Campaign[] = [
-    {
-      id: 1,
-      name: "Newsletter Grudzień 2024",
-      subject: "🎄 Świąteczne promocje tylko dla Ciebie!",
-      status: "sent",
-      statusLabel: "Wysłana",
-      statusColor: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400",
-      sent: 12458,
-      opens: 3090,
-      clicks: 448,
-      openRate: "24.8%",
-      clickRate: "3.6%",
-      sentDate: "2024-12-01 10:00"
-    },
-    {
-      id: 2,
-      name: "Black Friday 2024",
-      subject: "🔥 -50% na wszystko - tylko dziś!",
-      status: "sent",
-      statusLabel: "Wysłana",
-      statusColor: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400",
-      sent: 11892,
-      opens: 3568,
-      clicks: 535,
-      openRate: "30.0%",
-      clickRate: "4.5%",
-      sentDate: "2024-11-29 08:00"
-    },
-    {
-      id: 3,
-      name: "Cyber Monday",
-      subject: "⚡ Ostatnia szansa na mega okazje!",
-      status: "sent",
-      statusLabel: "Wysłana",
-      statusColor: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400",
-      sent: 11756,
-      opens: 2821,
-      clicks: 395,
-      openRate: "24.0%",
-      clickRate: "3.4%",
-      sentDate: "2024-12-02 09:00"
-    },
-    {
-      id: 4,
-      name: "Newsletter Listopad",
-      subject: "📰 Co nowego w listopadzie?",
-      status: "sent",
-      statusLabel: "Wysłana",
-      statusColor: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400",
-      sent: 11234,
-      opens: 2471,
-      clicks: 337,
-      openRate: "22.0%",
-      clickRate: "3.0%",
-      sentDate: "2024-11-15 10:00"
-    },
-    {
-      id: 5,
-      name: "Świąteczny Przewodnik",
-      subject: "🎁 Najlepsze pomysły na prezenty",
-      status: "scheduled",
-      statusLabel: "Zaplanowana",
-      statusColor: "bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400",
-      sent: 0,
-      opens: 0,
-      clicks: 0,
-      openRate: "-",
-      clickRate: "-",
-      sentDate: "2024-12-15 10:00"
-    }
-  ];
+export class RecentCampaigns implements OnInit {
+  private dashboardService = inject(DashboardService);
+
+  campaigns: Campaign[] = [];
+  loading = true;
+  error: string | null = null;
+
+  ngOnInit() {
+    this.loadCampaigns();
+  }
+
+  private loadCampaigns() {
+    this.dashboardService.getRecentCampaigns(5).subscribe({
+      next: (data) => {
+        this.campaigns = data.campaigns.map((c: CampaignStats) => this.mapCampaign(c));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading recent campaigns:', err);
+        this.error = 'Nie udało się załadować kampanii';
+        this.loading = false;
+        this.campaigns = [];
+      }
+    });
+  }
+
+  private mapCampaign(campaign: CampaignStats): Campaign {
+    const statusMap = {
+      'sent': { label: 'Wysłana', color: 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' },
+      'scheduled': { label: 'Zaplanowana', color: 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400' },
+      'draft': { label: 'Szkic', color: 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-400' },
+      'failed': { label: 'Nieudana', color: 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400' }
+    };
+
+    const status = statusMap[campaign.status as keyof typeof statusMap] || statusMap['draft'];
+
+    return {
+      id: parseInt(campaign.campaignId),
+      name: campaign.campaignName,
+      subject: campaign.subject,
+      status: campaign.status as 'sent' | 'draft' | 'scheduled',
+      statusLabel: status.label,
+      statusColor: status.color,
+      sent: campaign.sent,
+      opens: campaign.opens,
+      clicks: campaign.clicks,
+      openRate: campaign.sent > 0 ? `${campaign.openRate.toFixed(1)}%` : '-',
+      clickRate: campaign.sent > 0 ? `${campaign.clickRate.toFixed(1)}%` : '-',
+      sentDate: campaign.sentDate
+    };
+  }
 }
