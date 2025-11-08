@@ -11,7 +11,6 @@ import { ContactService } from '../../../services/contact.service';
 import { ContactListService } from '../../../services/contact-list.service';
 import { Contact, ContactFilter } from '../../../models/contact.model';
 import { ContactList } from '../../../models/contact-list.model';
-import { PagedData } from '../../../core/api/api.service';
 
 @Component({
   selector: 'app-contact-list',
@@ -103,14 +102,6 @@ export class ContactListComponent implements OnInit {
     } else {
       this.selectedTags.push(tag);
     }
-    this.updateFilter();
-  }
-
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedStatus = '';
-    this.selectedList = '';
-    this.selectedTags = [];
     this.updateFilter();
   }
 

@@ -65,10 +65,6 @@
     <div class="card-header">
       <h6 class="card-title">{{ 'CONTACTS.CONTACTS_LIST' | translate }}</h6>
       <div class="flex items-center gap-3">
-        <a routerLink="/contacts/lists" class="btn btn-sm bg-default-100 text-default-600">
-          <div class="size-4 me-1"><ng-icon name="lucideList"></ng-icon></div>
-          {{ 'CONTACTS.MANAGE_LISTS' | translate }}
-        </a>
         <a routerLink="/contacts/create" class="btn btn-sm bg-primary text-white">
           <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
           {{ 'CONTACTS.ADD_CONTACT' | translate }}
@@ -108,13 +104,6 @@
           <option value="">{{ 'CONTACTS.ALL_LISTS' | translate }}</option>
           <option *ngFor="let list of lists$ | async" [value]="list.id">{{ list.name }}</option>
         </select>
-      </div>
-
-      <div class="flex gap-2 items-center flex-wrap">
-        <a routerLink="/contacts/import" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
-          <div class="size-4"><ng-icon name="lucideUpload"></ng-icon></div>
-          {{ 'COMMON.IMPORT' | translate }}
-        </a>
       </div>
 
     </div>

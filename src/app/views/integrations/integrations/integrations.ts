@@ -119,11 +119,6 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedStatus = '';
-  }
-
   regenerateKey(key: ApiKey) {
     if (
       confirm(

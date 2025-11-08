@@ -63,13 +63,6 @@ export class ContactListsComponent implements OnInit {
     // Implement filter logic
   }
 
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedType = '';
-    this.selectedStatus = '';
-    this.onFilterChange();
-  }
-
   deleteList(list: ContactList) {
     if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
       this.error = null;
@@ -166,15 +159,5 @@ export class ContactListsComponent implements OnInit {
 
   trackByListId(index: number, list: ContactList): string {
     return list.id;
-  }
-
-  exportAllLists(format: 'csv' | 'xlsx') {
-    console.log('Exporting all lists in format:', format);
-    // TODO: Implement export functionality
-  }
-
-  exportList(list: ContactList, format: 'csv' | 'xlsx') {
-    console.log('Exporting list:', list.name, 'in format:', format);
-    // TODO: Implement export functionality
   }
 }

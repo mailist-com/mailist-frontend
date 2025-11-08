@@ -6,10 +6,11 @@ import { LayoutService } from '../../../../../core/services/layout-store.service
   selector: 'app-theme-toggler',
   imports: [NgIcon],
   templateUrl: './theme-toggler.html',
+  standalone: true,
   styles: ``
 })
 export class ThemeToggler {
-  
+
   constructor(public layout: LayoutService) {
   }
 

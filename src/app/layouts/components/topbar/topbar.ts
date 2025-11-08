@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { UserProfile } from "./components/user-profile/user-profile";
-import { LanguageDropdown } from "./components/language-dropdown/language-dropdown";
 import { ThemeToggler } from "./components/theme-toggler/theme-toggler";
 import { NotificationDropdown } from "./components/notification-dropdown/notification-dropdown";
-import { CustomizerToggler } from './components/customizer-toggler/customizer-toggler';
 import { LayoutService } from '../../../core/services/layout-store.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-topbar',
-  imports: [NgIcon, UserProfile, LanguageDropdown, ThemeToggler, CustomizerToggler, NotificationDropdown, TranslatePipe],
+  standalone: true,
+  imports: [NgIcon, UserProfile, ThemeToggler, NotificationDropdown, TranslatePipe],
   templateUrl: './topbar.html',
   styles: ``
 })

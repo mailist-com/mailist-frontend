@@ -7,6 +7,7 @@ import { SimplebarAngularModule } from "simplebar-angular";
   selector: 'app-notification-dropdown',
   imports: [NgIcon, RouterLink, SimplebarAngularModule],
   templateUrl: './notification-dropdown.html',
+  standalone: true,
   styles: ``
 })
 export class NotificationDropdown {

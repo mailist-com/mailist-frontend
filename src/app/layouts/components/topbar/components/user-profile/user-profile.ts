@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
   selector: 'app-user-profile',
   imports: [NgIcon, RouterLink, CommonModule],
   templateUrl: './user-profile.html',
+  standalone: true,
   styles: ``
 })
 export class UserProfile {
