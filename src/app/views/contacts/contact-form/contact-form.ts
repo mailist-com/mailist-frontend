@@ -115,19 +115,25 @@ export class ContactForm implements OnInit {
     });
 
     // Populate custom fields
-    contact.customFields.forEach(field => {
-      this.addCustomField(field);
-    });
+    if (contact.customFields && contact.customFields.length > 0) {
+      contact.customFields.forEach(field => {
+        this.addCustomField(field);
+      });
+    }
 
     // Populate lists
-    contact.lists.forEach(listId => {
-      this.addList(listId);
-    });
+    if (contact.lists && contact.lists.length > 0) {
+      contact.lists.forEach(listId => {
+        this.addList(listId);
+      });
+    }
 
     // Populate tags
-    contact.tags.forEach(tag => {
-      this.addTag(tag);
-    });
+    if (contact.tags && contact.tags.length > 0) {
+      contact.tags.forEach(tag => {
+        this.addTag(tag);
+      });
+    }
   }
 
   addCustomField(field?: CustomField) {
@@ -199,11 +205,15 @@ export class ContactForm implements OnInit {
       const contactData = {
         ...formValue,
         customFields: formValue.customFields || [],
-        lists: formValue.lists || [],
+        // Convert list IDs from strings to numbers
+        listIds: (formValue.lists || []).map((id: string) => Number(id)).filter((id: number) => !isNaN(id)),
         tags: formValue.tags || []
       };
 
-      const operation = this.isEditing 
+      // Remove the old 'lists' property
+      delete (contactData as any).lists;
+
+      const operation = this.isEditing
         ? this.contactService.updateContact(this.contactId!, contactData)
         : this.contactService.createContact(contactData);
 

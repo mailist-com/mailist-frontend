@@ -3,8 +3,8 @@
     <div class="bg-card/70 rounded-lg w-lg relative">
       <div class="text-center px-10 py-12">
         <div class="text-center">
-          <h4 class="mb-2.5 text-xl font-semibold text-primary">Verify Your Email</h4>
-          <p class="text-base text-default-500">We've sent a verification code to <strong>{{ email }}</strong></p>
+          <h4 class="mb-2.5 text-xl font-semibold text-primary">{{ 'AUTH.VERIFY_EMAIL_TITLE' | translate }}</h4>
+          <p class="text-base text-default-500">{{ 'AUTH.VERIFICATION_SENT_TO' | translate }} <strong>{{ email }}</strong></p>
         </div>
 
         <!-- Success Alert -->
@@ -20,7 +20,7 @@
         <!-- Verification Form -->
         <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-10">
           <div class="mb-4">
-            <label for="code" class="block font-medium text-default-900 text-sm mb-2">Verification Code</label>
+            <label for="code" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.VERIFICATION_CODE' | translate }}</label>
             <input
               type="text"
               id="code"
@@ -39,31 +39,31 @@
               type="submit"
               class="btn bg-purple-500 border-purple-500 hover:bg-purple-600 hover:border-purple-600 text-white w-full"
               [disabled]="isLoading">
-              <span *ngIf="!isLoading">Verify Email</span>
-              <span *ngIf="isLoading">Verifying...</span>
+              <span *ngIf="!isLoading">{{ 'AUTH.VERIFY_EMAIL_BUTTON' | translate }}</span>
+              <span *ngIf="isLoading">{{ 'AUTH.VERIFYING' | translate }}</span>
             </button>
           </div>
 
           <div class="text-center">
             <p class="text-sm text-default-600 mb-4">
-              Didn't receive the code?
+              {{ 'AUTH.NO_CODE_RECEIVED' | translate }}
             </p>
             <button
               type="button"
               (click)="resendCode()"
               class="text-sm text-purple-500 hover:text-purple-600 font-medium"
               [disabled]="isResending">
-              <span *ngIf="!isResending">Resend Code</span>
-              <span *ngIf="isResending">Sending...</span>
+              <span *ngIf="!isResending">{{ 'AUTH.RESEND_CODE' | translate }}</span>
+              <span *ngIf="isResending">{{ 'AUTH.SENDING' | translate }}</span>
             </button>
           </div>
         </form>
 
         <div class="mt-6 text-center">
           <p class="text-sm text-default-600">
-            Already verified?
+            {{ 'AUTH.ALREADY_VERIFIED' | translate }}
             <a [routerLink]="['/auth/login']" class="text-purple-500 hover:text-purple-600 font-medium">
-              Sign In
+              {{ 'AUTH.SIGN_IN_LINK' | translate }}
             </a>
           </p>
         </div>

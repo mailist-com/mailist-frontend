@@ -3,8 +3,8 @@
     <div class="bg-card/70 rounded-lg w-lg relative">
       <div class="text-center px-10 py-12">
         <div class="text-center">
-          <h4 class="mb-2.5 text-xl font-semibold text-primary">Create Account</h4>
-          <p class="text-base text-default-500">Get started with your Email Marketing Platform</p>
+          <h4 class="mb-2.5 text-xl font-semibold text-primary">{{ 'AUTH.CREATE_ACCOUNT_TITLE' | translate }}</h4>
+          <p class="text-base text-default-500">{{ 'AUTH.REGISTER_SUBTITLE' | translate }}</p>
         </div>
 
         <!-- Error Alert -->
@@ -16,26 +16,26 @@
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label for="firstName" class="block font-medium text-default-900 text-sm mb-2">First Name</label>
+              <label for="firstName" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.FIRST_NAME' | translate }}</label>
               <input type="text"
                      id="firstName"
                      formControlName="firstName"
                      class="form-input"
                      [class.border-danger]="getFieldError('firstName')"
-                     placeholder="Enter your first name" />
+                     [placeholder]="'AUTH.FIRST_NAME_PLACEHOLDER' | translate" />
               <div *ngIf="getFieldError('firstName')" class="text-sm text-danger mt-1">
                 {{ getFieldError('firstName') }}
               </div>
             </div>
 
             <div>
-              <label for="lastName" class="block font-medium text-default-900 text-sm mb-2">Last Name</label>
+              <label for="lastName" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.LAST_NAME' | translate }}</label>
               <input type="text"
                      id="lastName"
                      formControlName="lastName"
                      class="form-input"
                      [class.border-danger]="getFieldError('lastName')"
-                     placeholder="Enter your last name" />
+                     [placeholder]="'AUTH.LAST_NAME_PLACEHOLDER' | translate" />
               <div *ngIf="getFieldError('lastName')" class="text-sm text-danger mt-1">
                 {{ getFieldError('lastName') }}
               </div>
@@ -43,27 +43,27 @@
           </div>
 
           <div class="mb-4">
-            <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
+            <label for="email" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.EMAIL_ADDRESS' | translate }}</label>
             <input type="email"
                    id="email"
                    formControlName="email"
                    class="form-input"
                    [class.border-danger]="getFieldError('email')"
-                   placeholder="Enter your email" />
+                   [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" />
             <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
               {{ getFieldError('email') }}
             </div>
           </div>
 
           <div class="mb-4">
-            <label for="password" class="block font-medium text-default-900 text-sm mb-2">Password</label>
+            <label for="password" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.PASSWORD' | translate }}</label>
             <div class="relative">
               <input [type]="showPassword ? 'text' : 'password'"
                      id="password"
                      formControlName="password"
                      class="form-input pr-12"
                      [class.border-danger]="getFieldError('password')"
-                     placeholder="Enter your password" />
+                     [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
               <button type="button"
                       (click)="togglePassword()"
                       class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -77,14 +77,14 @@
           </div>
 
           <div class="mb-4">
-            <label for="confirmPassword" class="block font-medium text-default-900 text-sm mb-2">Confirm Password</label>
+            <label for="confirmPassword" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</label>
             <div class="relative">
               <input [type]="showConfirmPassword ? 'text' : 'password'"
                      id="confirmPassword"
                      formControlName="confirmPassword"
                      class="form-input pr-12"
                      [class.border-danger]="getFieldError('confirmPassword')"
-                     placeholder="Confirm your password" />
+                     [placeholder]="'AUTH.CONFIRM_PASSWORD_PLACEHOLDER' | translate" />
               <button type="button"
                       (click)="toggleConfirmPassword()"
                       class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -104,10 +104,10 @@
                    class="form-checkbox mt-1"
                    [class.border-danger]="getFieldError('acceptTerms')">
             <label class="text-default-900 text-sm" for="acceptTerms">
-              I agree to the
-              <a href="#" class="text-primary font-medium">Terms & Conditions</a>
-              and
-              <a href="#" class="text-primary font-medium">Privacy Policy</a>
+              {{ 'AUTH.AGREE_TO' | translate }}
+              <a href="#" class="text-primary font-medium">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
+              {{ 'COMMON.AND' | translate }}
+              <a href="#" class="text-primary font-medium">{{ 'AUTH.PRIVACY_POLICY' | translate }}</a>
             </label>
           </div>
           <div *ngIf="getFieldError('acceptTerms')" class="text-sm text-danger -mt-4 mb-4">
@@ -121,16 +121,16 @@
               <span *ngIf="isLoading" class="animate-spin mr-2">
                 <iconify-icon icon="lucide:loader-2"></iconify-icon>
               </span>
-              <span *ngIf="!isLoading">Create Account</span>
-              <span *ngIf="isLoading">Creating Account...</span>
+              <span *ngIf="!isLoading">{{ 'AUTH.CREATE_ACCOUNT_BUTTON' | translate }}</span>
+              <span *ngIf="isLoading">{{ 'AUTH.CREATING_ACCOUNT' | translate }}</span>
             </button>
           </div>
         </form>
 
         <div class="mt-10 text-center">
           <p class="text-base text-default-500">
-            Already have an account?
-            <a routerLink="/auth/login" class="font-semibold underline hover:text-primary transition duration-200">Sign in</a>
+            {{ 'AUTH.HAVE_ACCOUNT' | translate }}
+            <a routerLink="/auth/login" class="font-semibold underline hover:text-primary transition duration-200">{{ 'AUTH.SIGN_IN_LINK' | translate }}</a>
           </p>
         </div>
       </div>

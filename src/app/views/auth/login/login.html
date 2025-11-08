@@ -3,8 +3,8 @@
     <div class="bg-card/70 rounded-lg w-lg relative">
       <div class="text-center px-10 py-12">
         <div class="text-center">
-          <h4 class="mb-2.5 text-xl font-semibold text-primary">Welcome Back!</h4>
-          <p class="text-base text-default-500">Sign in to continue to Email Marketing Platform</p>
+          <h4 class="mb-2.5 text-xl font-semibold text-primary">{{ 'AUTH.WELCOME_BACK' | translate }}</h4>
+          <p class="text-base text-default-500">{{ 'AUTH.LOGIN_SUBTITLE' | translate }}</p>
         </div>
 
         <!-- Success Alert -->
@@ -20,13 +20,13 @@
         <!-- Login Form -->
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-left w-full mt-10">
           <div class="mb-4">
-            <label for="email" class="block font-medium text-default-900 text-sm mb-2">Email Address</label>
+            <label for="email" class="block font-medium text-default-900 text-sm mb-2">{{ 'AUTH.EMAIL_ADDRESS' | translate }}</label>
             <input type="email"
                    id="email"
                    formControlName="email"
                    class="form-input"
                    [class.border-danger]="getFieldError('email')"
-                   placeholder="Enter your email" />
+                   [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" />
             <div *ngIf="getFieldError('email')" class="text-sm text-danger mt-1">
               {{ getFieldError('email') }}
             </div>
@@ -34,8 +34,8 @@
 
           <div class="mb-4">
             <div class="flex items-center justify-between mb-2">
-              <label for="password" class="block font-medium text-default-900 text-sm">Password</label>
-              <a routerLink="/auth/reset-password" class="text-primary font-medium text-sm">Forgot Password?</a>
+              <label for="password" class="block font-medium text-default-900 text-sm">{{ 'AUTH.PASSWORD' | translate }}</label>
+              <a routerLink="/auth/reset-password" class="text-primary font-medium text-sm">{{ 'AUTH.FORGOT_PASSWORD' | translate }}</a>
             </div>
             <div class="relative">
               <input [type]="showPassword ? 'text' : 'password'"
@@ -43,7 +43,7 @@
                      formControlName="password"
                      class="form-input pr-12"
                      [class.border-danger]="getFieldError('password')"
-                     placeholder="Enter your password" />
+                     [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
               <button type="button"
                       (click)="togglePassword()"
                       class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -61,7 +61,7 @@
                    type="checkbox"
                    formControlName="rememberMe"
                    class="form-checkbox">
-            <label class="text-default-900 text-sm font-medium" for="rememberMe">Remember Me</label>
+            <label class="text-default-900 text-sm font-medium" for="rememberMe">{{ 'AUTH.REMEMBER_ME' | translate }}</label>
           </div>
 
           <div class="mt-10 text-center">
@@ -71,16 +71,16 @@
               <span *ngIf="isLoading" class="animate-spin mr-2">
                 <iconify-icon icon="lucide:loader-2"></iconify-icon>
               </span>
-              <span *ngIf="!isLoading">Sign In</span>
-              <span *ngIf="isLoading">Signing In...</span>
+              <span *ngIf="!isLoading">{{ 'AUTH.SIGN_IN' | translate }}</span>
+              <span *ngIf="isLoading">{{ 'AUTH.SIGNING_IN' | translate }}</span>
             </button>
           </div>
         </form>
 
         <div class="mt-10 text-center">
           <p class="text-base text-default-500">
-            Don't have an account?
-            <a routerLink="/auth/register" class="font-semibold underline hover:text-primary transition duration-200">Create account</a>
+            {{ 'AUTH.NO_ACCOUNT' | translate }}
+            <a routerLink="/auth/register" class="font-semibold underline hover:text-primary transition duration-200">{{ 'AUTH.CREATE_ACCOUNT' | translate }}</a>
           </p>
         </div>
       </div>

@@ -117,21 +117,25 @@ export class ContactListFormComponent implements OnInit {
 
     // Populate tags
     const tagsArray = this.listForm.get('tags') as FormArray;
-    list.tags.forEach(tag => {
-      tagsArray.push(this.fb.control(tag));
-    });
+    if (list.tags && list.tags.length > 0) {
+      list.tags.forEach(tag => {
+        tagsArray.push(this.fb.control(tag));
+      });
+    }
 
     // Populate custom fields
     const customFieldsArray = this.listForm.get('customFields') as FormArray;
-    list.customFields.forEach(field => {
-      customFieldsArray.push(this.fb.group({
-        name: [field.name, Validators.required],
-        type: [field.type, Validators.required],
-        required: [field.required],
-        defaultValue: [field.defaultValue],
-        options: [field.options?.join(', ') || '']
-      }));
-    });
+    if (list.customFields && list.customFields.length > 0) {
+      list.customFields.forEach(field => {
+        customFieldsArray.push(this.fb.group({
+          name: [field.name, Validators.required],
+          type: [field.type, Validators.required],
+          required: [field.required],
+          defaultValue: [field.defaultValue],
+          options: [field.options?.join(', ') || '']
+        }));
+      });
+    }
   }
 
   get tags() {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, of, tap, catchError } from 'rxjs';
 import { Contact, ContactFilter, ContactSegment, CustomField } from '../models/contact.model';
-import { ApiService, ApiResponse, PaginatedResponse } from '../core/api/api.service';
+import { ApiService, ApiResponse, PaginatedResponse, PagedData } from '../core/api/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,18 +15,21 @@ export class ContactService {
 
   constructor(private api: ApiService) {}
 
-  getContacts(filter?: ContactFilter): Observable<Contact[]> {
-    const params: any = {};
+  getContacts(filter?: ContactFilter, page: number = 0, size: number = 20): Observable<PagedData<Contact>> {
+    const params: any = {
+      page: page.toString(),
+      size: size.toString()
+    };
     if (filter?.search) params.search = filter.search;
     if (filter?.status) params.status = filter.status.join(',');
     if (filter?.subscriptionStatus) params.subscriptionStatus = filter.subscriptionStatus.join(',');
     if (filter?.lists) params.lists = filter.lists.join(',');
     if (filter?.tags) params.tags = filter.tags.join(',');
 
-    return this.api.get<ApiResponse<Contact[]>>('contacts', { params })
+    return this.api.get<ApiResponse<PagedData<Contact>>>('contacts', { params })
       .pipe(
         map(response => response.data),
-        tap(contacts => this.contactsSubject.next(contacts))
+        tap(pagedData => this.contactsSubject.next(pagedData.content))
       );
   }
 

@@ -11,7 +11,7 @@
                     <div class="text-base size-4"><ng-icon name="tablerSearch"></ng-icon></div>
                 </div>
 
-                <input type="search" id="topbar-search" class="form-input px-12 text-sm rounded border-transparent focus:border-transparent w-60" placeholder="Search something...">
+                <input type="search" id="topbar-search" class="form-input px-12 text-sm rounded border-transparent focus:border-transparent w-60" [placeholder]="'COMMON.SEARCH_PLACEHOLDER' | translate">
 
                 <button type="button" class="absolute inset-y-0 end-0 flex items-center pe-4">
                     <span class="ms-auto font-medium">⌘ K</span>

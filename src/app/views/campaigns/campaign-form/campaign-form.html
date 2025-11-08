@@ -290,25 +290,25 @@
             rows="15"
             class="form-input w-full font-mono text-sm"
             placeholder="<html>&#10;  <body>&#10;    <h1>Witaj!</h1>&#10;    <p>Treść twojej wiadomości...</p>&#10;  </body>&#10;</html>"></textarea>
-          <p class="mt-1 text-xs text-default-600">Wklej pełny kod HTML swojej wiadomości email</p>
+          <p class="mt-1 text-xs text-default-600">HTML</p>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-default-700 mb-2">
-            Wersja tekstowa
+            {{ 'CAMPAIGNS.DETAILS.TEXT_VERSION' | translate }}
           </label>
           <textarea
             [(ngModel)]="campaign.content!.text"
             name="textContent"
             rows="8"
             class="form-input w-full"
-            placeholder="Treść wiadomości w formacie tekstowym..."></textarea>
-          <p class="mt-1 text-xs text-default-600">Opcjonalna wersja tekstowa dla klientów email niepodporujących HTML</p>
+            [placeholder]="'CAMPAIGNS.DETAILS.TEXT_VERSION' | translate"></textarea>
+          <p class="mt-1 text-xs text-default-600">{{ 'CAMPAIGNS.DETAILS.TEXT_VERSION' | translate }}</p>
         </div>
 
         <!-- Settings -->
         <div class="border-t border-default-200 pt-4 mt-6">
-          <h4 class="text-sm font-medium text-default-900 mb-3">Ustawienia śledzenia</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.TRACKING.SETTINGS' | translate }}</h4>
           <div class="space-y-2">
             <label class="flex items-center">
               <input
@@ -316,7 +316,7 @@
                 [(ngModel)]="campaign.settings!.trackOpens"
                 name="trackOpens"
                 class="form-checkbox text-primary">
-              <span class="ms-2 text-sm text-default-700">Śledź otwarcia</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.TRACKING.TRACK_OPENS' | translate }}</span>
             </label>
             <label class="flex items-center">
               <input
@@ -324,7 +324,7 @@
                 [(ngModel)]="campaign.settings!.trackClicks"
                 name="trackClicks"
                 class="form-checkbox text-primary">
-              <span class="ms-2 text-sm text-default-700">Śledź kliknięcia</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.TRACKING.TRACK_CLICKS' | translate }}</span>
             </label>
             <label class="flex items-center">
               <input
@@ -332,7 +332,7 @@
                 [(ngModel)]="campaign.settings!.googleAnalytics!.enabled"
                 name="gaEnabled"
                 class="form-checkbox text-primary">
-              <span class="ms-2 text-sm text-default-700">Integracja z Google Analytics</span>
+              <span class="ms-2 text-sm text-default-700">{{ 'CAMPAIGNS.TRACKING.GOOGLE_ANALYTICS' | translate }}</span>
             </label>
           </div>
         </div>
@@ -341,12 +341,12 @@
 
     <!-- Step 4: Schedule -->
     <div *ngIf="currentStep === 4" class="card p-6">
-      <h3 class="text-lg font-semibold text-default-900 mb-6">Planowanie wysyłki</h3>
+      <h3 class="text-lg font-semibold text-default-900 mb-6">{{ 'CAMPAIGNS.SCHEDULE' | translate }}</h3>
 
       <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-default-700 mb-3">
-            Kiedy wysłać kampanię?
+            {{ 'CAMPAIGNS.SCHEDULE' | translate }}
           </label>
           <div class="space-y-3">
             <label class="flex items-start p-4 border border-default-200 rounded-lg hover:border-primary transition-colors cursor-pointer">
@@ -357,8 +357,8 @@
                 value="immediate"
                 class="form-radio text-primary mt-1">
               <div class="ms-3">
-                <div class="text-sm font-medium text-default-900">Wyślij natychmiast</div>
-                <div class="text-xs text-default-600">Kampania zostanie wysłana zaraz po zapisaniu</div>
+                <div class="text-sm font-medium text-default-900">{{ 'CAMPAIGNS.SEND_NOW' | translate }}</div>
+                <div class="text-xs text-default-600">{{ 'CAMPAIGNS.SEND_NOW' | translate }}</div>
               </div>
             </label>
             <label class="flex items-start p-4 border border-default-200 rounded-lg hover:border-primary transition-colors cursor-pointer">
@@ -369,8 +369,8 @@
                 value="scheduled"
                 class="form-radio text-primary mt-1">
               <div class="ms-3">
-                <div class="text-sm font-medium text-default-900">Zaplanuj na później</div>
-                <div class="text-xs text-default-600">Wybierz datę i godzinę wysyłki</div>
+                <div class="text-sm font-medium text-default-900">{{ 'CAMPAIGNS.SCHEDULE_FOR_LATER' | translate }}</div>
+                <div class="text-xs text-default-600">{{ 'CAMPAIGNS.SEND_DATE' | translate }}</div>
               </div>
             </label>
           </div>
@@ -378,10 +378,10 @@
 
         <!-- Scheduled Date/Time -->
         <div *ngIf="scheduleType === 'scheduled'" class="border border-default-200 rounded-lg p-4">
-          <h4 class="text-sm font-medium text-default-900 mb-4">Data i godzina wysyłki</h4>
+          <h4 class="text-sm font-medium text-default-900 mb-4">{{ 'CAMPAIGNS.SEND_DATE' | translate }}</h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-default-700 mb-2">Data</label>
+              <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CAMPAIGNS.SEND_DATE' | translate }}</label>
               <input
                 type="date"
                 [(ngModel)]="scheduledDate"
@@ -389,7 +389,7 @@
                 class="form-input w-full">
             </div>
             <div>
-              <label class="block text-sm font-medium text-default-700 mb-2">Godzina</label>
+              <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CAMPAIGNS.SEND_TIME' | translate }}</label>
               <input
                 type="time"
                 [(ngModel)]="scheduledTime"
@@ -407,8 +407,8 @@
               <ng-icon name="lucideInfo"></ng-icon>
             </div>
             <div class="text-sm text-default-700">
-              <p class="font-medium mb-1">Wskazówka:</p>
-              <p>Najlepszy czas wysyłki to wtorek-czwartek między 9:00 a 11:00 lub 14:00 a 16:00.</p>
+              <p class="font-medium mb-1">{{ 'CAMPAIGNS.SCHEDULE' | translate }}</p>
+              <p>{{ 'CAMPAIGNS.SEND_TIME' | translate }}</p>
             </div>
           </div>
         </div>
@@ -437,7 +437,7 @@
               <span class="text-sm font-medium text-default-900">{{ campaign.fromName }} &lt;{{ campaign.fromEmail }}&gt;</span>
             </div>
             <div class="flex justify-between" *ngIf="campaign.replyTo">
-              <span class="text-sm text-default-600">Odpowiedz do:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.REPLY_TO' | translate }}:</span>
               <span class="text-sm font-medium text-default-900">{{ campaign.replyTo }}</span>
             </div>
           </div>
@@ -448,7 +448,7 @@
           <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.RECIPIENTS' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-default-600">Liczba odbiorców:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.RECIPIENTS' | translate }}:</span>
               <span class="text-lg font-semibold text-primary">{{ campaign.recipients!.totalCount || 0 }}</span>
             </div>
           </div>
@@ -461,13 +461,13 @@
             <div class="flex justify-between">
               <span class="text-sm text-default-600">{{ 'CAMPAIGNS.CONTENT' | translate }} HTML:</span>
               <span class="text-sm font-medium text-success">
-                {{ campaign.content!.html ? 'Dodana' : 'Brak' }}
+                {{ campaign.content!.html ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
               </span>
             </div>
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Wersja tekstowa:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.DETAILS.TEXT_VERSION' | translate }}:</span>
               <span class="text-sm font-medium" [class.text-success]="campaign.content!.text" [class.text-default-500]="!campaign.content!.text">
-                {{ campaign.content!.text ? 'Dodana' : 'Brak' }}
+                {{ campaign.content!.text ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
               </span>
             </div>
           </div>
@@ -478,9 +478,9 @@
           <h4 class="text-sm font-medium text-default-900 mb-3">{{ 'CAMPAIGNS.SCHEDULE' | translate }}</h4>
           <div class="bg-default-50 rounded-lg p-4">
             <div class="flex justify-between">
-              <span class="text-sm text-default-600">Wysyłka:</span>
+              <span class="text-sm text-default-600">{{ 'CAMPAIGNS.SCHEDULE' | translate }}:</span>
               <span class="text-sm font-medium text-default-900">
-                <span *ngIf="scheduleType === 'immediate'">Natychmiast po zapisaniu</span>
+                <span *ngIf="scheduleType === 'immediate'">{{ 'CAMPAIGNS.SEND_NOW' | translate }}</span>
                 <span *ngIf="scheduleType === 'scheduled'">{{ scheduledDate }} {{ scheduledTime }}</span>
               </span>
             </div>
@@ -494,12 +494,12 @@
               <ng-icon name="lucideTriangleAlert"></ng-icon>
             </div>
             <div class="text-sm text-default-700">
-              <p class="font-medium mb-1">Uwaga!</p>
+              <p class="font-medium mb-1">{{ 'COMMON.CONFIRM' | translate }}</p>
               <p *ngIf="scheduleType === 'immediate'">
-                Po zapisaniu kampania zostanie wysłana natychmiast do wszystkich odbiorców. Upewnij się, że wszystkie dane są prawidłowe.
+                {{ 'CAMPAIGNS.SEND_NOW' | translate }}
               </p>
               <p *ngIf="scheduleType === 'scheduled'">
-                Kampania zostanie automatycznie wysłana w zaplanowanym terminie. Możesz edytować lub anulować kampanię przed datą wysyłki.
+                {{ 'CAMPAIGNS.SCHEDULE_FOR_LATER' | translate }}
               </p>
             </div>
           </div>
@@ -543,7 +543,7 @@
           [disabled]="isSaving || !isStepComplete(5)"
           class="btn bg-success text-white hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed">
           <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
-          {{ isSaving ? 'Zapisywanie...' : (scheduleType === 'immediate' ? 'Zapisz i wyślij' : 'Zaplanuj wysyłkę') }}
+          {{ isSaving ? ('CAMPAIGNS.SAVING' | translate) : (scheduleType === 'immediate' ? ('CAMPAIGNS.SAVE_AND_SEND' | translate) : ('CAMPAIGNS.SCHEDULE_SEND' | translate)) }}
         </button>
       </div>
     </div>
