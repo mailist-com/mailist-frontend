@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactService } from '../../../services/contact.service';
@@ -12,7 +13,7 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-form',
-  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-form.html'
 })
 export class ContactForm implements OnInit {

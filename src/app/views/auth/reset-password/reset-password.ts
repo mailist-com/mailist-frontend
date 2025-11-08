@@ -3,10 +3,11 @@ import { RouterLink, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [RouterLink, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule, TranslatePipe],
   templateUrl: './reset-password.html',
   styles: ``,
   schemas:[CUSTOM_ELEMENTS_SCHEMA]

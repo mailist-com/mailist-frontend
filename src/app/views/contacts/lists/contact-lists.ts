@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -12,7 +13,7 @@ import { ContactList } from '../../../models/contact-list.model';
 @Component({
   selector: 'app-contact-lists',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-lists.html'
 })
 export class ContactListsComponent implements OnInit {
@@ -165,5 +166,15 @@ export class ContactListsComponent implements OnInit {
 
   trackByListId(index: number, list: ContactList): string {
     return list.id;
+  }
+
+  exportAllLists(format: 'csv' | 'xlsx') {
+    console.log('Exporting all lists in format:', format);
+    // TODO: Implement export functionality
+  }
+
+  exportList(list: ContactList, format: 'csv' | 'xlsx') {
+    console.log('Exporting list:', list.name, 'in format:', format);
+    // TODO: Implement export functionality
   }
 }

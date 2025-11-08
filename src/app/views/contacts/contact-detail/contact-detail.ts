@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { Observable } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactService } from '../../../services/contact.service';
@@ -12,7 +13,7 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-detail',
-  imports: [CommonModule, RouterLink, NgIcon, PageTitle],
+  imports: [CommonModule, RouterLink, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-detail.html'
 })
 export class ContactDetail implements OnInit {

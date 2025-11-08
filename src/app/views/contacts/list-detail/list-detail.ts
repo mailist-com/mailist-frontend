@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { Observable, combineLatest, map, switchMap, BehaviorSubject } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
@@ -13,7 +14,7 @@ import { Contact, ContactFilter } from '../../../models/contact.model';
 
 @Component({
   selector: 'app-list-detail',
-  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle],
+  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './list-detail.html'
 })
 export class ListDetailComponent implements OnInit {
