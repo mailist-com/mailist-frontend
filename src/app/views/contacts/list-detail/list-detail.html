@@ -1,18 +1,18 @@
 <main *ngIf="list$ | async as list">
-  <app-page-title title="List Details" [subtitle]="list.name" />
+  <app-page-title [title]="'COMMON.VIEW_DETAILS' | translate" [subtitle]="list.name" />
 
   <!-- List Details Section -->
   <div class="card mb-6">
     <div class="card-header">
-      <h6 class="card-title">List Information</h6>
+      <h6 class="card-title">{{ 'COMMON.BASIC_INFO' | translate }}</h6>
       <div class="flex items-center gap-3">
         <a [routerLink]="['/contacts/lists/edit', list.id]" class="btn btn-sm bg-default-100 text-default-600">
           <div class="size-4 me-1"><ng-icon name="lucideFilePen"></ng-icon></div>
-          Edit List
+          {{ 'COMMON.EDIT' | translate }}
         </a>
         <a routerLink="/contacts/lists" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
           <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
-          Back to Lists
+          {{ 'COMMON.BACK' | translate }}
         </a>
       </div>
     </div>
@@ -39,17 +39,17 @@
           </div>
 
           <div *ngIf="list.description" class="mb-4">
-            <label class="text-sm font-medium text-default-700 mb-1 block">Description</label>
+            <label class="text-sm font-medium text-default-700 mb-1 block">{{ 'COMMON.DESCRIPTION' | translate }}</label>
             <p class="text-sm text-default-600">{{ list.description }}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="text-sm font-medium text-default-700 mb-1 block">Created</label>
+              <label class="text-sm font-medium text-default-700 mb-1 block">{{ 'COMMON.CREATED_AT' | translate }}</label>
               <p class="text-sm text-default-600">{{ list.createdAt | date:'MMM d, y' }}</p>
             </div>
             <div>
-              <label class="text-sm font-medium text-default-700 mb-1 block">Updated</label>
+              <label class="text-sm font-medium text-default-700 mb-1 block">{{ 'COMMON.UPDATED_AT' | translate }}</label>
               <p class="text-sm text-default-600">{{ list.updatedAt | date:'MMM d, y' }}</p>
             </div>
           </div>
@@ -57,29 +57,29 @@
 
         <!-- Statistics -->
         <div>
-          <h4 class="text-sm font-medium text-default-700 mb-3">Statistics</h4>
+          <h4 class="text-sm font-medium text-default-700 mb-3">{{ 'CAMPAIGNS.STATISTICS' | translate }}</h4>
           <div class="grid grid-cols-2 gap-3">
             <div class="p-4 bg-primary/5 rounded-lg">
               <div class="text-2xl font-bold text-primary">{{ list.subscriberCount | number }}</div>
-              <div class="text-xs text-default-600 mt-1">Subscribers</div>
+              <div class="text-xs text-default-600 mt-1">{{ 'LISTS.SUBSCRIBERS' | translate }}</div>
             </div>
             <div class="p-4 rounded-lg" [class]="getEngagementRate(list) >= 80 ? 'bg-success/5' : getEngagementRate(list) >= 60 ? 'bg-warning/5' : 'bg-danger/5'">
               <div class="text-2xl font-bold" [class]="getEngagementRate(list) >= 80 ? 'text-success' : getEngagementRate(list) >= 60 ? 'text-warning' : 'text-danger'">
                 {{ getEngagementRate(list) | number:'1.0-0' }}%
               </div>
-              <div class="text-xs text-default-600 mt-1">Engagement</div>
+              <div class="text-xs text-default-600 mt-1">{{ 'LISTS.ENGAGEMENT' | translate }}</div>
             </div>
             <div class="p-4 bg-danger/5 rounded-lg">
               <div class="text-xl font-bold text-danger">{{ list.unsubscribedCount | number }}</div>
-              <div class="text-xs text-default-600 mt-1">Unsubscribed</div>
+              <div class="text-xs text-default-600 mt-1">{{ 'CONTACTS.UNSUBSCRIBED' | translate }}</div>
             </div>
             <div class="p-4 bg-warning/5 rounded-lg">
               <div class="text-xl font-bold text-warning">{{ list.bouncedCount | number }}</div>
-              <div class="text-xs text-default-600 mt-1">Bounced</div>
+              <div class="text-xs text-default-600 mt-1">{{ 'LISTS.BOUNCED' | translate }}</div>
             </div>
             <div class="p-4 bg-info/5 rounded-lg">
               <div class="text-xl font-bold text-info">{{ list.cleanedCount | number }}</div>
-              <div class="text-xs text-default-600 mt-1">Cleaned</div>
+              <div class="text-xs text-default-600 mt-1">{{ 'LISTS.CLEANED' | translate }}</div>
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@
 
       <!-- Settings -->
       <div class="border-t border-default-200 pt-6">
-        <h4 class="text-sm font-medium text-default-700 mb-3">Settings</h4>
+        <h4 class="text-sm font-medium text-default-700 mb-3">{{ 'COMMON.SETTINGS' | translate }}</h4>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="flex items-center gap-2">
             <div class="size-5 text-default-600">
@@ -130,7 +130,7 @@
 
       <!-- Tags -->
       <div *ngIf="list.tags.length > 0" class="border-t border-default-200 pt-6 mt-6">
-        <h4 class="text-sm font-medium text-default-700 mb-3">Tags</h4>
+        <h4 class="text-sm font-medium text-default-700 mb-3">{{ 'CONTACTS.TAGS' | translate }}</h4>
         <div class="flex flex-wrap gap-2">
           <span *ngFor="let tag of list.tags"
                 class="py-1 px-3 text-xs font-medium rounded bg-secondary/10 text-secondary">
@@ -141,7 +141,7 @@
 
       <!-- Custom Fields -->
       <div *ngIf="list.customFields && list.customFields.length > 0" class="border-t border-default-200 pt-6 mt-6">
-        <h4 class="text-sm font-medium text-default-700 mb-3">Custom Fields</h4>
+        <h4 class="text-sm font-medium text-default-700 mb-3">{{ 'CONTACTS.CUSTOM_FIELDS' | translate }}</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div *ngFor="let field of list.customFields" class="p-3 bg-default-50 rounded-lg">
             <div class="flex items-center justify-between">
@@ -162,11 +162,11 @@
   <!-- Contacts Section -->
   <div class="card">
     <div class="card-header">
-      <h6 class="card-title">Contacts in this List</h6>
+      <h6 class="card-title">{{ 'CONTACTS.CONTACTS_LIST' | translate }}</h6>
       <div class="flex items-center gap-3">
         <a routerLink="/contacts/create" class="btn btn-sm bg-primary text-white">
           <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-          Add Contact
+          {{ 'CONTACTS.ADD_CONTACT' | translate }}
         </a>
       </div>
     </div>
@@ -181,7 +181,7 @@
                    [(ngModel)]="searchTerm"
                    (input)="onSearch()"
                    class="form-input form-input-sm ps-9"
-                   placeholder="Search contacts...">
+                   [placeholder]="'CONTACTS.SEARCH_PLACEHOLDER' | translate">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3">
               <div class="size-3.5 flex items-center text-default-500 fill-default-100">
                 <ng-icon name="lucideSearch"></ng-icon>
@@ -191,12 +191,12 @@
 
           <!-- Status Filter -->
           <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="unconfirmed">Unconfirmed</option>
-            <option value="unsubscribed">Unsubscribed</option>
-            <option value="bounced">Bounced</option>
-            <option value="blocked">Blocked</option>
+            <option value="">{{ 'CONTACTS.ALL_STATUS' | translate }}</option>
+            <option value="active">{{ 'CONTACTS.STATUS.ACTIVE' | translate }}</option>
+            <option value="unconfirmed">{{ 'CONTACTS.STATUS.UNCONFIRMED' | translate }}</option>
+            <option value="unsubscribed">{{ 'CONTACTS.STATUS.UNSUBSCRIBED' | translate }}</option>
+            <option value="bounced">{{ 'CONTACTS.STATUS.BOUNCED' | translate }}</option>
+            <option value="blocked">{{ 'CONTACTS.STATUS.BLOCKED' | translate }}</option>
           </select>
         </div>
 
@@ -217,11 +217,11 @@
                   <th class="ps-4 text-start">
                     <input id="checkbox-all" type="checkbox" class="form-checkbox">
                   </th>
-                  <th scope="col" class="px-3.5 py-3 text-start">Contact</th>
-                  <th scope="col" class="px-3.5 py-3 text-start">Status</th>
-                  <th scope="col" class="px-3.5 py-3 text-start">Tags</th>
-                  <th scope="col" class="px-3.5 py-3 text-start">Added</th>
-                  <th scope="col" class="px-3.5 py-3 text-start">Action</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">{{ 'CONTACTS.COLUMN.CONTACT' | translate }}</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">{{ 'CONTACTS.COLUMN.STATUS' | translate }}</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">{{ 'CONTACTS.COLUMN.TAGS' | translate }}</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">{{ 'CONTACTS.COLUMN.ADDED' | translate }}</th>
+                  <th scope="col" class="px-3.5 py-3 text-start">{{ 'CONTACTS.COLUMN.ACTION' | translate }}</th>
                 </tr>
               </thead>
 
@@ -288,17 +288,17 @@
                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
                            [routerLink]="['/contacts/view', contact.id]">
                           <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
-                          View
+                          {{ 'COMMON.VIEW' | translate }}
                         </a>
                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
                            [routerLink]="['/contacts/edit', contact.id]">
                           <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>
-                          Edit
+                          {{ 'COMMON.EDIT' | translate }}
                         </a>
                         <button class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded w-full text-left"
                                 (click)="deleteContact(contact)">
                           <div class="size-3"><ng-icon name="lucideTrash2"></ng-icon></div>
-                          Delete
+                          {{ 'COMMON.DELETE' | translate }}
                         </button>
                       </div>
                     </div>
@@ -313,7 +313,7 @@
       <!-- Footer -->
       <div class="card-footer">
         <p class="text-default-500 text-sm">
-          Showing <b>{{ (contacts$ | async)?.length || 0 }}</b> contacts
+          {{ 'COMMON.SHOWING' | translate }} <b>{{ (contacts$ | async)?.length || 0 }}</b> {{ 'CONTACTS.CONTACTS_LOWERCASE' | translate }}
         </p>
       </div>
     </div>
@@ -324,6 +324,6 @@
 <div *ngIf="!(list$ | async)" class="flex items-center justify-center py-12">
   <div class="text-center">
     <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-    <p class="text-default-600">Loading list details...</p>
+    <p class="text-default-600">{{ 'CONTACTS.LOADING_DETAILS' | translate }}</p>
   </div>
 </div>

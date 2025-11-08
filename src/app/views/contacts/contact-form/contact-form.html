@@ -1,7 +1,7 @@
 <main>
   <app-page-title 
-    [title]="isEditing ? 'Edit Contact' : 'Create Contact'" 
-    [subtitle]="isEditing ? 'Update contact information' : 'Add a new contact to your database'" />
+    [title]="(isEditing ? 'CONTACTS.EDIT_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate"
+    [subtitle]="(isEditing ? 'CONTACTS.UPDATE_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate" />
 
   <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -10,13 +10,13 @@
         <div class="space-y-6">
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Basic Information</h6>
+            <h6 class="card-title">{{ 'CONTACTS.BASIC_INFO' | translate }}</h6>
             <div class="flex items-center gap-3">
               <button type="button" (click)="onCancel()" class="btn btn-sm bg-default-100 text-default-600">
-                Cancel
+                {{ 'COMMON.CANCEL' | translate }}
               </button>
-              <button type="submit" 
-                      [disabled]="isLoading || contactForm.invalid" 
+              <button type="submit"
+                      [disabled]="isLoading || contactForm.invalid"
                       class="btn btn-sm bg-primary text-white">
                 <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
                   <ng-icon name="lucideLoader"></ng-icon>
@@ -24,7 +24,7 @@
                 <div *ngIf="!isLoading" class="size-4 me-1">
                   <ng-icon name="lucideSave"></ng-icon>
                 </div>
-                {{ isEditing ? 'Update' : 'Create' }} Contact
+                {{ (isEditing ? 'CONTACTS.UPDATE_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate }}
               </button>
             </div>
           </div>
@@ -33,7 +33,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-default-700 mb-2">
-                  First Name <span class="text-danger">*</span>
+                  {{ 'CONTACTS.FIRST_NAME' | translate }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" 
                        formControlName="firstName" 
@@ -46,7 +46,7 @@
 
               <div>
                 <label class="block text-sm font-medium text-default-700 mb-2">
-                  Last Name <span class="text-danger">*</span>
+                  {{ 'CONTACTS.LAST_NAME' | translate }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" 
                        formControlName="lastName" 
@@ -60,7 +60,7 @@
 
             <div>
               <label class="block text-sm font-medium text-default-700 mb-2">
-                Email Address <span class="text-danger">*</span>
+                {{ 'CONTACTS.EMAIL_ADDRESS' | translate }} <span class="text-danger">*</span>
               </label>
               <input type="email" 
                      formControlName="email" 
@@ -73,35 +73,35 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Phone</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.PHONE' | translate }}</label>
                 <input type="tel" formControlName="phone" class="form-input">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Organization</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.ORGANIZATION' | translate }}</label>
                 <input type="text" formControlName="organization" class="form-input">
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Status</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.STATUS_LABEL' | translate }}</label>
                 <select formControlName="status" class="form-input">
-                  <option value="active">Active</option>
-                  <option value="unconfirmed">Unconfirmed</option>
-                  <option value="unsubscribed">Unsubscribed</option>
-                  <option value="bounced">Bounced</option>
-                  <option value="blocked">Blocked</option>
+                  <option value="active">{{ 'CONTACTS.STATUS.ACTIVE' | translate }}</option>
+                  <option value="unconfirmed">{{ 'CONTACTS.STATUS.UNCONFIRMED' | translate }}</option>
+                  <option value="unsubscribed">{{ 'CONTACTS.STATUS.UNSUBSCRIBED' | translate }}</option>
+                  <option value="bounced">{{ 'CONTACTS.STATUS.BOUNCED' | translate }}</option>
+                  <option value="blocked">{{ 'CONTACTS.STATUS.BLOCKED' | translate }}</option>
                 </select>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Subscription Status</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.SUBSCRIPTION_STATUS' | translate }}</label>
                 <select formControlName="subscriptionStatus" class="form-input">
-                  <option value="subscribed">Subscribed</option>
-                  <option value="unsubscribed">Unsubscribed</option>
-                  <option value="pending">Pending</option>
-                  <option value="cleaned">Cleaned</option>
+                  <option value="subscribed">{{ 'CONTACTS.SUB_STATUS.SUBSCRIBED' | translate }}</option>
+                  <option value="unsubscribed">{{ 'CONTACTS.SUB_STATUS.UNSUBSCRIBED' | translate }}</option>
+                  <option value="pending">{{ 'CONTACTS.SUB_STATUS.PENDING' | translate }}</option>
+                  <option value="cleaned">{{ 'LISTS.CLEANED' | translate }}</option>
                 </select>
               </div>
             </div>
@@ -111,36 +111,36 @@
         <!-- Location Information -->
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Location Information</h6>
+            <h6 class="card-title">{{ 'CONTACTS.LOCATION_INFO' | translate }}</h6>
           </div>
           <div class="card-body space-y-4" formGroupName="location">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Country</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.COUNTRY' | translate }}</label>
                 <input type="text" formControlName="country" class="form-input">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">State/Province</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.STATE' | translate }}</label>
                 <input type="text" formControlName="state" class="form-input">
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">City</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.CITY' | translate }}</label>
                 <input type="text" formControlName="city" class="form-input">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">ZIP Code</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.ZIP_CODE' | translate }}</label>
                 <input type="text" formControlName="zipCode" class="form-input">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-default-700 mb-2">Timezone</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.TIMEZONE' | translate }}</label>
                 <select formControlName="timezone" class="form-input">
-                  <option value="">Select timezone</option>
+                  <option value="">{{ 'CONTACTS.SELECT_TIMEZONE' | translate }}</option>
                   <option value="America/New_York">Eastern Time</option>
                   <option value="America/Chicago">Central Time</option>
                   <option value="America/Denver">Mountain Time</option>
@@ -157,10 +157,10 @@
         <!-- Custom Fields -->
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Custom Fields</h6>
+            <h6 class="card-title">{{ 'CONTACTS.CUSTOM_FIELDS' | translate }}</h6>
             <button type="button" (click)="addCustomField()" class="btn btn-sm bg-transparent border border-dashed border-primary text-primary hover:bg-primary/10">
               <div class="size-4 me-1"><ng-icon name="lucidePlus"></ng-icon></div>
-              Add Field
+              {{ 'CONTACTS.ADD_FIELD' | translate }}
             </button>
           </div>
           <div class="card-body" formArrayName="customFields">
@@ -168,22 +168,22 @@
                  [formGroupName]="i" 
                  class="flex items-end gap-4 p-4 border border-default-200 rounded-lg mb-4">
               <div class="flex-1">
-                <label class="block text-sm font-medium text-default-700 mb-2">Field Name</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.FIELD_NAME' | translate }}</label>
                 <input type="text" formControlName="name" class="form-input">
               </div>
 
               <div class="flex-1">
-                <label class="block text-sm font-medium text-default-700 mb-2">Value</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.VALUE' | translate }}</label>
                 <input type="text" formControlName="value" class="form-input">
               </div>
 
               <div class="w-32">
-                <label class="block text-sm font-medium text-default-700 mb-2">Type</label>
+                <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.TYPE' | translate }}</label>
                 <select formControlName="type" class="form-input">
-                  <option value="text">Text</option>
-                  <option value="number">Number</option>
-                  <option value="date">Date</option>
-                  <option value="boolean">Boolean</option>
+                  <option value="text">{{ 'CONTACTS.FIELD_TYPES.TEXT' | translate }}</option>
+                  <option value="number">{{ 'CONTACTS.FIELD_TYPES.NUMBER' | translate }}</option>
+                  <option value="date">{{ 'CONTACTS.FIELD_TYPES.DATE' | translate }}</option>
+                  <option value="boolean">{{ 'CONTACTS.FIELD_TYPES.BOOLEAN' | translate }}</option>
                   <option value="textarea">Textarea</option>
                   <option value="dropdown">Dropdown</option>
                 </select>
@@ -200,8 +200,8 @@
               <div class="size-12 mx-auto mb-4 text-default-300">
                 <ng-icon name="lucidePlus"></ng-icon>
               </div>
-              <p>No custom fields added yet</p>
-              <p class="text-sm">Click "Add Field" to create custom fields for this contact</p>
+              <p>{{ 'CONTACTS.NO_CUSTOM_FIELDS' | translate }}</p>
+              <p class="text-sm">{{ 'CONTACTS.ADD_FIELD_HINT' | translate }}</p>
             </div>
           </div>
         </div>
@@ -214,8 +214,8 @@
         <!-- Lists -->
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Contact Lists</h6>
-            <span class="text-xs text-default-500">{{ lists.length }} selected</span>
+            <h6 class="card-title">{{ 'CONTACTS.CONTACT_LISTS' | translate }}</h6>
+            <span class="text-xs text-default-500">{{ lists.length }} {{ 'CONTACTS.SELECTED' | translate }}</span>
           </div>
           <div class="card-body">
             <div class="space-y-3 max-h-64 overflow-y-auto">
@@ -227,7 +227,7 @@
                        class="form-checkbox me-3">
                 <label [for]="'list-' + list.id" class="flex-1 cursor-pointer">
                   <div class="font-medium text-sm">{{ list.name }}</div>
-                  <div class="text-xs text-default-600">{{ list.subscriberCount }} subscribers</div>
+                  <div class="text-xs text-default-600">{{ list.subscriberCount }} {{ 'CONTACTS.SUBSCRIBERS' | translate }}</div>
                 </label>
               </div>
 
@@ -235,7 +235,7 @@
                 <div class="size-8 mx-auto mb-2 text-default-300">
                   <ng-icon name="lucideList"></ng-icon>
                 </div>
-                <p class="text-sm">No lists available</p>
+                <p class="text-sm">{{ 'CONTACTS.NO_LISTS_AVAILABLE' | translate }}</p>
               </div>
             </div>
           </div>
@@ -244,8 +244,8 @@
         <!-- Tags -->
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Tags</h6>
-            <span class="text-xs text-default-500">{{ tags.length }} selected</span>
+            <h6 class="card-title">{{ 'CONTACTS.TAGS' | translate }}</h6>
+            <span class="text-xs text-default-500">{{ tags.length }} {{ 'CONTACTS.SELECTED' | translate }}</span>
           </div>
           <div class="card-body">
             <div class="flex flex-wrap gap-2 mb-4">
@@ -259,7 +259,7 @@
             </div>
 
             <div class="mt-4" *ngIf="tags.length > 0">
-              <h6 class="text-sm font-medium text-default-700 mb-2">Selected Tags:</h6>
+              <h6 class="text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.SELECTED_TAGS' | translate }}</h6>
               <div class="space-y-2" formArrayName="tags">
                 <div *ngFor="let tag of tags.controls; let i = index" class="flex items-center justify-between py-1.5 px-3 bg-secondary/10 rounded">
                   <span class="text-sm font-medium text-secondary">{{ tag.value }}</span>
@@ -277,11 +277,11 @@
         <!-- Save Actions -->
         <div class="card">
           <div class="card-header">
-            <h6 class="card-title">Actions</h6>
+            <h6 class="card-title">{{ 'COMMON.ACTIONS' | translate }}</h6>
           </div>
           <div class="card-body space-y-3">
-            <button type="submit" 
-                    [disabled]="isLoading || contactForm.invalid" 
+            <button type="submit"
+                    [disabled]="isLoading || contactForm.invalid"
                     class="btn bg-primary text-white w-full">
               <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
                 <ng-icon name="lucideLoader"></ng-icon>
@@ -289,12 +289,12 @@
               <div *ngIf="!isLoading" class="size-4 me-1">
                 <ng-icon name="lucideSave"></ng-icon>
               </div>
-              {{ isEditing ? 'Update Contact' : 'Create Contact' }}
+              {{ (isEditing ? 'CONTACTS.UPDATE_CONTACT' : 'CONTACTS.CREATE_CONTACT') | translate }}
             </button>
-            
+
             <button type="button" (click)="onCancel()" class="btn bg-default-100 text-default-600 w-full">
               <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
-              Cancel
+              {{ 'COMMON.CANCEL' | translate }}
             </button>
           </div>
         </div>
