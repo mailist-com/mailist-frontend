@@ -125,6 +125,7 @@
     "EDIT_SUBTITLE": "Wprowadź zmiany w kampanii",
     "CAMPAIGN_LIST": "Lista kampanii",
     "CAMPAIGN_DETAILS": "Szczegóły kampanii",
+    "CAMPAIGNS_LOWERCASE": "kontakty",
     "SEARCH_CAMPAIGNS": "Szukaj kampanii...",
     "NO_CAMPAIGNS": "Brak kampanii",
     "NO_CAMPAIGNS_FOUND": "Nie znaleziono kampanii spełniających kryteria.",
@@ -322,6 +323,7 @@
     "TEMPLATE_LIST": "Lista szablonów",
     "TEMPLATE_NAME": "Nazwa szablonu",
     "TEMPLATE_DESCRIPTION": "Opis szablonu",
+    "TEMPLATES_LOWERCASE": "kontakty",
     "NO_TEMPLATES": "Brak szablonów",
     "NO_TEMPLATES_MESSAGE": "Nie masz jeszcze żadnych szablonów email. Utwórz swój pierwszy szablon, aby przyspieszyć proces tworzenia kampanii.",
     "NO_RESULTS_MESSAGE": "Nie znaleziono szablonów spełniających wybrane kryteria. Spróbuj zmienić filtry lub wyszukiwanie.",
@@ -362,7 +364,9 @@
       "STATUS": "Status",
       "USAGE": "Użycie",
       "UPDATED": "Zaktualizowano",
-      "ACTIONS": "Akcje"
+      "ACTIONS": "Akcje",
+      "LAST_MODIFIED": "Ostatnia modyfikacja",
+      "TEMPLATE": "Nazwa"
     }
   },
   "DASHBOARD": {
@@ -524,6 +528,7 @@
     "NEW_AUTOMATION": "Nowa automatyzacja",
     "EDIT_AUTOMATION": "Edytuj automatyzację",
     "AUTOMATION_LIST": "Lista automatyzacji",
+    "AUTOMATIONS_LOWERCASE": "kontakty",
     "NO_AUTOMATIONS": "Brak automatyzacji",
     "SEARCH_AUTOMATIONS": "Szukaj automatyzacji...",
     "SEARCH_PLACEHOLDER": "Szukaj automatyzacji...",

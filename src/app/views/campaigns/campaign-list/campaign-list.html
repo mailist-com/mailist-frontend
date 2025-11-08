@@ -1,52 +1,60 @@
-<main class="p-6">
+<main>
   <app-page-title [title]="'CAMPAIGNS.TITLE' | translate" [subtitle]="'CAMPAIGNS.SUBTITLE' | translate" />
 
   <!-- Statistics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.TOTAL' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
-        </div>
-        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-primary"><ng-icon name="lucideMail"></ng-icon></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SENT' | translate }}</p>
-          <p class="text-2xl font-semibold text-success">{{ stats.sent }}</p>
-        </div>
-        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-success"><ng-icon name="lucideSend"></ng-icon></div>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.TOTAL' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
+          </div>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary"><ng-icon name="lucideMail"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SCHEDULED' | translate }}</p>
-          <p class="text-2xl font-semibold text-warning">{{ stats.scheduled }}</p>
-        </div>
-        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-warning"><ng-icon name="lucideClock"></ng-icon></div>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SENT' | translate }}</p>
+            <p class="text-2xl font-semibold text-success">{{ stats.sent }}</p>
+          </div>
+          <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success"><ng-icon name="lucideSend"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.DRAFT' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.SCHEDULED' | translate }}</p>
+            <p class="text-2xl font-semibold text-warning">{{ stats.scheduled }}</p>
+          </div>
+          <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-warning"><ng-icon name="lucideClock"></ng-icon></div>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-default-600"><ng-icon name="lucideFileText"></ng-icon></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'CAMPAIGNS.DRAFT' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+          </div>
+          <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-default-600"><ng-icon name="lucideFileText"></ng-icon></div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,16 +84,16 @@
 
     <!-- Filters -->
     <div class="card-header">
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
         <!-- Search -->
-        <div class="relative min-w-64">
+        <div class="relative">
           <input type="text"
                  [(ngModel)]="searchTerm"
                  (input)="applyFilters()"
-                 class="form-input form-input-sm ps-9 w-full"
+                 class="form-input form-input-sm ps-9"
                  [placeholder]="'CAMPAIGNS.SEARCH_CAMPAIGNS' | translate">
           <div class="absolute inset-y-0 start-0 flex items-center ps-3">
-            <div class="size-3.5 flex items-center text-default-500">
+            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
               <ng-icon name="lucideSearch"></ng-icon>
             </div>
           </div>
@@ -109,13 +117,6 @@
           <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
           <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
         </select>
-
-        <button
-          type="button"
-          (click)="clearFilters()"
-          class="btn btn-sm bg-transparent border border-dashed border-default-300 text-default-600 hover:bg-default-50">
-          {{ 'COMMON.CLEAR_FILTERS' | translate }}
-        </button>
       </div>
     </div>
 
@@ -160,7 +161,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-default-200">
-            <tr *ngFor="let campaign of filteredCampaigns" class="hover:bg-default-50/50 transition-colors">
+            <tr *ngFor="let campaign of paginatedCampaigns" class="hover:bg-default-50/50 transition-colors">
               <td class="px-6 py-4">
                 <div>
                   <h6 class="text-sm font-medium text-default-900 mb-1">{{ campaign.name }}</h6>
@@ -277,6 +278,60 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Footer with Pagination -->
+      <div *ngIf="filteredCampaigns.length > 0" class="card-footer">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <p class="text-default-500 text-sm">
+            {{ 'COMMON.SHOWING' | translate }} <b>{{ currentPage * pageSize + 1 }}</b> {{ 'COMMON.TO' | translate }} <b>{{ Math.min((currentPage + 1) * pageSize, totalElements) }}</b> {{ 'COMMON.OF' | translate }} <b>{{ totalElements }}</b> {{ 'CAMPAIGNS.CAMPAIGNS_LOWERCASE' | translate }}
+          </p>
+
+          <div class="flex items-center gap-2">
+            <!-- Page Size Selector -->
+            <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
+              <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
+              <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
+              <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
+              <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
+            </select>
+
+            <!-- Pagination Buttons -->
+            <div class="flex gap-1">
+              <button type="button"
+                      (click)="onPageChange(0)"
+                      [disabled]="currentPage === 0"
+                      class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronsLeft"></ng-icon></div>
+              </button>
+
+              <button type="button"
+                      (click)="onPageChange(currentPage - 1)"
+                      [disabled]="currentPage === 0"
+                      class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronLeft"></ng-icon></div>
+              </button>
+
+              <span class="flex items-center px-3 text-sm text-default-600">
+                {{ 'COMMON.PAGE' | translate }} {{ currentPage + 1 }} {{ 'COMMON.OF' | translate }} {{ totalPages }}
+              </span>
+
+              <button type="button"
+                      (click)="onPageChange(currentPage + 1)"
+                      [disabled]="currentPage >= totalPages - 1"
+                      class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronRight"></ng-icon></div>
+              </button>
+
+              <button type="button"
+                      (click)="onPageChange(totalPages - 1)"
+                      [disabled]="currentPage >= totalPages - 1"
+                      class="btn btn-sm size-7.5 bg-default-100 text-default-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronsRight"></ng-icon></div>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

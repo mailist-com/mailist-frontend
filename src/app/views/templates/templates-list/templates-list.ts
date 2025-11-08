@@ -16,6 +16,10 @@ import {
   lucideCircleCheck,
   lucideFileText,
   lucideTags,
+  lucideChevronsLeft,
+  lucideChevronLeft,
+  lucideChevronRight,
+  lucideChevronsRight,
 } from '@ng-icons/lucide';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -44,6 +48,10 @@ import {
       lucideCircleCheck,
       lucideFileText,
       lucideTags,
+      lucideChevronsLeft,
+      lucideChevronLeft,
+      lucideChevronRight,
+      lucideChevronsRight,
     }),
   ],
   templateUrl: './templates-list.html',
@@ -68,6 +76,15 @@ export class TemplatesList implements OnInit, OnDestroy {
     active: 0,
     archived: 0,
   };
+
+  // Pagination properties
+  currentPage = 0;
+  pageSize = 20;
+  totalPages = 0;
+  totalElements = 0;
+
+  // Expose Math to template
+  Math = Math;
 
   constructor(
     private templateService: TemplateService,
@@ -134,6 +151,15 @@ export class TemplatesList implements OnInit, OnDestroy {
 
       return matchesSearch && matchesStatus && matchesCategory;
     });
+
+    // Update pagination
+    this.totalElements = this.filteredTemplates.length;
+    this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+
+    // Reset to first page if current page is out of bounds
+    if (this.currentPage >= this.totalPages && this.totalPages > 0) {
+      this.currentPage = 0;
+    }
   }
 
   createTemplate(): void {
@@ -260,5 +286,26 @@ export class TemplatesList implements OnInit, OnDestroy {
 
   formatNumber(num: number): string {
     return new Intl.NumberFormat('pl-PL').format(num);
+  }
+
+  // Pagination methods
+  get paginatedTemplates(): Template[] {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredTemplates.slice(start, end);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 0;
+    this.applyFilters();
+  }
+
+  get pages(): number[] {
+    return Array.from({length: this.totalPages}, (_, i) => i);
   }
 }
