@@ -1,64 +1,71 @@
-<main class="p-6">
+<main>
   <app-page-title [title]="'TEMPLATES.PAGE_TITLE' | translate" [subtitle]="'TEMPLATES.PAGE_SUBTITLE' | translate"></app-page-title>
 
-  <div>
   <!-- Statistics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
     <!-- Total Templates -->
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ALL_TEMPLATES' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
-        </div>
-        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-primary">
-            <ng-icon name="lucideLayoutTemplate"></ng-icon>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ALL_TEMPLATES' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.total }}</p>
+          </div>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary">
+              <ng-icon name="lucideLayoutTemplate"></ng-icon>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Active Templates -->
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ACTIVE' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.active }}</p>
-        </div>
-        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-success">
-            <ng-icon name="lucideCircleCheck"></ng-icon>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ACTIVE' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.active }}</p>
+          </div>
+          <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success">
+              <ng-icon name="lucideCircleCheck"></ng-icon>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Draft Templates -->
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.DRAFTS' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
-        </div>
-        <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-info">
-            <ng-icon name="lucideFileText"></ng-icon>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.DRAFTS' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.draft }}</p>
+          </div>
+          <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-info">
+              <ng-icon name="lucideFileText"></ng-icon>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Archived Templates -->
-    <div class="card p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ARCHIVED' | translate }}</p>
-          <p class="text-2xl font-semibold text-default-900">{{ stats.archived }}</p>
-        </div>
-        <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
-          <div class="size-6 text-default-600">
-            <ng-icon name="lucideArchive"></ng-icon>
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">{{ 'TEMPLATES.ARCHIVED' | translate }}</p>
+            <p class="text-2xl font-semibold text-default-900">{{ stats.archived }}</p>
+          </div>
+          <div class="w-12 h-12 bg-default-100 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-default-600">
+              <ng-icon name="lucideArchive"></ng-icon>
+            </div>
           </div>
         </div>
       </div>
@@ -83,17 +90,17 @@
 
     <!-- Filters -->
     <div class="card-header">
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
         <!-- Search Input -->
-        <div class="relative min-w-64">
+        <div class="relative">
           <input
             type="text"
             [(ngModel)]="searchTerm"
             (input)="applyFilters()"
-            class="form-input form-input-sm ps-9 w-full"
+            class="form-input form-input-sm ps-9"
             [placeholder]="'TEMPLATES.SEARCH_PLACEHOLDER' | translate" />
-          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <div class="size-4 text-default-400">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <div class="size-3.5 flex items-center text-default-500 fill-default-100">
               <ng-icon name="lucideSearch"></ng-icon>
             </div>
           </div>
@@ -125,11 +132,6 @@
           <option value="survey">{{ 'TEMPLATES.CATEGORY.SURVEY' | translate }}</option>
           <option value="other">{{ 'TEMPLATES.CATEGORY.OTHER' | translate }}</option>
         </select>
-
-        <!-- Results Count -->
-        <div class="ms-auto text-sm text-default-600">
-          {{ 'TEMPLATES.SHOWING' | translate }}: <span class="font-medium">{{ filteredTemplates.length }}</span> / {{ templates.length }}
-        </div>
       </div>
     </div>
 
@@ -359,6 +361,5 @@
         </tbody>
       </table>
     </div>
-  </div>
   </div>
 </main>
