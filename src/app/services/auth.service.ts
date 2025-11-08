@@ -53,10 +53,8 @@ export interface VerificationResponse {
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  private isLoadingSubject = new BehaviorSubject<boolean>(false);
 
   public currentUser$ = this.currentUserSubject.asObservable();
-  public isLoading$ = this.isLoadingSubject.asObservable();
 
   constructor(
     private router: Router,
@@ -73,8 +71,6 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<User> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<AuthResponse>>('auth/login', credentials)
       .pipe(
         map(response => {
@@ -108,10 +104,7 @@ export class AuthService {
         tap(user => {
           this.setUser(user, credentials.rememberMe);
         }),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
-
           // Handle different error scenarios
           let errorMessage = 'An unexpected error occurred. Please try again.';
 
@@ -140,8 +133,6 @@ export class AuthService {
   }
 
   register(data: RegisterData): Observable<RegistrationResponse> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<RegistrationResponse>>('auth/register', data)
       .pipe(
         map(response => {
@@ -160,10 +151,7 @@ export class AuthService {
             requiresVerification: true
           };
         }),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
-
           // Handle different error scenarios
           let errorMessage = 'An unexpected error occurred. Please try again.';
 
@@ -198,36 +186,26 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<string> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<{ message: string }>>('auth/password-reset', { email })
       .pipe(
         map(response => response.data.message || response.message || 'Password reset instructions sent'),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
           return throwError(() => error.message || 'Password reset failed');
         })
       );
   }
 
   updatePassword(token: string, password: string, confirmPassword: string): Observable<string> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<{ message: string }>>('auth/password-update', { token, password, confirmPassword })
       .pipe(
         map(response => response.data.message || response.message || 'Password updated successfully'),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
           return throwError(() => error.message || 'Password update failed');
         })
       );
   }
 
   verifyTwoFactor(code: string): Observable<User> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<AuthResponse>>('auth/verify-2fa', { code })
       .pipe(
         map(response => {
@@ -246,10 +224,8 @@ export class AuthService {
         }),
         tap(user => {
           this.setUser(user);
-          this.isLoadingSubject.next(false);
         }),
         catchError(error => {
-          this.isLoadingSubject.next(false);
           return throwError(() => error.message || 'Two-factor verification failed');
         })
       );
@@ -362,8 +338,6 @@ export class AuthService {
    * Verify email with code
    */
   verifyEmail(email: string, code: string): Observable<string> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<any>>('auth/verify-email', { email, verificationCode: code })
       .pipe(
         map(response => {
@@ -376,10 +350,7 @@ export class AuthService {
           // User needs to login after verification
           return response.message || 'Email verified successfully. You can now login.';
         }),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
-
           let errorMessage = 'Email verification failed. Please try again.';
 
           if (error.status === 0) {
@@ -405,15 +376,10 @@ export class AuthService {
    * Resend verification code
    */
   resendVerificationCode(email: string): Observable<string> {
-    this.isLoadingSubject.next(true);
-
     return this.api.post<ApiResponse<{ message: string }>>('auth/resend-verification', { email })
       .pipe(
         map(response => response.message || response.data?.message || 'Verification code sent'),
-        tap(() => this.isLoadingSubject.next(false)),
         catchError(error => {
-          this.isLoadingSubject.next(false);
-
           let errorMessage = 'Failed to resend verification code.';
 
           if (error.status === 0) {

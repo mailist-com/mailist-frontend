@@ -49,7 +49,6 @@ export class CampaignDetails implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   campaign: Campaign | null = null;
-  isLoading = true;
   showHtmlPreview = false;
 
   constructor(
@@ -71,17 +70,14 @@ export class CampaignDetails implements OnInit, OnDestroy {
   }
 
   loadCampaign(id: string): void {
-    this.isLoading = true;
     this.campaignService.getCampaignById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (campaign) => {
           this.campaign = campaign;
-          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading campaign:', error);
-          this.isLoading = false;
         }
       });
   }

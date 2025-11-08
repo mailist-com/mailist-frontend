@@ -62,7 +62,6 @@ export class TemplatesList implements OnInit, OnDestroy {
 
   templates: Template[] = [];
   filteredTemplates: Template[] = [];
-  isLoading = false;
 
   // Filter properties
   searchTerm = '';
@@ -102,7 +101,6 @@ export class TemplatesList implements OnInit, OnDestroy {
   }
 
   loadTemplates(): void {
-    this.isLoading = true;
     this.templateService
       .getTemplates()
       .pipe(takeUntil(this.destroy$))
@@ -110,11 +108,9 @@ export class TemplatesList implements OnInit, OnDestroy {
         next: (templates) => {
           this.templates = templates;
           this.applyFilters();
-          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading templates:', error);
-          this.isLoading = false;
         },
       });
   }

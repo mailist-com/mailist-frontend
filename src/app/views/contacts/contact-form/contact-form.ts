@@ -20,7 +20,6 @@ export class ContactForm implements OnInit {
   contactForm!: FormGroup;
   contactId: string | null = null;
   isEditing = false;
-  isLoading = false;
   availableLists: ContactList[] = [];
   availableTags = ['premium', 'developer', 'designer', 'angular', 'asp.net', 'senior', 'customer', 'prospect'];
 
@@ -80,17 +79,14 @@ export class ContactForm implements OnInit {
   }
 
   loadContact(id: string) {
-    this.isLoading = true;
     this.contactService.getContact(id).subscribe({
       next: (contact) => {
         if (contact) {
           this.populateForm(contact);
         }
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading contact:', error);
-        this.isLoading = false;
       }
     });
   }
@@ -200,7 +196,6 @@ export class ContactForm implements OnInit {
 
   onSubmit() {
     if (this.contactForm.valid) {
-      this.isLoading = true;
       const formValue = this.contactForm.value;
 
       const contactData = {
@@ -224,7 +219,6 @@ export class ContactForm implements OnInit {
         },
         error: (error) => {
           console.error('Error saving contact:', error);
-          this.isLoading = false;
         }
       });
     } else {

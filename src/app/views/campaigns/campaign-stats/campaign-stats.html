@@ -1,11 +1,6 @@
 <main class="p-6">
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex justify-center py-12">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-  </div>
-
   <!-- Campaign Stats -->
-  <div *ngIf="!isLoading && campaign">
+  <div *ngIf="campaign">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-4">
@@ -315,7 +310,7 @@
   </div>
 
   <!-- Not Found -->
-  <div *ngIf="!isLoading && !campaign" class="text-center py-12">
+  <div *ngIf="!campaign" class="text-center py-12">
     <div class="size-16 mx-auto mb-4 text-default-400">
       <ng-icon name="lucideCircleAlert"></ng-icon>
     </div>

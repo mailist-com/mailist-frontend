@@ -58,7 +58,6 @@ export class AutomationList implements OnInit, OnDestroy {
 
   automations: Automation[] = [];
   filteredAutomations: Automation[] = [];
-  isLoading = false;
 
   searchTerm = '';
   selectedStatus = '';
@@ -97,19 +96,16 @@ export class AutomationList implements OnInit, OnDestroy {
   }
 
   loadAutomations(): void {
-    this.isLoading = true;
     this.automationService.getAutomations()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (automations) => {
           this.automations = automations;
           this.applyFilters();
-          this.isLoading = false;
           this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error loading automations:', error);
-          this.isLoading = false;
           alert('Wystąpił błąd podczas ładowania automatyzacji');
         }
       });

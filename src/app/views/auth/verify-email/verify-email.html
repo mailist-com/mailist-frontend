@@ -37,10 +37,8 @@
           <div class="mb-4">
             <button
               type="submit"
-              class="btn bg-purple-500 border-purple-500 hover:bg-purple-600 hover:border-purple-600 text-white w-full"
-              [disabled]="isLoading">
-              <span *ngIf="!isLoading">{{ 'AUTH.VERIFY_EMAIL_BUTTON' | translate }}</span>
-              <span *ngIf="isLoading">{{ 'AUTH.VERIFYING' | translate }}</span>
+              class="btn bg-purple-500 border-purple-500 hover:bg-purple-600 hover:border-purple-600 text-white w-full">
+              {{ 'AUTH.VERIFY_EMAIL_BUTTON' | translate }}
             </button>
           </div>
 
@@ -51,10 +49,8 @@
             <button
               type="button"
               (click)="resendCode()"
-              class="text-sm text-purple-500 hover:text-purple-600 font-medium"
-              [disabled]="isResending">
-              <span *ngIf="!isResending">{{ 'AUTH.RESEND_CODE' | translate }}</span>
-              <span *ngIf="isResending">{{ 'AUTH.SENDING' | translate }}</span>
+              class="text-sm text-purple-500 hover:text-purple-600 font-medium">
+              {{ 'AUTH.RESEND_CODE' | translate }}
             </button>
           </div>
         </form>

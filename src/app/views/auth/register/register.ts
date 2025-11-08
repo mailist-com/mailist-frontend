@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class Register {
   registerForm: FormGroup;
-  isLoading = false;
   error = '';
   showPassword = false;
   showConfirmPassword = false;
@@ -57,21 +56,18 @@ export class Register {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      this.isLoading = true;
       this.error = '';
 
       const email = this.registerForm.value.email;
 
       this.authService.register(this.registerForm.value).subscribe({
         next: (response) => {
-          this.isLoading = false;
           // Redirect to verification page with email parameter
           this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
         },
         error: (error) => {
           console.error('Registration error:', error);
           this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Registration failed. Please try again.');
-          this.isLoading = false;
         }
       });
     } else {

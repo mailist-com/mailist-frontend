@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class Login {
   loginForm: FormGroup;
-  isLoading = false;
   error = '';
   success = '';
   returnUrl = '';
@@ -48,7 +47,6 @@ export class Login {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading = true;
       this.error = '';
       this.success = '';
 
@@ -56,7 +54,6 @@ export class Login {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (user) => {
-          this.isLoading = false;
           this.router.navigate([this.returnUrl]);
         },
         error: (error) => {
@@ -74,7 +71,6 @@ export class Login {
           }
 
           this.error = errorMessage;
-          this.isLoading = false;
         }
       });
     } else {

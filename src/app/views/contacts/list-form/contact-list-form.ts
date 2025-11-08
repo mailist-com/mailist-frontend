@@ -17,7 +17,6 @@ import { ContactList, ListType, ListStatus } from '../../../models/contact-list.
 export class ContactListFormComponent implements OnInit {
   listForm!: FormGroup;
   isEditing = false;
-  isLoading = false;
   listId?: string;
   error: string | null = null;
 
@@ -84,23 +83,19 @@ export class ContactListFormComponent implements OnInit {
   }
 
   private loadList(id: string) {
-    this.isLoading = true;
     this.contactListService.getList(id).subscribe({
       next: (list) => {
         if (list) {
           // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
           setTimeout(() => {
             this.populateForm(list);
-            this.isLoading = false;
             this.cdr.markForCheck();
           });
         } else {
-          this.isLoading = false;
           this.router.navigate(['/contacts/lists']);
         }
       },
       error: (err) => {
-        this.isLoading = false;
         this.error = err.error?.message || 'Failed to load list. Please try again.';
         console.error('Error loading list:', err);
       }
@@ -175,7 +170,6 @@ export class ContactListFormComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
     this.error = null;
     const formValue = this.listForm.value;
 
@@ -201,12 +195,9 @@ export class ContactListFormComponent implements OnInit {
     // Handle response in component
     request$.subscribe({
       next: () => {
-        this.isLoading = false;
         this.router.navigate(['/contacts/lists']);
       },
       error: (err) => {
-        this.isLoading = false;
-
         // Handle different error types
         if (err.status === 403) {
           this.error = 'Access forbidden. You do not have permission to perform this action. Please check with your administrator.';

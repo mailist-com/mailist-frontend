@@ -540,10 +540,10 @@
         <button
           *ngIf="currentStep === totalSteps"
           type="submit"
-          [disabled]="isSaving || !isStepComplete(5)"
+          [disabled]="!isStepComplete(5)"
           class="btn bg-success text-white hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed">
           <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
-          {{ isSaving ? ('CAMPAIGNS.SAVING' | translate) : (scheduleType === 'immediate' ? ('CAMPAIGNS.SAVE_AND_SEND' | translate) : ('CAMPAIGNS.SCHEDULE_SEND' | translate)) }}
+          {{ scheduleType === 'immediate' ? ('CAMPAIGNS.SAVE_AND_SEND' | translate) : ('CAMPAIGNS.SCHEDULE_SEND' | translate) }}
         </button>
       </div>
     </div>

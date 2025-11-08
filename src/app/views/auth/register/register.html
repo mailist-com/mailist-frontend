@@ -116,13 +116,9 @@
 
           <div class="mt-10 text-center">
             <button type="submit"
-                    [disabled]="isLoading || registerForm.invalid"
+                    [disabled]="registerForm.invalid"
                     class="btn bg-primary text-white w-full">
-              <span *ngIf="isLoading" class="animate-spin mr-2">
-                <iconify-icon icon="lucide:loader-2"></iconify-icon>
-              </span>
-              <span *ngIf="!isLoading">{{ 'AUTH.CREATE_ACCOUNT_BUTTON' | translate }}</span>
-              <span *ngIf="isLoading">{{ 'AUTH.CREATING_ACCOUNT' | translate }}</span>
+              {{ 'AUTH.CREATE_ACCOUNT_BUTTON' | translate }}
             </button>
           </div>
         </form>

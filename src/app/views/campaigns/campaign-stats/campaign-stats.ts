@@ -50,7 +50,6 @@ export class CampaignStats implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   campaign: Campaign | null = null;
-  isLoading = true;
 
   // Mock link clicks data
   linkClicks: LinkClick[] = [
@@ -99,17 +98,14 @@ export class CampaignStats implements OnInit, OnDestroy {
   }
 
   loadCampaign(id: string): void {
-    this.isLoading = true;
     this.campaignService.getCampaignById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (campaign) => {
           this.campaign = campaign;
-          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading campaign:', error);
-          this.isLoading = false;
         }
       });
   }

@@ -120,13 +120,8 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-
     <!-- Campaigns List -->
-    <div *ngIf="!isLoading">
+    <div>
       <!-- Empty State -->
       <div *ngIf="filteredCampaigns.length === 0" class="p-12 text-center">
         <div class="size-16 mx-auto mb-4 text-default-400">

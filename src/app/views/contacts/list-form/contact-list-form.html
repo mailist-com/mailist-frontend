@@ -30,13 +30,10 @@
               <button type="button" (click)="onCancel()" class="btn btn-sm bg-default-100 text-default-600">
                 {{ 'COMMON.CANCEL' | translate }}
               </button>
-              <button type="submit" 
-                      [disabled]="isLoading || listForm.invalid" 
+              <button type="submit"
+                      [disabled]="listForm.invalid"
                       class="btn btn-sm bg-primary text-white">
-                <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
-                  <ng-icon name="lucideLoader"></ng-icon>
-                </div>
-                <div *ngIf="!isLoading" class="size-4 me-1">
+                <div class="size-4 me-1">
                   <ng-icon name="lucideSave"></ng-icon>
                 </div>
                 {{ (isEditing ? 'COMMON.SAVE' : 'LISTS.CREATE_LIST') | translate }}
@@ -348,13 +345,10 @@
             <h6 class="card-title">{{ 'COMMON.ACTIONS' | translate }}</h6>
           </div>
           <div class="card-body space-y-3">
-            <button type="submit" 
-                    [disabled]="isLoading || listForm.invalid" 
+            <button type="submit"
+                    [disabled]="listForm.invalid"
                     class="btn bg-primary text-white w-full">
-              <div *ngIf="isLoading" class="size-4 me-1 animate-spin">
-                <ng-icon name="lucideLoader"></ng-icon>
-              </div>
-              <div *ngIf="!isLoading" class="size-4 me-1">
+              <div class="size-4 me-1">
                 <ng-icon name="lucideSave"></ng-icon>
               </div>
               {{ (isEditing ? 'COMMON.SAVE' : 'LISTS.CREATE_LIST') | translate }}

@@ -14,11 +14,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class VerifyEmail implements OnInit {
   verifyForm: FormGroup;
-  isLoading = false;
   error = '';
   success = '';
   email = '';
-  isResending = false;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +40,6 @@ export class VerifyEmail implements OnInit {
 
   onSubmit() {
     if (this.verifyForm.valid && this.email) {
-      this.isLoading = true;
       this.error = '';
       this.success = '';
 
@@ -50,7 +47,6 @@ export class VerifyEmail implements OnInit {
 
       this.authService.verifyEmail(this.email, code).subscribe({
         next: (message) => {
-          this.isLoading = false;
           this.success = message || 'Email verified successfully! Redirecting to login...';
 
           // Redirect to login page after 2 seconds
@@ -63,7 +59,6 @@ export class VerifyEmail implements OnInit {
         error: (error) => {
           console.error('Verification error:', error);
           this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Verification failed. Please try again.');
-          this.isLoading = false;
         }
       });
     } else {
@@ -80,19 +75,16 @@ export class VerifyEmail implements OnInit {
       return;
     }
 
-    this.isResending = true;
     this.error = '';
     this.success = '';
 
     this.authService.resendVerificationCode(this.email).subscribe({
       next: (message) => {
-        this.isResending = false;
         this.success = message || 'Verification code sent successfully!';
       },
       error: (error) => {
         console.error('Resend error:', error);
         this.error = typeof error === 'string' ? error : (error?.message || error?.toString() || 'Failed to resend code. Please try again.');
-        this.isResending = false;
       }
     });
   }

@@ -49,7 +49,7 @@ export class CampaignForm implements OnInit, OnDestroy {
   selectedLists: string[] = [];
   selectedSegments: string[] = [];
   selectedTags: string[] = [];
-  
+
   // Schedule
   scheduleType: 'immediate' | 'scheduled' = 'immediate';
   scheduledDate = '';
@@ -58,8 +58,6 @@ export class CampaignForm implements OnInit, OnDestroy {
   // A/B Test
   abTestEnabled = false;
   abTestType: 'subject' | 'from_name' | 'content' = 'subject';
-  
-  isSaving = false;
 
   constructor(
     private campaignService: CampaignService,
@@ -114,8 +112,6 @@ export class CampaignForm implements OnInit, OnDestroy {
   }
 
   saveCampaign(): void {
-    this.isSaving = true;
-
     const campaignData: Partial<Campaign> = {
       ...this.campaign,
       recipients: {
@@ -143,12 +139,10 @@ export class CampaignForm implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.isSaving = false;
           this.router.navigate(['/campaigns']);
         },
         error: (error) => {
           console.error('Error saving campaign:', error);
-          this.isSaving = false;
         }
       });
   }
