@@ -61,25 +61,32 @@ export class ProfileSettings implements OnInit, OnDestroy {
     this.userService
       .getCurrentUser()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => {
-        this.user = user;
-        this.formData = {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone || '',
-          company: user.company || '',
-          timezone: user.timezone,
-          language: user.language,
-        };
-        this.notifications = { ...user.notifications };
-        this.preferences = {
-          defaultFromName: user.preferences.defaultFromName || '',
-          defaultFromEmail: user.preferences.defaultFromEmail || '',
-          emailSignature: user.preferences.emailSignature || '',
-          dateFormat: user.preferences.dateFormat,
-          timeFormat: user.preferences.timeFormat,
-        };
+      .subscribe({
+        next: (user) => {
+          console.log('User profile loaded:', user);
+          this.user = user;
+          this.formData = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone || '',
+            company: user.company || '',
+            timezone: user.timezone,
+            language: user.language,
+          };
+          this.notifications = { ...user.notifications };
+          this.preferences = {
+            defaultFromName: user.preferences.defaultFromName || '',
+            defaultFromEmail: user.preferences.defaultFromEmail || '',
+            emailSignature: user.preferences.emailSignature || '',
+            dateFormat: user.preferences.dateFormat,
+            timeFormat: user.preferences.timeFormat,
+          };
+        },
+        error: (error) => {
+          console.error('Error loading user profile:', error);
+          alert('Błąd podczas ładowania profilu użytkownika');
+        }
       });
   }
 
