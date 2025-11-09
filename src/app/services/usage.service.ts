@@ -1,126 +1,174 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
 import { UsageStatistics, UsageHistory, UsageAlert } from '../models/usage.model';
+import { ApiService } from '../core/api/api.service';
+
+interface UsageStatisticsResponse {
+  period: {
+    start: string;
+    end: string;
+  };
+  contacts: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  emails: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  users: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  automations: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  templates: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  apiCalls: {
+    current: number;
+    limit: number;
+    percentage: number;
+    trend?: number;
+  };
+  storage: {
+    current: number;
+    limit: number;
+    percentage: number;
+    unit: string;
+    trend?: number;
+  };
+}
+
+interface UsageAlertsResponse {
+  alerts: {
+    id: string;
+    type: string;
+    threshold: number;
+    current: number;
+    limit: number;
+    message: string;
+    severity: string;
+    createdAt: string;
+  }[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsageService {
-  constructor() {}
+  private apiService = inject(ApiService);
 
   /**
-   * Get current usage statistics
+   * Get current usage statistics from API
    */
   getUsageStatistics(): Observable<UsageStatistics> {
-    return of(this.getMockUsageStatistics());
+    return this.apiService.get<UsageStatisticsResponse>('dashboard/usage-statistics').pipe(
+      map((response) => this.mapToUsageStatistics(response))
+    );
   }
 
   /**
    * Get usage history
    */
   getUsageHistory(days: number = 30): Observable<UsageHistory[]> {
-    return of(this.getMockUsageHistory(days));
+    // This can be implemented later when backend supports it
+    // For now, return empty array or mock data
+    return this.apiService.get<UsageHistory[]>('dashboard/usage-history', {
+      params: { days },
+    });
   }
 
   /**
-   * Get usage alerts
+   * Get usage alerts from API
    */
   getUsageAlerts(): Observable<UsageAlert[]> {
-    return of(this.getMockUsageAlerts());
+    return this.apiService.get<UsageAlertsResponse>('dashboard/usage-alerts').pipe(
+      map((response) => this.mapToUsageAlerts(response))
+    );
   }
 
   /**
-   * Get mock usage statistics
+   * Map API response to UsageStatistics model
    */
-  private getMockUsageStatistics(): UsageStatistics {
+  private mapToUsageStatistics(response: UsageStatisticsResponse): UsageStatistics {
     return {
       period: {
-        start: new Date('2025-11-01'),
-        end: new Date('2025-12-01'),
+        start: new Date(response.period.start),
+        end: new Date(response.period.end),
       },
       contacts: {
-        current: 7234,
-        limit: 10000,
-        percentage: 72.34,
-        trend: 5.2,
+        current: response.contacts.current,
+        limit: response.contacts.limit,
+        percentage: response.contacts.percentage,
+        trend: response.contacts.trend,
       },
       emails: {
-        current: 45678,
-        limit: 100000,
-        percentage: 45.68,
-        trend: -2.1,
+        current: response.emails.current,
+        limit: response.emails.limit,
+        percentage: response.emails.percentage,
+        trend: response.emails.trend,
       },
       users: {
-        current: 3,
-        limit: 5,
-        percentage: 60,
-        trend: 0,
+        current: response.users.current,
+        limit: response.users.limit,
+        percentage: response.users.percentage,
+        trend: response.users.trend,
       },
       automations: {
-        current: 12,
-        limit: -1, // unlimited
-        percentage: 0,
-        trend: 20,
+        current: response.automations.current,
+        limit: response.automations.limit,
+        percentage: response.automations.percentage,
+        trend: response.automations.trend,
       },
       templates: {
-        current: 28,
-        limit: -1, // unlimited
-        percentage: 0,
-        trend: 12.5,
+        current: response.templates.current,
+        limit: response.templates.limit,
+        percentage: response.templates.percentage,
+        trend: response.templates.trend,
       },
       apiCalls: {
-        current: 2456,
-        limit: 10000,
-        percentage: 24.56,
-        trend: 8.3,
+        current: response.apiCalls.current,
+        limit: response.apiCalls.limit,
+        percentage: response.apiCalls.percentage,
+        trend: response.apiCalls.trend,
       },
       storage: {
-        current: 234,
-        limit: 1000,
-        percentage: 23.4,
-        unit: 'MB',
-        trend: 3.5,
+        current: response.storage.current,
+        limit: response.storage.limit,
+        percentage: response.storage.percentage,
+        unit: response.storage.unit as 'MB' | 'GB' | 'TB',
+        trend: response.storage.trend,
       },
     };
   }
 
   /**
-   * Get mock usage history
+   * Map API response to UsageAlert array
    */
-  private getMockUsageHistory(days: number): UsageHistory[] {
-    const history: UsageHistory[] = [];
-    const today = new Date();
-
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-
-      history.push({
-        date,
-        contacts: 7000 + Math.floor(Math.random() * 500),
-        emailsSent: 1000 + Math.floor(Math.random() * 500),
-        apiCalls: 50 + Math.floor(Math.random() * 100),
-      });
-    }
-
-    return history;
-  }
-
-  /**
-   * Get mock usage alerts
-   */
-  private getMockUsageAlerts(): UsageAlert[] {
-    return [
-      {
-        id: 'alert_1',
-        type: 'contacts',
-        threshold: 80,
-        current: 7234,
-        limit: 10000,
-        message: 'Wykorzystujesz 72% limitu kontaktów',
-        severity: 'warning',
-        createdAt: new Date('2025-11-04'),
-      },
-    ];
+  private mapToUsageAlerts(response: UsageAlertsResponse): UsageAlert[] {
+    return response.alerts.map((alert) => ({
+      id: alert.id,
+      type: alert.type as 'contacts' | 'emails' | 'storage' | 'apiCalls',
+      threshold: alert.threshold,
+      current: alert.current,
+      limit: alert.limit,
+      message: alert.message,
+      severity: alert.severity as 'warning' | 'critical',
+      createdAt: new Date(alert.createdAt),
+    }));
   }
 }

@@ -18,7 +18,8 @@
       "Bash(psql:*)",
       "Bash(timeout 30 ./mvnw:*)",
       "Bash(cat:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(timeout 120 ./mvnw:*)"
     ],
     "deny": []
   }
