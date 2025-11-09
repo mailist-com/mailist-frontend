@@ -1,21 +1,21 @@
 export interface TeamMember {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
   avatar?: string;
   role: TeamRole;
   status: TeamMemberStatus;
-  permissions: TeamPermission[];
+  permissions?: TeamPermission[];
   invitedBy?: string;
-  invitedAt: Date;
+  invitedAt?: Date;
   joinedAt?: Date;
   lastActiveAt?: Date;
 }
 
-export type TeamRole = 'owner' | 'admin' | 'member' | 'viewer';
+export type TeamRole = 'OWNER' | 'ADMIN' | 'USER';
 
-export type TeamMemberStatus = 'active' | 'invited' | 'suspended';
+export type TeamMemberStatus = 'ACTIVE' | 'PENDING_VERIFICATION' | 'INACTIVE' | 'SUSPENDED';
 
 export interface TeamPermission {
   resource: PermissionResource;
@@ -46,10 +46,11 @@ export interface TeamStatistics {
   totalMembers: number;
   activeMembers: number;
   pendingInvites: number;
-  byRole: {
-    owner: number;
-    admin: number;
-    member: number;
-    viewer: number;
-  };
+}
+
+export interface TeamMembersListResponse {
+  members: TeamMember[];
+  totalMembers: number;
+  activeMembers: number;
+  pendingInvites: number;
 }

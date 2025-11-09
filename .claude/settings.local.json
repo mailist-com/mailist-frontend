@@ -17,7 +17,8 @@
       "Bash(xargs kill -9)",
       "Bash(psql:*)",
       "Bash(timeout 30 ./mvnw:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(awk:*)"
     ],
     "deny": []
   }

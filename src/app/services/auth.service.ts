@@ -398,4 +398,31 @@ export class AuthService {
         })
       );
   }
+
+  /**
+   * Set password for invited team member
+   */
+  setPassword(token: string, password: string): Observable<string> {
+    return this.api.post<ApiResponse<{ message: string }>>('auth/set-password', { token, password })
+      .pipe(
+        map(response => response.message || response.data?.message || 'Password set successfully. You can now login.'),
+        catchError(error => {
+          let errorMessage = 'Failed to set password. Please try again.';
+
+          if (error.status === 0) {
+            errorMessage = 'Unable to connect to server. Please check your internet connection.';
+          } else if (error.status === 400) {
+            errorMessage = 'Invalid or expired invitation link.';
+          } else if (error.status === 422) {
+            errorMessage = error.errors ? this.formatValidationErrors(error.errors) : 'Invalid password. Must be at least 8 characters.';
+          } else if (error.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+
+          return throwError(() => errorMessage);
+        })
+      );
+  }
 }

@@ -1,181 +1,127 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import {
   TeamMember,
   InviteTeamMemberDTO,
   TeamStatistics,
   TeamRole,
+  TeamMembersListResponse,
 } from '../models/team.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TeamService {
-  private teamMembersSubject = new BehaviorSubject<TeamMember[]>(
-    this.getMockTeamMembers()
-  );
+  private apiUrl = `${environment.apiUrl}/team`;
+  private teamMembersSubject = new BehaviorSubject<TeamMember[]>([]);
   public teamMembers$ = this.teamMembersSubject.asObservable();
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Get all team members
    */
   getTeamMembers(): Observable<TeamMember[]> {
-    return of(this.teamMembersSubject.value);
+    return this.http.get<TeamMembersListResponse>(`${this.apiUrl}/members`).pipe(
+      tap((response) => {
+        this.teamMembersSubject.next(response.members);
+      }),
+      map((response) => response.members),
+      catchError((error) => {
+        console.error('Error fetching team members:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
    * Get team statistics
    */
   getTeamStatistics(): Observable<TeamStatistics> {
-    const members = this.teamMembersSubject.value;
-    const stats: TeamStatistics = {
-      totalMembers: members.length,
-      activeMembers: members.filter((m) => m.status === 'active').length,
-      pendingInvites: members.filter((m) => m.status === 'invited').length,
-      byRole: {
-        owner: members.filter((m) => m.role === 'owner').length,
-        admin: members.filter((m) => m.role === 'admin').length,
-        member: members.filter((m) => m.role === 'member').length,
-        viewer: members.filter((m) => m.role === 'viewer').length,
-      },
-    };
-
-    return of(stats);
+    return this.http.get<TeamMembersListResponse>(`${this.apiUrl}/members`).pipe(
+      map((response) => ({
+        totalMembers: response.totalMembers,
+        activeMembers: response.activeMembers,
+        pendingInvites: response.pendingInvites,
+      })),
+      catchError((error) => {
+        console.error('Error fetching team statistics:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
    * Invite team member
    */
   inviteTeamMember(invite: InviteTeamMemberDTO): Observable<TeamMember> {
-    const newMember: TeamMember = {
-      id: `member_${Date.now()}`,
-      email: invite.email,
-      firstName: invite.firstName,
-      lastName: invite.lastName,
-      role: invite.role,
-      status: 'invited',
-      permissions: invite.permissions || [],
-      invitedAt: new Date(),
-      invitedBy: 'user_1',
-    };
-
-    const currentMembers = this.teamMembersSubject.value;
-    this.teamMembersSubject.next([...currentMembers, newMember]);
-
-    return of(newMember);
+    return this.http.post<TeamMember>(`${this.apiUrl}/members/invite`, invite).pipe(
+      tap((newMember) => {
+        const currentMembers = this.teamMembersSubject.value;
+        this.teamMembersSubject.next([...currentMembers, newMember]);
+      }),
+      catchError((error) => {
+        console.error('Error inviting team member:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
    * Update team member role
    */
-  updateMemberRole(memberId: string, role: TeamRole): Observable<TeamMember> {
-    const currentMembers = this.teamMembersSubject.value;
-    const memberIndex = currentMembers.findIndex((m) => m.id === memberId);
-
-    if (memberIndex === -1) {
-      return throwError(() => new Error('Członek zespołu nie znaleziony'));
-    }
-
-    const updatedMember: TeamMember = {
-      ...currentMembers[memberIndex],
-      role,
-    };
-
-    const updatedMembers = [...currentMembers];
-    updatedMembers[memberIndex] = updatedMember;
-    this.teamMembersSubject.next(updatedMembers);
-
-    return of(updatedMember);
+  updateMemberRole(memberId: number, role: TeamRole): Observable<TeamMember> {
+    return this.http.put<TeamMember>(`${this.apiUrl}/members/${memberId}/role`, { role }).pipe(
+      tap((updatedMember) => {
+        const currentMembers = this.teamMembersSubject.value;
+        const memberIndex = currentMembers.findIndex((m) => m.id === memberId);
+        if (memberIndex !== -1) {
+          const updatedMembers = [...currentMembers];
+          updatedMembers[memberIndex] = updatedMember;
+          this.teamMembersSubject.next(updatedMembers);
+        }
+      }),
+      catchError((error) => {
+        console.error('Error updating member role:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
    * Remove team member
    */
-  removeTeamMember(memberId: string): Observable<boolean> {
-    const currentMembers = this.teamMembersSubject.value;
-    const filteredMembers = currentMembers.filter((m) => m.id !== memberId);
-
-    if (filteredMembers.length === currentMembers.length) {
-      return throwError(() => new Error('Członek zespołu nie znaleziony'));
-    }
-
-    this.teamMembersSubject.next(filteredMembers);
-    return of(true);
+  removeTeamMember(memberId: number): Observable<boolean> {
+    return this.http.delete<any>(`${this.apiUrl}/members/${memberId}`).pipe(
+      tap(() => {
+        const currentMembers = this.teamMembersSubject.value;
+        const filteredMembers = currentMembers.filter((m) => m.id !== memberId);
+        this.teamMembersSubject.next(filteredMembers);
+      }),
+      map(() => true),
+      catchError((error) => {
+        console.error('Error removing team member:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
    * Resend invitation
    */
-  resendInvitation(memberId: string): Observable<boolean> {
-    return of(true);
+  resendInvitation(memberId: number): Observable<boolean> {
+    // TODO: Implement when backend endpoint is ready
+    console.warn('Resend invitation not yet implemented on backend');
+    return throwError(() => new Error('Not implemented'));
   }
 
   /**
    * Cancel invitation
    */
-  cancelInvitation(memberId: string): Observable<boolean> {
+  cancelInvitation(memberId: number): Observable<boolean> {
     return this.removeTeamMember(memberId);
-  }
-
-  /**
-   * Get mock team members
-   */
-  private getMockTeamMembers(): TeamMember[] {
-    return [
-      {
-        id: 'member_1',
-        email: 'jan.kowalski@example.com',
-        firstName: 'Jan',
-        lastName: 'Kowalski',
-        avatar: 'https://ui-avatars.com/api/?name=Jan+Kowalski',
-        role: 'owner',
-        status: 'active',
-        permissions: [],
-        invitedAt: new Date('2024-01-15'),
-        joinedAt: new Date('2024-01-15'),
-        lastActiveAt: new Date('2025-11-05T10:30:00'),
-      },
-      {
-        id: 'member_2',
-        email: 'anna.nowak@example.com',
-        firstName: 'Anna',
-        lastName: 'Nowak',
-        avatar: 'https://ui-avatars.com/api/?name=Anna+Nowak',
-        role: 'admin',
-        status: 'active',
-        permissions: [],
-        invitedBy: 'member_1',
-        invitedAt: new Date('2024-03-10'),
-        joinedAt: new Date('2024-03-11'),
-        lastActiveAt: new Date('2025-11-05T09:15:00'),
-      },
-      {
-        id: 'member_3',
-        email: 'piotr.wisniewski@example.com',
-        firstName: 'Piotr',
-        lastName: 'Wiśniewski',
-        avatar: 'https://ui-avatars.com/api/?name=Piotr+Wisniewski',
-        role: 'member',
-        status: 'active',
-        permissions: [],
-        invitedBy: 'member_1',
-        invitedAt: new Date('2024-06-20'),
-        joinedAt: new Date('2024-06-21'),
-        lastActiveAt: new Date('2025-11-04T16:45:00'),
-      },
-      {
-        id: 'member_4',
-        email: 'maria.kowalczyk@example.com',
-        firstName: 'Maria',
-        lastName: 'Kowalczyk',
-        role: 'member',
-        status: 'invited',
-        permissions: [],
-        invitedBy: 'member_1',
-        invitedAt: new Date('2025-10-28'),
-      },
-    ];
   }
 }

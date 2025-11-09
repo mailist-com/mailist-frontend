@@ -23,8 +23,12 @@ export class TeamSettings implements OnInit, OnDestroy, AfterViewInit {
     email: '',
     firstName: '',
     lastName: '',
-    role: 'member' as TeamRole,
+    role: 'USER' as TeamRole,
   };
+
+  alertMessage = '';
+  alertType: 'success' | 'error' = 'success';
+  showAlert = false;
 
   constructor(private teamService: TeamService) {}
 
@@ -42,63 +46,120 @@ export class TeamSettings implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadMembers() {
-    this.teamService.getTeamMembers().pipe(takeUntil(this.destroy$)).subscribe((members) => {
-      this.members = members;
-      this.reinitializePreline();
+    this.teamService.getTeamMembers().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (members) => {
+        this.members = members;
+        this.reinitializePreline();
+      },
+      error: (error) => {
+        this.showAlertMessage('Błąd podczas pobierania członków zespołu', 'error');
+        console.error('Error loading members:', error);
+      }
     });
   }
 
   inviteMember() {
     if (!this.inviteForm.email || !this.inviteForm.firstName || !this.inviteForm.lastName) {
-      alert('Wypełnij wszystkie pola');
+      this.showAlertMessage('Wypełnij wszystkie pola', 'error');
       return;
     }
 
     const invite: InviteTeamMemberDTO = { ...this.inviteForm };
 
-    this.teamService.inviteTeamMember(invite).pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.showInviteModal = false;
-      this.resetInviteForm();
-      this.loadMembers();
-      alert('Zaproszenie wysłane');
+    this.teamService.inviteTeamMember(invite).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.showInviteModal = false;
+        this.resetInviteForm();
+        this.loadMembers();
+        this.showAlertMessage('Zaproszenie wysłane pomyślnie', 'success');
+      },
+      error: (error) => {
+        const message = error?.error?.message || 'Błąd podczas wysyłania zaproszenia';
+        this.showAlertMessage(message, 'error');
+        console.error('Error inviting member:', error);
+      }
     });
   }
 
-  updateRole(memberId: string, role: TeamRole) {
-    this.teamService.updateMemberRole(memberId, role).pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.loadMembers();
+  updateRole(memberId: number, role: TeamRole) {
+    this.teamService.updateMemberRole(memberId, role).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.loadMembers();
+        this.showAlertMessage('Rola została zaktualizowana', 'success');
+      },
+      error: (error) => {
+        const message = error?.error?.message || 'Błąd podczas aktualizacji roli';
+        this.showAlertMessage(message, 'error');
+        console.error('Error updating role:', error);
+      }
     });
   }
 
   removeMember(member: TeamMember) {
     if (confirm(`Czy na pewno chcesz usunąć ${member.firstName} ${member.lastName}?`)) {
-      this.teamService.removeTeamMember(member.id).pipe(takeUntil(this.destroy$)).subscribe(() => {
-        this.loadMembers();
+      this.teamService.removeTeamMember(member.id).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.loadMembers();
+          this.showAlertMessage('Członek zespołu został usunięty', 'success');
+        },
+        error: (error) => {
+          const message = error?.error?.message || 'Błąd podczas usuwania członka zespołu';
+          this.showAlertMessage(message, 'error');
+          console.error('Error removing member:', error);
+        }
       });
     }
   }
 
   resetInviteForm() {
-    this.inviteForm = { email: '', firstName: '', lastName: '', role: 'member' };
+    this.inviteForm = { email: '', firstName: '', lastName: '', role: 'USER' };
+  }
+
+  showAlertMessage(message: string, type: 'success' | 'error') {
+    this.alertMessage = message;
+    this.alertType = type;
+    this.showAlert = true;
+    setTimeout(() => {
+      this.showAlert = false;
+    }, 5000);
   }
 
   getRoleClass(role: TeamRole): string {
     const classes = {
-      owner: 'bg-purple-100 text-purple-700',
-      admin: 'bg-blue-100 text-blue-700',
-      member: 'bg-green-100 text-green-700',
-      viewer: 'bg-gray-100 text-gray-700',
+      OWNER: 'bg-purple-100 text-purple-700',
+      ADMIN: 'bg-blue-100 text-blue-700',
+      USER: 'bg-green-100 text-green-700',
     };
     return classes[role] || 'bg-default-200 text-default-600';
   }
 
+  getRoleLabel(role: TeamRole): string {
+    const labels = {
+      OWNER: 'Właściciel',
+      ADMIN: 'Administrator',
+      USER: 'Użytkownik',
+    };
+    return labels[role] || role;
+  }
+
   getStatusClass(status: string): string {
     const classes = {
-      active: 'bg-success/10 text-success',
-      invited: 'bg-warning/10 text-warning',
-      suspended: 'bg-danger/10 text-danger',
+      ACTIVE: 'bg-success/10 text-success',
+      PENDING_VERIFICATION: 'bg-warning/10 text-warning',
+      INACTIVE: 'bg-gray-100 text-gray-700',
+      SUSPENDED: 'bg-danger/10 text-danger',
     };
     return classes[status as keyof typeof classes] || 'bg-default-200 text-default-600';
+  }
+
+  getStatusLabel(status: string): string {
+    const labels = {
+      ACTIVE: 'Aktywny',
+      PENDING_VERIFICATION: 'Zaproszony',
+      INACTIVE: 'Nieaktywny',
+      SUSPENDED: 'Zawieszony',
+    };
+    return labels[status as keyof typeof labels] || status;
   }
 
   private reinitializePreline() {
