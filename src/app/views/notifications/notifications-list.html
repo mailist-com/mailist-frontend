@@ -1,0 +1,275 @@
+<main>
+  <app-page-title title="Powiadomienia" subtitle="Dashboard" />
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Wszystkie</p>
+            <p class="text-2xl font-semibold text-default-900">{{ totalElements() }}</p>
+          </div>
+          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-primary"><ng-icon name="lucideBell"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Nieprzeczytane</p>
+            <p class="text-2xl font-semibold text-warning">{{ unreadCount() }}</p>
+          </div>
+          <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-warning"><ng-icon name="lucideBellRing"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Kontakty dodane</p>
+            <p class="text-2xl font-semibold text-success">{{ getCategoryCount('contact_added') }}</p>
+          </div>
+          <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-success"><ng-icon name="lucideUserPlus"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-default-600 mb-1">Kontakty usunięte</p>
+            <p class="text-2xl font-semibold text-danger">{{ getCategoryCount('contact_removed') }}</p>
+          </div>
+          <div class="w-12 h-12 bg-danger/10 rounded-lg flex items-center justify-center">
+            <div class="size-6 text-danger"><ng-icon name="lucideUserMinus"></ng-icon></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card">
+    <div class="card-header">
+      <h6 class="card-title">Lista powiadomień</h6>
+      <div class="flex items-center gap-3">
+        @if (unreadCount() > 0) {
+          <button type="button"
+                  (click)="markAllAsRead()"
+                  class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+            <div class="size-4 me-1"><ng-icon name="lucideCheckCheck"></ng-icon></div>
+            Oznacz wszystkie jako przeczytane
+          </button>
+        }
+        <button type="button"
+                (click)="loadNotifications()"
+                class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
+          <div class="size-4 me-1"><ng-icon name="lucideRefreshCw"></ng-icon></div>
+          Odśwież
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-header">
+      <div class="md:flex items-center md:space-y-0 space-y-4 gap-3">
+        <!-- Filter buttons -->
+        <div class="flex flex-wrap gap-2">
+          <button type="button"
+                  (click)="selectFilter('all')"
+                  [class]="selectedFilter() === 'all' ? 'bg-primary text-white' : 'bg-default-100 text-default-600'"
+                  class="btn btn-sm">
+            Wszystkie
+          </button>
+
+          <button type="button"
+                  (click)="selectFilter('unread')"
+                  [class]="selectedFilter() === 'unread' ? 'bg-primary text-white' : 'bg-default-100 text-default-600'"
+                  class="btn btn-sm">
+            Nieprzeczytane
+            @if (unreadCount() > 0 && selectedFilter() === 'unread') {
+              <span class="ms-1 badge bg-white text-primary">{{ unreadCount() }}</span>
+            }
+          </button>
+
+          <button type="button"
+                  (click)="selectFilter('contact_added')"
+                  [class]="selectedFilter() === 'contact_added' ? 'bg-primary text-white' : 'bg-default-100 text-default-600'"
+                  class="btn btn-sm">
+            Dodano kontakt
+          </button>
+
+          <button type="button"
+                  (click)="selectFilter('contact_removed')"
+                  [class]="selectedFilter() === 'contact_removed' ? 'bg-primary text-white' : 'bg-default-100 text-default-600'"
+                  class="btn btn-sm">
+            Usunięto kontakt
+          </button>
+
+          <button type="button"
+                  (click)="selectFilter('campaign_sent')"
+                  [class]="selectedFilter() === 'campaign_sent' ? 'bg-primary text-white' : 'bg-default-100 text-default-600'"
+                  class="btn btn-sm">
+            Kampanie
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications list -->
+    <div class="card-body">
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      } @else if (notifications().length === 0) {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="size-20 rounded-full bg-default-100 flex items-center justify-center mb-4">
+            <ng-icon name="lucideBell" class="size-10 text-default-400"></ng-icon>
+          </div>
+          <h3 class="text-lg font-semibold text-default-800 mb-2">Brak powiadomień</h3>
+          <p class="text-default-500 text-sm">Nie masz jeszcze żadnych powiadomień w kategorii "{{ getCategoryLabel(selectedFilter()) }}"</p>
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <tbody class="divide-y divide-default-200">
+              @for (notification of notifications(); track notification.id) {
+                <tr class="hover:bg-default-50 transition-colors"
+                    [class.bg-primary/5]="!notification.isRead">
+                  <!-- Icon -->
+                  <td class="px-4 py-4 w-16">
+                    <div class="size-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                         [ngClass]="getNotificationColor(notification.category).bg">
+                      <ng-icon [name]="getNotificationIcon(notification.category)"
+                               class="size-5"
+                               [ngClass]="getNotificationColor(notification.category).text"></ng-icon>
+                    </div>
+                  </td>
+
+                  <!-- Content -->
+                  <td class="px-4 py-4">
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="flex-1 min-w-0">
+                        @if (notification.title) {
+                          <h4 class="text-sm font-semibold text-default-800 mb-1">{{ notification.title }}</h4>
+                        }
+                        <p class="text-sm text-default-600"
+                           [innerHTML]="notification.message"></p>
+                        <div class="flex items-center gap-4 mt-2 text-xs text-default-500">
+                          <div class="flex items-center gap-1">
+                            <div class="size-3.5"><ng-icon name="lucideClock"></ng-icon></div>
+                            <span>{{ getRelativeTime(notification.createdAt) }}</span>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <div class="size-3.5"><ng-icon name="lucideTag"></ng-icon></div>
+                            <span>{{ getCategoryLabel(notification.category) }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      @if (!notification.isRead) {
+                        <div class="flex-shrink-0 mt-1">
+                          <div class="size-2 bg-primary rounded-full"></div>
+                        </div>
+                      }
+                    </div>
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="px-4 py-4 w-48">
+                    <div class="flex items-center gap-2 justify-end">
+                      @if (notification.actionUrl) {
+                        <a [routerLink]="notification.actionUrl"
+                           (click)="markAsRead(notification, $event)"
+                           class="btn btn-sm bg-primary/10 text-primary hover:bg-primary hover:text-white">
+                          <div class="size-3.5 me-1"><ng-icon name="lucideEye"></ng-icon></div>
+                          Zobacz
+                        </a>
+                      }
+
+                      @if (!notification.isRead) {
+                        <button type="button"
+                                (click)="markAsRead(notification, $event)"
+                                class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200"
+                                title="Oznacz jako przeczytane">
+                          <div class="size-3.5"><ng-icon name="lucideCheck"></ng-icon></div>
+                        </button>
+                      } @else {
+                        <button type="button"
+                                (click)="markAsUnread(notification, $event)"
+                                class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200"
+                                title="Oznacz jako nieprzeczytane">
+                          <div class="size-3.5"><ng-icon name="lucideCircle"></ng-icon></div>
+                        </button>
+                      }
+
+                      <button type="button"
+                              (click)="deleteNotification(notification, $event)"
+                              class="btn btn-sm bg-danger/10 text-danger hover:bg-danger hover:text-white"
+                              title="Usuń">
+                        <div class="size-3.5"><ng-icon name="lucideTrash2"></ng-icon></div>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-between px-4 py-4 border-t border-default-200">
+            <div class="text-sm text-default-600">
+              Strona {{ currentPage() + 1 }} z {{ totalPages() }} ({{ totalElements() }} powiadomień)
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button"
+                      (click)="previousPage()"
+                      [disabled]="currentPage() === 0"
+                      class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronLeft"></ng-icon></div>
+              </button>
+
+              <div class="flex items-center gap-1">
+                @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+                  @if (i < 5 || i === currentPage() || i === totalPages() - 1) {
+                    <button type="button"
+                            (click)="goToPage(i)"
+                            [class]="currentPage() === i ? 'bg-primary text-white' : 'bg-default-100 text-default-600 hover:bg-default-200'"
+                            class="btn btn-sm size-8">
+                      {{ i + 1 }}
+                    </button>
+                  } @else if (i === 5) {
+                    <span class="px-2 text-default-500">...</span>
+                  }
+                }
+              </div>
+
+              <button type="button"
+                      (click)="nextPage()"
+                      [disabled]="currentPage() >= totalPages() - 1"
+                      class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="size-4"><ng-icon name="lucideChevronRight"></ng-icon></div>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</main>

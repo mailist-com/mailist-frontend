@@ -35,6 +35,10 @@ export const VIEWS_ROUTES: Routes = [
   },
   {
     path: '',
+    loadChildren: () => import('./notifications/notifications.routes').then((mod) => mod.NOTIFICATIONS_ROUTES)
+  },
+  {
+    path: '',
     loadChildren: () => import('./layouts/layout.routes').then((mod) => mod.LAYOUT_ROUTES)
   },
 ]
