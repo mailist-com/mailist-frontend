@@ -5,43 +5,41 @@
     <div class="card">
       <!-- Card Header -->
       <div class="card-header">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 flex-1">
-            @if (isEditingName()) {
-              <input
-                type="text"
-                class="form-input form-input-sm text-lg font-semibold max-w-md"
-                [(ngModel)]="editingNameValue"
-                (blur)="saveName()"
-                (keydown)="onNameKeydown($event)"
-                #nameInput
-                autofocus
-              />
-              <button class="btn btn-sm btn-ghost" (click)="saveName()" title="Zapisz">
-                <ng-icon name="lucideCheck"></ng-icon>
-              </button>
-              <button class="btn btn-sm btn-ghost" (click)="cancelEditingName()" title="Anuluj">
-                <ng-icon name="lucideX"></ng-icon>
-              </button>
-            } @else {
-              <h2 class="text-lg font-semibold text-default-900 cursor-pointer hover:text-primary transition-colors group flex items-center gap-2" (click)="startEditingName()">
-                {{ model.name || 'Nowa automatyzacja' }}
-                <div class="size-4 text-default-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ng-icon name="lucidePencil"></ng-icon>
-                </div>
-              </h2>
-            }
-          </div>
-          <div class="flex items-center gap-3">
-            <button class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" (click)="cancel()">
-              <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
-              Anuluj
+        @if (isEditingName()) {
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              class="form-input form-input-sm text-lg font-semibold max-w-md"
+              [(ngModel)]="editingNameValue"
+              (blur)="saveName()"
+              (keydown)="onNameKeydown($event)"
+              #nameInput
+              autofocus
+            />
+            <button class="btn btn-sm btn-ghost" (click)="saveName()" title="Zapisz">
+              <ng-icon name="lucideCheck"></ng-icon>
             </button>
-            <button class="btn btn-sm bg-primary text-white hover:bg-primary/90" (click)="saveAutomation()">
-              <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
-              Zapisz i zamknij
+            <button class="btn btn-sm btn-ghost" (click)="cancelEditingName()" title="Anuluj">
+              <ng-icon name="lucideX"></ng-icon>
             </button>
           </div>
+        } @else {
+          <h6 class="card-title cursor-pointer hover:text-primary transition-colors group flex items-center gap-2" (click)="startEditingName()">
+            {{ model.name || 'Nowa automatyzacja' }}
+            <div class="size-4 text-default-400 opacity-0 group-hover:opacity-100 transition-opacity">
+              <ng-icon name="lucidePencil"></ng-icon>
+            </div>
+          </h6>
+        }
+        <div class="flex items-center gap-3">
+          <button class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" (click)="cancel()">
+            <div class="size-4 me-1"><ng-icon name="lucideX"></ng-icon></div>
+            Anuluj
+          </button>
+          <button class="btn btn-sm bg-primary text-white hover:bg-primary/90" (click)="saveAutomation()">
+            <div class="size-4 me-1"><ng-icon name="lucideSave"></ng-icon></div>
+            Zapisz i zamknij
+          </button>
         </div>
       </div>
 

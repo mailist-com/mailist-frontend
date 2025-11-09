@@ -117,26 +117,14 @@ export class AutomationService {
       type: 'custom' as AutomationType,
       trigger: {
         type: this.mapTriggerType(backendData.triggerType),
-        conditions: backendData.conditions || [],
+        conditions: [],
         settings: {
           once_per_contact: true,
           run_once: false
         }
       },
-      actions: (backendData.actions || []).map((action: any, index: number) => ({
-        id: `action-${index}`,
-        type: this.mapActionType(action.type),
-        settings: {
-          emailTemplate: action.target || action.value,
-          tagIds: action.type === 'ADD_TAG' ? [action.value] : undefined
-        },
-        order: index,
-        delay: action.delayMinutes ? {
-          amount: action.delayMinutes,
-          unit: 'minutes' as const
-        } : undefined
-      })),
-      conditions: backendData.conditions || [],
+      actions: [],
+      conditions: [],
       settings: {
         timezone: 'UTC',
         respectUnsubscribes: true,
@@ -171,17 +159,6 @@ export class AutomationService {
       description: frontendData.description,
       triggerType: this.mapTriggerTypeToBackend(frontendData.trigger?.type),
       isActive: frontendData.status === 'active',
-      conditions: (frontendData.conditions || []).map(condition => ({
-        type: 'CONTACT',
-        field: condition.field,
-        operator: condition.operator?.toUpperCase(),
-        value: condition.value
-      })),
-      actions: (frontendData.actions || []).map(action => ({
-        type: this.mapActionTypeToBackend(action.type),
-        target: action.settings?.emailTemplate || action.settings?.tagIds?.[0] || '',
-        parameters: JSON.stringify(action.settings || {})
-      })),
       flowJson: frontendData.flowData ? JSON.stringify(frontendData.flowData) : null
     };
   }

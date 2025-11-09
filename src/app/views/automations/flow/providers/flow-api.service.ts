@@ -15,6 +15,7 @@ import {IFlowStateNode} from "../models/i-flow-state-node";
 import {createGenericNode} from "./create-generic-node";
 import {IFlowStateConnection} from "../models/i-flow-state-connection";
 import {AutomationService} from "../../../../services/automation.service";
+import {Observable, of, map, catchError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -26,59 +27,84 @@ export class FlowApiService {
 
   private _currentAutomationId: string | null = null;
 
-  public getFlowById(flowId: string): IFlowState {
+  /**
+   * Load flow state from backend (async)
+   */
+  public loadFlowFromBackend(flowId: string): Observable<IFlowState> {
     this._currentAutomationId = flowId;
-    console.log('[FlowApiService] Loading flow for ID:', flowId);
+    console.log('[FlowApiService] Loading flow from backend for ID:', flowId);
 
-    // Try to load from localStorage first
-    const storageKey = `automation_flow_${flowId}`;
-    const savedFlow = localStorage.getItem(storageKey);
-
-    console.log('[FlowApiService] Storage key:', storageKey);
-    console.log('[FlowApiService] Found saved flow:', !!savedFlow);
-
-    if (savedFlow) {
-      try {
-        const parsedFlow = JSON.parse(savedFlow);
-        console.log('[FlowApiService] Parsed flow:', {
-          nodeCount: Object.keys(parsedFlow.nodes || {}).length,
-          connectionCount: Object.keys(parsedFlow.connections || {}).length,
-          name: parsedFlow.name
-        });
-        return parsedFlow;
-      } catch (e) {
-        console.error('[FlowApiService] Error parsing saved flow:', e);
-      }
+    // For new automations (no flowId or temporary ID), return empty flow
+    if (!flowId || flowId.includes('temp-')) {
+      console.log('[FlowApiService] New automation - returning empty flow');
+      return of({
+        nodes: {},
+        connections: {},
+        name: 'Nowa automatyzacja'
+      });
     }
 
-    // Return empty flow for new automations
-    console.log('[FlowApiService] Returning empty flow');
+    // Load automation from backend
+    return this._automationService.getAutomationById(flowId).pipe(
+      map(automation => {
+        if (!automation) {
+          console.warn('[FlowApiService] Automation not found:', flowId);
+          return {
+            nodes: {},
+            connections: {},
+            name: 'Nowa automatyzacja'
+          };
+        }
+
+        console.log('[FlowApiService] Loaded automation from backend:', {
+          id: automation.id,
+          name: automation.name,
+          hasFlowData: !!automation.flowData
+        });
+
+        // If automation has flowData, use it
+        if (automation.flowData) {
+          const flowState = automation.flowData as IFlowState;
+          console.log('[FlowApiService] Using flowData:', {
+            nodeCount: Object.keys(flowState.nodes || {}).length,
+            connectionCount: Object.keys(flowState.connections || {}).length
+          });
+          return flowState;
+        }
+
+        // Otherwise return empty flow with automation name
+        console.log('[FlowApiService] No flowData, returning empty flow');
+        return {
+          nodes: {},
+          connections: {},
+          name: automation.name || 'Automatyzacja'
+        };
+      }),
+      catchError(error => {
+        console.error('[FlowApiService] Error loading automation:', error);
+        return of({
+          nodes: {},
+          connections: {},
+          name: 'Nowa automatyzacja'
+        });
+      })
+    );
+  }
+
+  /**
+   * @deprecated Use loadFlowFromBackend instead
+   */
+  public getFlowById(flowId: string): IFlowState {
+    this._currentAutomationId = flowId;
+    console.log('[FlowApiService] getFlowById (deprecated) - returning empty state');
+
     return {
       nodes: {},
       connections: {},
-      name: 'Nowa automatyzacja'
+      name: 'Ładowanie...'
     };
   }
 
-  public saveFlow(flow: IFlowState, flowId: string): void {
-    // Save flow data to localStorage for persistence
-    const storageKey = `automation_flow_${flowId}`;
-    console.log('[FlowApiService] Saving flow for ID:', flowId);
-    console.log('[FlowApiService] Storage key:', storageKey);
-    console.log('[FlowApiService] Flow data:', {
-      nodeCount: Object.keys(flow.nodes || {}).length,
-      connectionCount: Object.keys(flow.connections || {}).length,
-      name: flow.name
-    });
-    localStorage.setItem(storageKey, JSON.stringify(flow));
-    console.log('[FlowApiService] Flow saved successfully');
-  }
-
-  public resetFlow(flowId: string): void {
-    // Clear from localStorage
-    const storageKey = `automation_flow_${flowId}`;
-    localStorage.removeItem(storageKey);
-  }
 
   public getCurrentAutomationId(): string | null {
     return this._currentAutomationId;

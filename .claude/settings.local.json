@@ -16,7 +16,8 @@
       "Bash(./mvnw clean compile:*)",
       "Bash(xargs kill -9)",
       "Bash(psql:*)",
-      "Bash(timeout 30 ./mvnw:*)"
+      "Bash(timeout 30 ./mvnw:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

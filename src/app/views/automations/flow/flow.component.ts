@@ -93,19 +93,49 @@ export class FlowComponent implements OnInit {
 
   private _initializeState(): void {
     effect(() => {
-      const id = this.id() || generateGuid();
+      const id = this.id();
       console.log('[FlowComponent] Initializing state with ID:', id);
       console.log('[FlowComponent] ID from input:', this.id());
+
       untracked(() => {
-        this._state.initialize(this._apiService.getFlowById(id))
+        // If no ID, create new automation with empty flow
+        if (!id) {
+          console.log('[FlowComponent] No ID - initializing empty flow');
+          this._state.initialize({
+            nodes: {},
+            connections: {},
+            name: 'Nowa automatyzacja'
+          });
+          return;
+        }
+
+        // Load existing automation from backend
+        console.log('[FlowComponent] Loading automation from backend:', id);
+        this._apiService.loadFlowFromBackend(id).subscribe({
+          next: (flowState) => {
+            console.log('[FlowComponent] Flow loaded successfully:', {
+              nodeCount: Object.keys(flowState.nodes || {}).length,
+              connectionCount: Object.keys(flowState.connections || {}).length,
+              name: flowState.name
+            });
+            this._state.initialize(flowState);
+          },
+          error: (error) => {
+            console.error('[FlowComponent] Error loading flow:', error);
+            // Initialize with empty flow on error
+            this._state.initialize({
+              nodes: {},
+              connections: {},
+              name: 'Nowa automatyzacja'
+            });
+          }
+        });
       });
     }, {injector: this._injector});
   }
 
   protected reset(): void {
     this._flow()?.reset();
-    const currentId = this.id() || generateGuid();
-    this._apiService.resetFlow(currentId);
     this._initializeState();
   }
 
@@ -114,8 +144,6 @@ export class FlowComponent implements OnInit {
       this._state.changes(); // Trigger effect on state changes
       untracked(() => {
         const model = this._state.getSnapshot();
-        const currentId = this.id() || generateGuid();
-        this._apiService.saveFlow(model, currentId);
         this._applyChanges(model);
       });
     }, {injector: this._injector});
@@ -256,8 +284,6 @@ export class FlowComponent implements OnInit {
     if (currentId) {
       // Update existing automation
       console.log('[FlowComponent] Updating existing automation:', currentId);
-      // Save flow to localStorage with automation ID
-      this._apiService.saveFlow(currentState, currentId);
 
       this._automationService.updateAutomation(currentId, {
         flowData: currentState,
@@ -282,8 +308,6 @@ export class FlowComponent implements OnInit {
       }).subscribe({
         next: (automation) => {
           console.log('[FlowComponent] Automation created successfully with ID:', automation.id);
-          // Save flow to localStorage with the new automation ID
-          this._apiService.saveFlow(currentState, automation.id);
           this._router.navigate(['/automations']);
         },
         error: (error) => {
