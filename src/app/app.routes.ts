@@ -5,7 +5,7 @@ import { authGuard, guestGuard } from './guards/auth.guard';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'dashboard',
+        loadComponent: () => import('./views/landing/landing').then(m => m.Landing),
         pathMatch: 'full',
     },
     {
