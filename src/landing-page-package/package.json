@@ -1,0 +1,26 @@
+{
+  "name": "@mailist/landing-page",
+  "version": "1.0.0",
+  "description": "A standalone, reusable Angular landing page package inspired by MailerLite and ActiveCampaign",
+  "main": "index.ts",
+  "author": "Mailist Team",
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "landing-page",
+    "email-marketing",
+    "marketing",
+    "standalone-components",
+    "mailerlite",
+    "activecampaign"
+  ],
+  "peerDependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/router": "^20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mailist-com/landing-page-package"
+  }
+}

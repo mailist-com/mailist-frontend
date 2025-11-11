@@ -1,0 +1,25 @@
+/* Landing Page Container Styles */
+.landing-page {
+  min-height: 100vh;
+  background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-page {
+    background-color: rgba(24, 24, 27, 1);
+  }
+}
+
+/* CSS Variables for theming - can be customized */
+:root {
+  --primary-color: #3b82f6;
+  --primary-hover-color: #2563eb;
+}
+
+/* Optional: Override primary colors */
+/*
+:root {
+  --primary-color: #your-brand-color;
+  --primary-hover-color: #your-brand-hover-color;
+}
+*/

@@ -1,0 +1,24 @@
+<!-- Navigation Header -->
+<nav class="landing-header">
+  <div class="landing-container">
+    <div class="landing-header-content">
+      <!-- Logo -->
+      <div class="landing-header-logo">
+        <h1 class="landing-logo-text">Mailist</h1>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="landing-header-nav">
+        <a (click)="onScrollToSection('features')" class="landing-nav-link">Features</a>
+        <a (click)="onScrollToSection('pricing')" class="landing-nav-link">Pricing</a>
+        <a (click)="onScrollToSection('testimonials')" class="landing-nav-link">Testimonials</a>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="landing-header-actions">
+        <a routerLink="/auth/login" class="landing-header-login">Sign In</a>
+        <a routerLink="/auth/register" class="landing-header-cta">Get Started</a>
+      </div>
+    </div>
+  </div>
+</nav>

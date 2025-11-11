@@ -1,0 +1,101 @@
+/* CTA Section Styles */
+.landing-cta {
+  padding: 5rem 1rem;
+  background-color: var(--primary-color, #3b82f6);
+}
+
+@media (min-width: 640px) {
+  .landing-cta {
+    padding: 5rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-cta {
+    padding: 5rem 2rem;
+  }
+}
+
+.landing-cta-container {
+  max-width: 56rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-cta-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .landing-cta-title {
+    font-size: 3rem;
+  }
+}
+
+.landing-cta-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
+  line-height: 1.75;
+}
+
+.landing-cta-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .landing-cta-actions {
+    flex-direction: row;
+  }
+}
+
+.landing-cta-button-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  color: var(--primary-color, #3b82f6);
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.landing-cta-button-primary:hover {
+  background-color: rgba(243, 244, 246, 1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.landing-cta-icon {
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.landing-cta-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: 2px solid white;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.landing-cta-button-secondary:hover {
+  background-color: white;
+  color: var(--primary-color, #3b82f6);
+}

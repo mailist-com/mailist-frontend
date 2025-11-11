@@ -1,0 +1,43 @@
+<!-- Hero Section -->
+<section class="landing-hero">
+  <div class="landing-hero-container">
+    <div class="landing-hero-content">
+      <!-- Badge -->
+      <div class="landing-hero-badge">
+        <iconify-icon icon="lucide:sparkles" class="landing-badge-icon"></iconify-icon>
+        <span class="landing-badge-text">The Future of Email Marketing</span>
+      </div>
+
+      <!-- Main Heading -->
+      <h1 class="landing-hero-title">
+        Grow Your Business with
+        <span class="landing-hero-highlight">Smart Email Marketing</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="landing-hero-subtitle">
+        Create stunning email campaigns, automate your marketing, and engage with your audience like never before.
+        Join thousands of businesses already growing with Mailist.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="landing-hero-actions">
+        <a routerLink="/auth/register" class="landing-hero-cta-primary">
+          Start Free Trial
+          <iconify-icon icon="lucide:arrow-right" class="landing-cta-icon"></iconify-icon>
+        </a>
+        <button (click)="onScrollToSection('features')" class="landing-hero-cta-secondary">
+          Learn More
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="landing-hero-stats">
+        <div *ngFor="let stat of stats" class="landing-stat-item">
+          <div class="landing-stat-value">{{ stat.value }}</div>
+          <div class="landing-stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

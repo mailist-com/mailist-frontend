@@ -1,0 +1,45 @@
+<!-- Testimonials Section -->
+<section id="testimonials" class="landing-testimonials">
+  <div class="landing-testimonials-container">
+    <!-- Section Header -->
+    <div class="landing-testimonials-header">
+      <div class="landing-section-badge">
+        <span class="landing-badge-text">Testimonials</span>
+      </div>
+      <h2 class="landing-section-title">
+        Loved by Marketers Worldwide
+      </h2>
+      <p class="landing-section-subtitle">
+        See what our customers have to say about their experience with Mailist
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="landing-testimonials-grid">
+      <div *ngFor="let testimonial of testimonials" class="landing-testimonial-card">
+        <!-- Star Rating -->
+        <div class="landing-testimonial-rating">
+          <iconify-icon
+            *ngFor="let star of stars"
+            icon="lucide:star"
+            class="landing-star-icon">
+          </iconify-icon>
+        </div>
+
+        <!-- Content -->
+        <p class="landing-testimonial-content">"{{ testimonial.content }}"</p>
+
+        <!-- Author Info -->
+        <div class="landing-testimonial-author">
+          <div class="landing-author-avatar">
+            <span class="landing-avatar-text">{{ testimonial.name.charAt(0) }}</span>
+          </div>
+          <div class="landing-author-info">
+            <div class="landing-author-name">{{ testimonial.name }}</div>
+            <div class="landing-author-role">{{ testimonial.role }} at {{ testimonial.company }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

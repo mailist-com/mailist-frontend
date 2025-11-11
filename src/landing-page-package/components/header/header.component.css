@@ -1,0 +1,121 @@
+/* Header Styles */
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(229, 231, 235, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-header {
+    background-color: rgba(24, 24, 27, 0.8);
+    border-bottom-color: rgba(63, 63, 70, 1);
+  }
+}
+
+.landing-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .landing-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-container {
+    padding: 0 2rem;
+  }
+}
+
+.landing-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+}
+
+.landing-header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.landing-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #3b82f6);
+}
+
+.landing-header-nav {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .landing-header-nav {
+    display: flex;
+  }
+}
+
+.landing-nav-link {
+  color: rgba(55, 65, 81, 1);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.landing-nav-link:hover {
+  color: var(--primary-color, #3b82f6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-nav-link {
+    color: rgba(212, 212, 216, 1);
+  }
+}
+
+.landing-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.landing-header-login {
+  color: rgba(55, 65, 81, 1);
+  font-weight: 500;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.landing-header-login:hover {
+  color: var(--primary-color, #3b82f6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-header-login {
+    color: rgba(212, 212, 216, 1);
+  }
+}
+
+.landing-header-cta {
+  padding: 0.5rem 1.5rem;
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.landing-header-cta:hover {
+  background-color: var(--primary-hover-color, #2563eb);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,28 @@
+<!-- Features Section -->
+<section id="features" class="landing-features">
+  <div class="landing-features-container">
+    <!-- Section Header -->
+    <div class="landing-features-header">
+      <div class="landing-section-badge">
+        <span class="landing-badge-text">Features</span>
+      </div>
+      <h2 class="landing-section-title">
+        Everything You Need to Succeed
+      </h2>
+      <p class="landing-section-subtitle">
+        Powerful tools designed to help you create, automate, and optimize your email marketing campaigns
+      </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="landing-features-grid">
+      <div *ngFor="let feature of features" class="landing-feature-card">
+        <div class="landing-feature-icon-wrapper">
+          <iconify-icon [icon]="feature.icon" class="landing-feature-icon"></iconify-icon>
+        </div>
+        <h3 class="landing-feature-title">{{ feature.title }}</h3>
+        <p class="landing-feature-description">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>

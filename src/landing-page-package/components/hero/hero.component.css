@@ -1,0 +1,222 @@
+/* Hero Section Styles */
+.landing-hero {
+  padding: 8rem 1rem 5rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 50%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, transparent 50%, rgba(59, 130, 246, 0.1) 100%);
+  }
+}
+
+@media (min-width: 640px) {
+  .landing-hero {
+    padding: 8rem 1.5rem 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-hero {
+    padding: 8rem 2rem 5rem;
+  }
+}
+
+.landing-hero-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.landing-hero-content {
+  text-align: center;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.landing-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 9999px;
+  margin-bottom: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero-badge {
+    background-color: rgba(59, 130, 246, 0.2);
+  }
+}
+
+.landing-badge-icon {
+  color: var(--primary-color, #3b82f6);
+  font-size: 1.125rem;
+}
+
+.landing-badge-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary-color, #3b82f6);
+}
+
+.landing-hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(17, 24, 39, 1);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  .landing-hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-hero-title {
+    font-size: 4.5rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero-title {
+    color: rgba(250, 250, 250, 1);
+  }
+}
+
+.landing-hero-highlight {
+  color: var(--primary-color, #3b82f6);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.landing-hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(75, 85, 99, 1);
+  margin-bottom: 2.5rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.75;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero-subtitle {
+    color: rgba(161, 161, 170, 1);
+  }
+}
+
+.landing-hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 640px) {
+  .landing-hero-actions {
+    flex-direction: row;
+  }
+}
+
+.landing-hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.landing-hero-cta-primary:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.landing-cta-icon {
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.landing-hero-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  color: rgba(17, 24, 39, 1);
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: 1px solid rgba(209, 213, 219, 1);
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero-cta-secondary {
+    background-color: rgba(39, 39, 42, 1);
+    color: rgba(250, 250, 250, 1);
+    border-color: rgba(63, 63, 70, 1);
+  }
+}
+
+.landing-hero-cta-secondary:hover {
+  border-color: var(--primary-color, #3b82f6);
+}
+
+.landing-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(229, 231, 235, 1);
+}
+
+@media (min-width: 768px) {
+  .landing-hero-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-hero-stats {
+    border-top-color: rgba(63, 63, 70, 1);
+  }
+}
+
+.landing-stat-item {
+  text-align: center;
+}
+
+.landing-stat-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--primary-color, #3b82f6);
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .landing-stat-value {
+    font-size: 2.25rem;
+  }
+}
+
+.landing-stat-label {
+  font-size: 0.875rem;
+  color: rgba(75, 85, 99, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-stat-label {
+    color: rgba(161, 161, 170, 1);
+  }
+}

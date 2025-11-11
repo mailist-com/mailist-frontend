@@ -1,0 +1,26 @@
+<!-- Landing Page Container -->
+<div class="landing-page">
+  <!-- Header -->
+  <landing-header (scrollToSection)="scrollToSection($event)"></landing-header>
+
+  <!-- Hero Section -->
+  <landing-hero
+    [stats]="stats"
+    (scrollToSection)="scrollToSection($event)">
+  </landing-hero>
+
+  <!-- Features Section -->
+  <landing-features [features]="features"></landing-features>
+
+  <!-- Testimonials Section -->
+  <landing-testimonials [testimonials]="testimonials"></landing-testimonials>
+
+  <!-- Pricing Section -->
+  <landing-pricing [plans]="plans"></landing-pricing>
+
+  <!-- CTA Section -->
+  <landing-cta></landing-cta>
+
+  <!-- Footer -->
+  <landing-footer (scrollToSection)="scrollToSection($event)"></landing-footer>
+</div>

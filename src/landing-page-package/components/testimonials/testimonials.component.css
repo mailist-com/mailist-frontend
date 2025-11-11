@@ -1,0 +1,150 @@
+/* Testimonials Section Styles */
+.landing-testimonials {
+  padding: 5rem 1rem;
+  background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-testimonials {
+    background-color: rgba(24, 24, 27, 1);
+  }
+}
+
+@media (min-width: 640px) {
+  .landing-testimonials {
+    padding: 5rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-testimonials {
+    padding: 5rem 2rem;
+  }
+}
+
+.landing-testimonials-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.landing-testimonials-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.landing-testimonials-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .landing-testimonials-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.landing-testimonial-card {
+  background-color: rgba(249, 250, 251, 1);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(229, 231, 235, 1);
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-testimonial-card {
+    background-color: rgba(39, 39, 42, 1);
+    border-color: rgba(63, 63, 70, 1);
+  }
+}
+
+.landing-testimonial-card:hover {
+  border-color: var(--primary-color, #3b82f6);
+  transform: translateY(-4px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-testimonial-card:hover {
+    border-color: var(--primary-color, #3b82f6);
+  }
+}
+
+.landing-testimonial-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.landing-star-icon {
+  color: #facc15;
+  font-size: 1.125rem;
+  fill: currentColor;
+}
+
+.landing-testimonial-content {
+  color: rgba(55, 65, 81, 1);
+  margin-bottom: 1.5rem;
+  line-height: 1.75;
+  font-style: italic;
+  flex-grow: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-testimonial-content {
+    color: rgba(212, 212, 216, 1);
+  }
+}
+
+.landing-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.landing-author-avatar {
+  width: 3rem;
+  height: 3rem;
+  background-color: rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.landing-avatar-text {
+  color: var(--primary-color, #3b82f6);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.landing-author-info {
+  flex-grow: 1;
+}
+
+.landing-author-name {
+  font-weight: 600;
+  color: rgba(17, 24, 39, 1);
+  margin-bottom: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-author-name {
+    color: rgba(250, 250, 250, 1);
+  }
+}
+
+.landing-author-role {
+  font-size: 0.875rem;
+  color: rgba(75, 85, 99, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-author-role {
+    color: rgba(161, 161, 170, 1);
+  }
+}

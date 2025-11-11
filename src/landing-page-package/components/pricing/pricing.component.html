@@ -1,0 +1,73 @@
+<!-- Pricing Section -->
+<section id="pricing" class="landing-pricing">
+  <div class="landing-pricing-container">
+    <!-- Section Header -->
+    <div class="landing-pricing-header">
+      <div class="landing-section-badge">
+        <span class="landing-badge-text">Pricing</span>
+      </div>
+      <h2 class="landing-section-title">
+        Simple, Transparent Pricing
+      </h2>
+      <p class="landing-section-subtitle">
+        Choose the perfect plan for your business. All plans include a 14-day free trial.
+      </p>
+    </div>
+
+    <!-- Pricing Grid -->
+    <div class="landing-pricing-grid">
+      <div *ngFor="let plan of plans"
+           [class.landing-pricing-card-popular]="plan.popular"
+           class="landing-pricing-card">
+
+        <!-- Popular Badge -->
+        <div *ngIf="plan.popular" class="landing-popular-badge">
+          <span class="landing-popular-text">Most Popular</span>
+        </div>
+
+        <!-- Plan Info -->
+        <div class="landing-plan-info">
+          <h3 class="landing-plan-name" [class.text-white]="plan.popular">
+            {{ plan.name }}
+          </h3>
+          <p class="landing-plan-description" [class.text-white-80]="plan.popular">
+            {{ plan.description }}
+          </p>
+        </div>
+
+        <!-- Pricing -->
+        <div class="landing-plan-pricing">
+          <span class="landing-plan-price" [class.text-white]="plan.popular">
+            ${{ plan.price }}
+          </span>
+          <span class="landing-plan-period" [class.text-white-80]="plan.popular">
+            /{{ plan.period }}
+          </span>
+        </div>
+
+        <!-- CTA Button -->
+        <a routerLink="/auth/register"
+           [class.landing-cta-popular]="plan.popular"
+           [class.landing-cta-regular]="!plan.popular"
+           class="landing-plan-cta">
+          Get Started
+        </a>
+
+        <!-- Features List -->
+        <ul class="landing-plan-features">
+          <li *ngFor="let feature of plan.features" class="landing-feature-item">
+            <iconify-icon
+              icon="lucide:check"
+              [class.text-white]="plan.popular"
+              [class.text-primary]="!plan.popular"
+              class="landing-check-icon">
+            </iconify-icon>
+            <span [class.text-white-90]="plan.popular" [class.text-default]="!plan.popular">
+              {{ feature }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,257 @@
+/* Pricing Section Styles - Inspired by Billing Component */
+.landing-pricing {
+  padding: 5rem 1rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 50%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-pricing {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, transparent 50%, rgba(59, 130, 246, 0.1) 100%);
+  }
+}
+
+@media (min-width: 640px) {
+  .landing-pricing {
+    padding: 5rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-pricing {
+    padding: 5rem 2rem;
+  }
+}
+
+.landing-pricing-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.landing-pricing-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.landing-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .landing-pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Pricing Card - Regular */
+.landing-pricing-card {
+  background-color: white;
+  border: 1px solid rgba(229, 231, 235, 1);
+  padding: 2rem;
+  border-radius: 1rem;
+  position: relative;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-pricing-card {
+    background-color: rgba(24, 24, 27, 1);
+    border-color: rgba(63, 63, 70, 1);
+  }
+}
+
+.landing-pricing-card:hover {
+  transform: scale(1.05);
+}
+
+/* Pricing Card - Popular */
+.landing-pricing-card-popular {
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: none;
+}
+
+.landing-pricing-card-popular:hover {
+  transform: scale(1.08);
+}
+
+/* Popular Badge */
+.landing-popular-badge {
+  position: absolute;
+  top: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.landing-popular-text {
+  background-color: #facc15;
+  color: rgba(24, 24, 27, 1);
+  padding: 0.25rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Plan Info */
+.landing-plan-info {
+  margin-bottom: 1.5rem;
+}
+
+.landing-plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: rgba(17, 24, 39, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-plan-name {
+    color: rgba(250, 250, 250, 1);
+  }
+}
+
+.landing-plan-name.text-white {
+  color: white !important;
+}
+
+.landing-plan-description {
+  font-size: 0.875rem;
+  color: rgba(75, 85, 99, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-plan-description {
+    color: rgba(161, 161, 170, 1);
+  }
+}
+
+.landing-plan-description.text-white-80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Pricing */
+.landing-plan-pricing {
+  margin-bottom: 1.5rem;
+}
+
+.landing-plan-price {
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(17, 24, 39, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-plan-price {
+    color: rgba(250, 250, 250, 1);
+  }
+}
+
+.landing-plan-price.text-white {
+  color: white !important;
+}
+
+.landing-plan-period {
+  font-size: 1.125rem;
+  color: rgba(75, 85, 99, 1);
+  margin-left: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-plan-period {
+    color: rgba(161, 161, 170, 1);
+  }
+}
+
+.landing-plan-period.text-white-80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* CTA Button */
+.landing-plan-cta {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+/* Regular CTA */
+.landing-cta-regular {
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+}
+
+.landing-cta-regular:hover {
+  background-color: var(--primary-hover-color, #2563eb);
+}
+
+/* Popular CTA */
+.landing-cta-popular {
+  background-color: white;
+  color: var(--primary-color, #3b82f6);
+}
+
+.landing-cta-popular:hover {
+  background-color: rgba(243, 244, 246, 1);
+}
+
+/* Features List */
+.landing-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+.landing-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.landing-check-icon {
+  font-size: 1.25rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.landing-check-icon.text-primary {
+  color: var(--primary-color, #3b82f6);
+}
+
+.landing-check-icon.text-white {
+  color: white;
+}
+
+.landing-feature-item span {
+  line-height: 1.5;
+}
+
+.landing-feature-item span.text-default {
+  color: rgba(55, 65, 81, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-feature-item span.text-default {
+    color: rgba(212, 212, 216, 1);
+  }
+}
+
+.landing-feature-item span.text-white-90 {
+  color: rgba(255, 255, 255, 0.9);
+}
