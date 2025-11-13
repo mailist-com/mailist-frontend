@@ -1,0 +1,80 @@
+<div class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+  @for (toast of toasts(); track toast.id) {
+    <div
+      class="pointer-events-auto transform transition-all duration-300 ease-in-out animate-slide-in"
+      [class.animate-slide-out]="toast.id === dismissingToastId"
+      role="alert"
+      [attr.aria-live]="toast.type === 'error' ? 'assertive' : 'polite'"
+    >
+      <div
+        class="flex items-start gap-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm"
+        [ngClass]="{
+          'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800': toast.type === 'success',
+          'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800': toast.type === 'error',
+          'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800': toast.type === 'warning',
+          'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': toast.type === 'info'
+        }"
+      >
+        <!-- Icon -->
+        <div class="flex-shrink-0">
+          <ng-icon
+            [name]="toast.icon || 'lucideInfo'"
+            size="20"
+            [ngClass]="{
+              'text-green-600 dark:text-green-400': toast.type === 'success',
+              'text-red-600 dark:text-red-400': toast.type === 'error',
+              'text-yellow-600 dark:text-yellow-400': toast.type === 'warning',
+              'text-blue-600 dark:text-blue-400': toast.type === 'info'
+            }"
+          ></ng-icon>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+          @if (toast.title) {
+            <h3
+              class="text-sm font-semibold mb-1"
+              [ngClass]="{
+                'text-green-900 dark:text-green-100': toast.type === 'success',
+                'text-red-900 dark:text-red-100': toast.type === 'error',
+                'text-yellow-900 dark:text-yellow-100': toast.type === 'warning',
+                'text-blue-900 dark:text-blue-100': toast.type === 'info'
+              }"
+            >
+              {{ toast.title }}
+            </h3>
+          }
+          <p
+            class="text-sm"
+            [ngClass]="{
+              'text-green-800 dark:text-green-200': toast.type === 'success',
+              'text-red-800 dark:text-red-200': toast.type === 'error',
+              'text-yellow-800 dark:text-yellow-200': toast.type === 'warning',
+              'text-blue-800 dark:text-blue-200': toast.type === 'info'
+            }"
+          >
+            {{ toast.message }}
+          </p>
+        </div>
+
+        <!-- Close Button -->
+        @if (toast.dismissible) {
+          <button
+            type="button"
+            (click)="dismiss(toast.id)"
+            class="flex-shrink-0 inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+            [ngClass]="{
+              'text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-900/50 focus:ring-green-500': toast.type === 'success',
+              'text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/50 focus:ring-red-500': toast.type === 'error',
+              'text-yellow-600 hover:bg-yellow-100 dark:text-yellow-400 dark:hover:bg-yellow-900/50 focus:ring-yellow-500': toast.type === 'warning',
+              'text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50 focus:ring-blue-500': toast.type === 'info'
+            }"
+            [attr.aria-label]="'Zamknij powiadomienie'"
+          >
+            <ng-icon name="lucideX" size="16"></ng-icon>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>

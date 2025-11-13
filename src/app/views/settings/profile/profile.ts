@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { UserService } from '../../../services/user.service';
 import { UserProfile } from '../../../models/user.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -46,7 +47,10 @@ export class ProfileSettings implements OnInit, OnDestroy {
     timeFormat: '24h' as '12h' | '24h',
   };
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.loadUser();
@@ -85,7 +89,7 @@ export class ProfileSettings implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading user profile:', error);
-          alert('Błąd podczas ładowania profilu użytkownika');
+          this.toastService.error('Błąd podczas ładowania profilu użytkownika');
         }
       });
   }
@@ -98,11 +102,11 @@ export class ProfileSettings implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.saving = false;
-          alert('Profil zaktualizowany pomyślnie');
+          this.toastService.success('Profil zaktualizowany pomyślnie');
         },
         error: () => {
           this.saving = false;
-          alert('Błąd podczas aktualizacji profilu');
+          this.toastService.error('Błąd podczas aktualizacji profilu');
         },
       });
   }
@@ -115,10 +119,11 @@ export class ProfileSettings implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.saving = false;
-          alert('Powiadomienia zaktualizowane');
+          this.toastService.success('Powiadomienia zaktualizowane');
         },
         error: () => {
           this.saving = false;
+          this.toastService.error('Błąd podczas aktualizacji powiadomień');
         },
       });
   }
@@ -131,10 +136,11 @@ export class ProfileSettings implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.saving = false;
-          alert('Preferencje zaktualizowane');
+          this.toastService.success('Preferencje zaktualizowane');
         },
         error: () => {
           this.saving = false;
+          this.toastService.error('Błąd podczas aktualizacji preferencji');
         },
       });
   }

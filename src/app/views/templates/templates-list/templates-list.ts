@@ -30,6 +30,7 @@ import {
   TemplateCategory,
   TemplateStatus,
 } from '../../../models/template.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-templates-list',
@@ -87,7 +88,8 @@ export class TemplatesList implements OnInit, OnDestroy {
 
   constructor(
     private templateService: TemplateService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -186,7 +188,7 @@ export class TemplatesList implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Error duplicating template:', error);
-            alert('Wystąpił błąd podczas duplikowania szablonu');
+            this.toastService.error('Wystąpił błąd podczas duplikowania szablonu');
           },
         });
     }
@@ -208,7 +210,7 @@ export class TemplatesList implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Error deleting template:', error);
-            alert('Wystąpił błąd podczas usuwania szablonu');
+            this.toastService.error('Wystąpił błąd podczas usuwania szablonu');
           },
         });
     }
@@ -225,7 +227,7 @@ export class TemplatesList implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error archiving template:', error);
-          alert('Wystąpił błąd podczas archiwizowania szablonu');
+          this.toastService.error('Wystąpił błąd podczas archiwizowania szablonu');
         },
       });
   }
@@ -241,7 +243,7 @@ export class TemplatesList implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error activating template:', error);
-          alert('Wystąpił błąd podczas aktywowania szablonu');
+          this.toastService.error('Wystąpił błąd podczas aktywowania szablonu');
         },
       });
   }
