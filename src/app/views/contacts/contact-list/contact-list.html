@@ -162,7 +162,7 @@
                     </div>
                     <div>
                       <h6 class="mb-1.5 font-semibold">
-                        <a [routerLink]="['/contacts/view', contact.id]" class="text-default-800 hover:text-primary">
+                        <a [routerLink]="['/contacts/edit', contact.id]" class="text-default-800 hover:text-primary">
                           {{ contact.firstName }} {{ contact.lastName }}
                         </a>
                       </h6>
@@ -222,11 +222,6 @@
                         <div class="size-4"><ng-icon name="lucideEllipsis"></ng-icon></div>
                       </button>
                       <div class="hs-dropdown-menu" role="menu">
-                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
-                           [routerLink]="['/contacts/view', contact.id]">
-                          <div class="size-3"><ng-icon name="lucideEye"></ng-icon></div>
-                          {{ 'COMMON.VIEW' | translate }}
-                        </a>
                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-default-500 hover:bg-default-150 rounded"
                            [routerLink]="['/contacts/edit', contact.id]">
                           <div class="size-3"><ng-icon name="lucideFilePen"></ng-icon></div>
