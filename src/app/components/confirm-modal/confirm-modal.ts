@@ -2,10 +2,10 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideAlertTriangle,
-  lucideAlertCircle,
+  lucideTriangleAlert,
+  lucideCircleAlert,
   lucideInfo,
-  lucideCheckCircle,
+  lucideCircleCheck,
   lucideX,
   lucideCheck,
   lucideTrash2
@@ -16,10 +16,10 @@ import { ConfirmService } from '../../services/confirm.service';
   selector: 'app-confirm-modal',
   imports: [CommonModule, NgIcon],
   providers: [provideIcons({
-    lucideAlertTriangle,
-    lucideAlertCircle,
+    lucideTriangleAlert,
+    lucideCircleAlert,
     lucideInfo,
-    lucideCheckCircle,
+    lucideCircleCheck,
     lucideX,
     lucideCheck,
     lucideTrash2

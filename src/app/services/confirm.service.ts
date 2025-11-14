@@ -103,10 +103,10 @@ export class ConfirmService {
    */
   private getIconForType(type: ConfirmType): string {
     const icons: Record<ConfirmType, string> = {
-      danger: 'lucideAlertTriangle',
-      warning: 'lucideAlertCircle',
+      danger: 'lucideTriangleAlert',
+      warning: 'lucideCircleAlert',
       info: 'lucideInfo',
-      success: 'lucideCheckCircle'
+      success: 'lucideCircleCheck'
     };
     return icons[type];
   }
