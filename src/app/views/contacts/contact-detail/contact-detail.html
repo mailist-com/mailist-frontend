@@ -1,4 +1,5 @@
-<main *ngIf="contact$ | async as contact">
+<main>
+  @if (contact$ | async; as contact) {
   <app-page-title
     [title]="contact.firstName + ' ' + contact.lastName"
     [subtitle]="'CONTACTS.CONTACT_DETAILS' | translate" />
@@ -257,4 +258,5 @@
       </div>
     </div>
   </div>
+  }
 </main>
