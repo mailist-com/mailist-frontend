@@ -1,80 +1,88 @@
 @for (dialog of dialogs(); track dialog.id) {
-  <!-- Backdrop -->
+  <!-- Modal Backdrop -->
   <div
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in"
+    class="fixed inset-0 z-[9999] overflow-y-auto animate-fade-in"
     (click)="onBackdropClick($event, dialog.id)"
     role="dialog"
     aria-modal="true"
     [attr.aria-labelledby]="'dialog-title-' + dialog.id"
   >
-    <!-- Modal -->
-    <div
-      class="bg-white dark:bg-default-50 rounded-lg shadow-xl max-w-md w-full animate-slide-up"
-      (click)="$event.stopPropagation()"
-    >
-      <!-- Header -->
-      <div class="flex items-start gap-4 p-6 pb-4">
-        <!-- Icon -->
-        <div
-          class="flex-shrink-0 rounded-full p-3"
-          [ngClass]="{
-            'bg-red-100 dark:bg-red-900/20': dialog.type === 'danger',
-            'bg-yellow-100 dark:bg-yellow-900/20': dialog.type === 'warning',
-            'bg-blue-100 dark:bg-blue-900/20': dialog.type === 'info',
-            'bg-green-100 dark:bg-green-900/20': dialog.type === 'success'
-          }"
-        >
-          <ng-icon
-            [name]="dialog.icon || 'lucideAlertTriangle'"
-            size="24"
-            [ngClass]="{
-              'text-red-600 dark:text-red-400': dialog.type === 'danger',
-              'text-yellow-600 dark:text-yellow-400': dialog.type === 'warning',
-              'text-blue-600 dark:text-blue-400': dialog.type === 'info',
-              'text-green-600 dark:text-green-400': dialog.type === 'success'
-            }"
-          ></ng-icon>
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <!-- Backdrop overlay (subtle) -->
+      <div class="fixed inset-0 bg-default-900/20"></div>
+
+      <!-- Modal Card -->
+      <div
+        class="card text-left max-w-md w-full animate-slide-up relative"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="card-body p-6">
+          <!-- Header with Icon -->
+          <div class="flex items-start gap-3 mb-4">
+            <div
+              class="flex-shrink-0 rounded-lg p-2"
+              [ngClass]="{
+                'bg-danger/10': dialog.type === 'danger',
+                'bg-warning/10': dialog.type === 'warning',
+                'bg-primary/10': dialog.type === 'info',
+                'bg-success/10': dialog.type === 'success'
+              }"
+            >
+              <ng-icon
+                [name]="dialog.icon || 'lucideAlertTriangle'"
+                class="size-5"
+                [ngClass]="{
+                  'text-danger': dialog.type === 'danger',
+                  'text-warning': dialog.type === 'warning',
+                  'text-primary': dialog.type === 'info',
+                  'text-success': dialog.type === 'success'
+                }"
+              ></ng-icon>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <h3
+                [id]="'dialog-title-' + dialog.id"
+                class="text-base font-semibold text-default-900 mb-1"
+              >
+                {{ dialog.title }}
+              </h3>
+              <p class="text-sm text-default-600">
+                {{ dialog.message }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 mt-6">
+            <button
+              type="button"
+              (click)="onCancel(dialog)"
+              class="btn btn-sm flex-1 bg-default-100 text-default-600 hover:bg-default-200"
+            >
+              <ng-icon name="lucideX" class="size-4 me-1"></ng-icon>
+              {{ dialog.cancelText }}
+            </button>
+
+            <button
+              type="button"
+              (click)="onConfirm(dialog)"
+              class="btn btn-sm flex-1 text-white"
+              [ngClass]="{
+                'bg-danger hover:bg-danger/90': dialog.type === 'danger',
+                'bg-warning hover:bg-warning/90': dialog.type === 'warning',
+                'bg-primary hover:bg-primary/90': dialog.type === 'info',
+                'bg-success hover:bg-success/90': dialog.type === 'success'
+              }"
+            >
+              <ng-icon
+                [name]="dialog.type === 'danger' ? 'lucideTrash2' : 'lucideCheck'"
+                class="size-4 me-1"
+              ></ng-icon>
+              {{ dialog.confirmText }}
+            </button>
+          </div>
         </div>
-
-        <!-- Title and Message -->
-        <div class="flex-1 min-w-0">
-          <h3
-            [id]="'dialog-title-' + dialog.id"
-            class="text-lg font-semibold text-default-900 dark:text-default-100 mb-2"
-          >
-            {{ dialog.title }}
-          </h3>
-          <p class="text-sm text-default-600 dark:text-default-400">
-            {{ dialog.message }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="flex items-center justify-end gap-3 px-6 py-4 bg-default-50 dark:bg-default-100/5 rounded-b-lg">
-        <!-- Cancel Button -->
-        <button
-          type="button"
-          (click)="onCancel(dialog)"
-          class="px-4 py-2 text-sm font-medium rounded-md border border-default-300 dark:border-default-600 text-default-700 dark:text-default-300 bg-white dark:bg-default-100/10 hover:bg-default-50 dark:hover:bg-default-100/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-        >
-          {{ dialog.cancelText }}
-        </button>
-
-        <!-- Confirm Button -->
-        <button
-          type="button"
-          (click)="onConfirm(dialog)"
-          class="px-4 py-2 text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
-          [ngClass]="{
-            'bg-red-600 hover:bg-red-700 focus:ring-red-500': dialog.type === 'danger',
-            'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500': dialog.type === 'warning',
-            'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500': dialog.type === 'info',
-            'bg-green-600 hover:bg-green-700 focus:ring-green-500': dialog.type === 'success'
-          }"
-        >
-          {{ dialog.confirmText }}
-        </button>
       </div>
     </div>
   </div>

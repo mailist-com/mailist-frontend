@@ -1,11 +1,29 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgIcon } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  lucideAlertTriangle,
+  lucideAlertCircle,
+  lucideInfo,
+  lucideCheckCircle,
+  lucideX,
+  lucideCheck,
+  lucideTrash2
+} from '@ng-icons/lucide';
 import { ConfirmService } from '../../services/confirm.service';
 
 @Component({
   selector: 'app-confirm-modal',
   imports: [CommonModule, NgIcon],
+  providers: [provideIcons({
+    lucideAlertTriangle,
+    lucideAlertCircle,
+    lucideInfo,
+    lucideCheckCircle,
+    lucideX,
+    lucideCheck,
+    lucideTrash2
+  })],
   templateUrl: './confirm-modal.html',
   styles: [`
     @keyframes fade-in {
@@ -19,7 +37,7 @@ import { ConfirmService } from '../../services/confirm.service';
 
     @keyframes slide-up {
       from {
-        transform: translateY(20px);
+        transform: translateY(16px);
         opacity: 0;
       }
       to {
@@ -28,25 +46,12 @@ import { ConfirmService } from '../../services/confirm.service';
       }
     }
 
-    @keyframes fade-out {
-      from {
-        opacity: 1;
-      }
-      to {
-        opacity: 0;
-      }
-    }
-
     .animate-fade-in {
-      animation: fade-in 0.2s ease-out;
+      animation: fade-in 0.15s ease-out;
     }
 
     .animate-slide-up {
-      animation: slide-up 0.3s ease-out;
-    }
-
-    .animate-fade-out {
-      animation: fade-out 0.2s ease-in;
+      animation: slide-up 0.2s ease-out;
     }
   `]
 })
@@ -54,7 +59,6 @@ export class ConfirmModalComponent {
   private confirmService = inject(ConfirmService);
 
   dialogs = this.confirmService.getDialogs;
-  dismissingDialogId: string | null = null;
 
   onConfirm(dialog: any): void {
     if (dialog.onConfirm) {
