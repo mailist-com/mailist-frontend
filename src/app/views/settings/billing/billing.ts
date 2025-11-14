@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { BillingService } from '../../../services/billing.service';
 import { BillingPlan, CurrentSubscription, BillingHistory } from '../../../models/billing.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-billing-settings',
@@ -27,7 +28,10 @@ export class BillingSettings implements OnInit, OnDestroy {
   maxContacts: number = 50000;
   stepContacts: number = 500;
 
-  constructor(private billingService: BillingService) {}
+  constructor(
+    private billingService: BillingService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -89,7 +93,7 @@ export class BillingSettings implements OnInit, OnDestroy {
   changePlan(planId: string) {
     if (confirm('Czy na pewno chcesz zmienić plan?')) {
       this.billingService.changePlan(planId).pipe(takeUntil(this.destroy$)).subscribe(() => {
-        alert('Plan zmieniony pomyślnie');
+        this.toastService.success('Plan zmieniony pomyślnie');
         this.loadData();
       });
     }
@@ -98,7 +102,7 @@ export class BillingSettings implements OnInit, OnDestroy {
   cancelSubscription() {
     if (confirm('Czy na pewno chcesz anulować subskrypcję?')) {
       this.billingService.cancelSubscription().pipe(takeUntil(this.destroy$)).subscribe(() => {
-        alert('Subskrypcja została anulowana');
+        this.toastService.success('Subskrypcja została anulowana');
         this.loadData();
       });
     }

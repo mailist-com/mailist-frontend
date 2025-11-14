@@ -17,6 +17,7 @@ import {
   CreateApiKeyResponse,
   PermissionInfo,
 } from '../../../models/api-key.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-integrations',
@@ -64,7 +65,8 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private apiKeyService: ApiKeyService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -140,7 +142,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
           },
           error: (error) => {
             console.error('Error regenerating key:', error);
-            alert('Wystąpił błąd podczas regeneracji klucza');
+            this.toastService.error('Wystąpił błąd podczas regeneracji klucza');
           }
         });
     }
@@ -162,7 +164,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
           },
           error: (error) => {
             console.error('Error revoking key:', error);
-            alert('Wystąpił błąd podczas odwoływania klucza');
+            this.toastService.error('Wystąpił błąd podczas odwoływania klucza');
           }
         });
     }
@@ -184,7 +186,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
           },
           error: (error) => {
             console.error('Error deleting key:', error);
-            alert('Wystąpił błąd podczas usuwania klucza');
+            this.toastService.error('Wystąpił błąd podczas usuwania klucza');
           }
         });
     }
@@ -201,7 +203,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
         },
         error: (error) => {
           console.error('Error toggling key status:', error);
-          alert('Wystąpił błąd podczas zmiany statusu klucza');
+          this.toastService.error('Wystąpił błąd podczas zmiany statusu klucza');
         }
       });
   }
@@ -291,12 +293,12 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
 
   createNewKey() {
     if (!this.newKeyName.trim()) {
-      alert('Proszę podać nazwę klucza API');
+      this.toastService.warning('Proszę podać nazwę klucza API');
       return;
     }
 
     if (this.newKeyPermissions.length === 0) {
-      alert('Proszę wybrać co najmniej jedno uprawnienie');
+      this.toastService.warning('Proszę wybrać co najmniej jedno uprawnienie');
       return;
     }
 
@@ -323,7 +325,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
         },
         error: (error) => {
           console.error('Error creating key:', error);
-          alert('Wystąpił błąd podczas tworzenia klucza API');
+          this.toastService.error('Wystąpił błąd podczas tworzenia klucza API');
         }
       });
   }
@@ -352,12 +354,12 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
     if (!this.editingKey) return;
 
     if (!this.editKeyName.trim()) {
-      alert('Proszę podać nazwę klucza API');
+      this.toastService.warning('Proszę podać nazwę klucza API');
       return;
     }
 
     if (this.editKeyPermissions.length === 0) {
-      alert('Proszę wybrać co najmniej jedno uprawnienie');
+      this.toastService.warning('Proszę wybrać co najmniej jedno uprawnienie');
       return;
     }
 
@@ -377,7 +379,7 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
         },
         error: (error) => {
           console.error('Error updating key:', error);
-          alert('Wystąpił błąd podczas aktualizacji klucza');
+          this.toastService.error('Wystąpił błąd podczas aktualizacji klucza');
         }
       });
   }

@@ -9,6 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
 import { ContactList, ListImportMapping, ListImportResult } from '../../../models/contact-list.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-contact-import',
@@ -40,7 +41,8 @@ export class ContactImport implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private contactListService: ContactListService
+    private contactListService: ContactListService,
+    private toastService: ToastService
   ) {
     this.initForm();
   }
@@ -64,7 +66,7 @@ export class ContactImport implements OnInit {
       this.uploadedFile = file;
       this.parseCSVFile(file);
     } else {
-      alert('Please select a valid CSV file.');
+      this.toastService.warning('Proszę wybrać poprawny plik CSV.');
     }
   }
 
@@ -169,7 +171,7 @@ export class ContactImport implements OnInit {
           error: (error) => {
             console.error('Import failed:', error);
             this.isImporting = false;
-            alert('Import failed. Please try again.');
+            this.toastService.error('Import nie powiódł się. Spróbuj ponownie.');
           }
         });
     };

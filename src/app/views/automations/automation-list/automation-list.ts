@@ -28,6 +28,7 @@ import { PageTitle } from '../../../components/page-title/page-title';
 
 import { AutomationService } from '../../../services/automation.service';
 import { Automation, AutomationStatus, AutomationType } from '../../../models/automation.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-automation-list',
@@ -82,7 +83,8 @@ export class AutomationList implements OnInit, OnDestroy {
   constructor(
     private automationService: AutomationService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -106,7 +108,7 @@ export class AutomationList implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading automations:', error);
-          alert('Wystąpił błąd podczas ładowania automatyzacji');
+          this.toastService.error('Wystąpił błąd podczas ładowania automatyzacji');
         }
       });
   }

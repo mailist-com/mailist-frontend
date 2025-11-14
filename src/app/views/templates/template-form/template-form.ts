@@ -24,6 +24,7 @@ import {
   TemplateStatus,
   CreateTemplateDTO,
 } from '../../../models/template.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-template-form',
@@ -98,7 +99,8 @@ export class TemplateForm implements OnInit, OnDestroy {
   constructor(
     private templateService: TemplateService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -134,13 +136,13 @@ export class TemplateForm implements OnInit, OnDestroy {
               thumbnailUrl: template.thumbnailUrl,
             };
           } else {
-            alert('Szablon nie został znaleziony');
+            this.toastService.error('Szablon nie został znaleziony');
             this.goBack();
           }
         },
         error: (error) => {
           console.error('Error loading template:', error);
-          alert('WystpiB bBd podczas Badowania szablonu');
+          this.toastService.error('Wystąpił błąd podczas ładowania szablonu');
           this.goBack();
         },
       });
@@ -149,17 +151,17 @@ export class TemplateForm implements OnInit, OnDestroy {
   saveTemplate(): void {
     // Basic validation
     if (!this.template.name?.trim()) {
-      alert('Nazwa szablonu jest wymagana');
+      this.toastService.warning('Nazwa szablonu jest wymagana');
       return;
     }
 
     if (!this.template.subject?.trim()) {
-      alert('Temat wiadomości jest wymagany');
+      this.toastService.warning('Temat wiadomości jest wymagany');
       return;
     }
 
     if (!this.template.content?.html?.trim()) {
-      alert('Tre[ HTML jest wymagana');
+      this.toastService.warning('Treść HTML jest wymagana');
       return;
     }
 
@@ -187,7 +189,7 @@ export class TemplateForm implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error saving template:', error);
-        alert('WystpiB bBd podczas zapisywania szablonu');
+        this.toastService.error('Wystąpił błąd podczas zapisywania szablonu');
         this.isSaving = false;
       },
     });
