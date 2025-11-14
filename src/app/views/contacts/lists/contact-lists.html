@@ -90,20 +90,24 @@
         </div>
 
         <!-- Type Filter -->
-        <select [(ngModel)]="selectedType" (change)="onFilterChange()" class="form-input form-input-sm">
-          <option value="">{{ 'LISTS.TYPE.ALL' | translate }}</option>
-          <option value="regular">{{ 'LISTS.TYPE.STATIC' | translate }}</option>
-          <option value="smart">{{ 'LISTS.TYPE.DYNAMIC' | translate }}</option>
-          <option value="static">{{ 'LISTS.TYPE.STATIC' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [options]="typeOptions"
+          [(ngModel)]="selectedType"
+          (ngModelChange)="onFilterChange()"
+          [placeholder]="'LISTS.TYPE.ALL' | translate"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
 
         <!-- Status Filter -->
-        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
-          <option value="">{{ 'LISTS.STATUS.ALL' | translate }}</option>
-          <option value="active">{{ 'LISTS.STATUS.ACTIVE' | translate }}</option>
-          <option value="inactive">{{ 'COMMON.INACTIVE' | translate }}</option>
-          <option value="archived">{{ 'LISTS.STATUS.ARCHIVED' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [options]="statusOptions"
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onFilterChange()"
+          [placeholder]="'LISTS.STATUS.ALL' | translate"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
       </div>
 
     </div>

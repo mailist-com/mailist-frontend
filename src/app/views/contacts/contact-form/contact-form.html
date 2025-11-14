@@ -83,23 +83,22 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.STATUS_LABEL' | translate }}</label>
-                <select formControlName="status" class="form-input">
-                  <option value="active">{{ 'CONTACTS.STATUS.ACTIVE' | translate }}</option>
-                  <option value="unconfirmed">{{ 'CONTACTS.STATUS.UNCONFIRMED' | translate }}</option>
-                  <option value="unsubscribed">{{ 'CONTACTS.STATUS.UNSUBSCRIBED' | translate }}</option>
-                  <option value="bounced">{{ 'CONTACTS.STATUS.BOUNCED' | translate }}</option>
-                  <option value="blocked">{{ 'CONTACTS.STATUS.BLOCKED' | translate }}</option>
-                </select>
+                <app-custom-dropdown
+                  formControlName="status"
+                  [options]="statusOptions"
+                  [placeholder]="'CONTACTS.STATUS_LABEL'"
+                  [searchable]="false">
+                </app-custom-dropdown>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.SUBSCRIPTION_STATUS' | translate }}</label>
-                <select formControlName="subscriptionStatus" class="form-input">
-                  <option value="subscribed">{{ 'CONTACTS.SUB_STATUS.SUBSCRIBED' | translate }}</option>
-                  <option value="unsubscribed">{{ 'CONTACTS.SUB_STATUS.UNSUBSCRIBED' | translate }}</option>
-                  <option value="pending">{{ 'CONTACTS.SUB_STATUS.PENDING' | translate }}</option>
-                  <option value="cleaned">{{ 'LISTS.CLEANED' | translate }}</option>
-                </select>
+                <app-custom-dropdown
+                  formControlName="subscriptionStatus"
+                  [options]="subscriptionStatusOptions"
+                  [placeholder]="'CONTACTS.SUBSCRIPTION_STATUS'"
+                  [searchable]="false">
+                </app-custom-dropdown>
               </div>
             </div>
           </div>
@@ -136,16 +135,12 @@
 
               <div>
                 <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.TIMEZONE' | translate }}</label>
-                <select formControlName="timezone" class="form-input">
-                  <option value="">{{ 'CONTACTS.SELECT_TIMEZONE' | translate }}</option>
-                  <option value="America/New_York">Eastern Time</option>
-                  <option value="America/Chicago">Central Time</option>
-                  <option value="America/Denver">Mountain Time</option>
-                  <option value="America/Los_Angeles">Pacific Time</option>
-                  <option value="Europe/London">London</option>
-                  <option value="Europe/Paris">Paris</option>
-                  <option value="Asia/Tokyo">Tokyo</option>
-                </select>
+                <app-custom-dropdown
+                  formControlName="timezone"
+                  [options]="timezoneOptions"
+                  [placeholder]="'CONTACTS.SELECT_TIMEZONE'"
+                  [searchable]="true">
+                </app-custom-dropdown>
               </div>
             </div>
           </div>
@@ -174,16 +169,15 @@
                 <input type="text" formControlName="value" class="form-input">
               </div>
 
-              <div class="w-32">
+              <div class="w-40">
                 <label class="block text-sm font-medium text-default-700 mb-2">{{ 'CONTACTS.TYPE' | translate }}</label>
-                <select formControlName="type" class="form-input">
-                  <option value="text">{{ 'CONTACTS.FIELD_TYPES.TEXT' | translate }}</option>
-                  <option value="number">{{ 'CONTACTS.FIELD_TYPES.NUMBER' | translate }}</option>
-                  <option value="date">{{ 'CONTACTS.FIELD_TYPES.DATE' | translate }}</option>
-                  <option value="boolean">{{ 'CONTACTS.FIELD_TYPES.BOOLEAN' | translate }}</option>
-                  <option value="textarea">Textarea</option>
-                  <option value="dropdown">Dropdown</option>
-                </select>
+                <app-custom-dropdown
+                  formControlName="type"
+                  [options]="fieldTypeOptions"
+                  [placeholder]="'CONTACTS.TYPE'"
+                  size="sm"
+                  [searchable]="false">
+                </app-custom-dropdown>
               </div>
 
               <button type="button" 

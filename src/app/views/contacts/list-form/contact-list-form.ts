@@ -6,12 +6,13 @@ import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactListService } from '../../../services/contact-list.service';
 import { ContactList, ListType, ListStatus } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-list-form',
-  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
   templateUrl: './contact-list-form.html'
 })
 export class ContactListFormComponent implements OnInit {
@@ -20,25 +21,34 @@ export class ContactListFormComponent implements OnInit {
   listId?: string;
   error: string | null = null;
 
-  listTypes = [
-    { value: 'regular', label: 'Regular List', description: 'Standard mailing list for manual contact management' },
-    { value: 'smart', label: 'Smart List', description: 'Automatically updates based on contact criteria' },
-    { value: 'static', label: 'Static List', description: 'Fixed list that doesn\'t change automatically' }
+  // Dropdown options
+  listTypeOptions: DropdownOption[] = [
+    { value: 'static', label: 'LISTS.TYPE.STATIC' },
+    { value: 'dynamic', label: 'LISTS.TYPE.DYNAMIC' },
+    { value: 'segment', label: 'LISTS.TYPE.SEGMENT' }
   ];
 
-  listStatuses = [
-    { value: 'active', label: 'Active' },
-    { value: 'inactive', label: 'Inactive' },
-    { value: 'archived', label: 'Archived' }
+  listStatusOptions: DropdownOption[] = [
+    { value: 'active', label: 'LISTS.STATUS.ACTIVE' },
+    { value: 'archived', label: 'LISTS.STATUS.ARCHIVED' },
+    { value: 'draft', label: 'LISTS.STATUS.DRAFT' }
   ];
 
-  customFieldTypes = [
-    { value: 'text', label: 'Text' },
-    { value: 'number', label: 'Number' },
-    { value: 'date', label: 'Date' },
-    { value: 'boolean', label: 'Boolean' },
-    { value: 'dropdown', label: 'Dropdown' }
+  customFieldTypeOptions: DropdownOption[] = [
+    { value: 'text', label: 'CONTACTS.FIELD_TYPES.TEXT' },
+    { value: 'number', label: 'CONTACTS.FIELD_TYPES.NUMBER' },
+    { value: 'date', label: 'CONTACTS.FIELD_TYPES.DATE' },
+    { value: 'boolean', label: 'CONTACTS.FIELD_TYPES.BOOLEAN' },
+    { value: 'url', label: 'CONTACTS.FIELD_TYPES.URL' },
+    { value: 'email', label: 'CONTACTS.FIELD_TYPES.EMAIL' }
   ];
+
+  // Type descriptions for UI
+  typeDescriptions: { [key: string]: string } = {
+    'static': 'Fixed list that doesn\'t change automatically',
+    'dynamic': 'Automatically updates based on contact criteria',
+    'segment': 'Target specific contact segments based on conditions'
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -63,7 +73,7 @@ export class ContactListFormComponent implements OnInit {
     this.listForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
-      type: ['regular', Validators.required],
+      type: ['static', Validators.required],
       status: ['active', Validators.required],
       tags: this.fb.array([]),
       settings: this.fb.group({
@@ -244,15 +254,14 @@ export class ContactListFormComponent implements OnInit {
 
   getTypeIcon(type: string): string {
     const typeIcons = {
-      'regular': 'lucideList',
-      'smart': 'lucideZap',
-      'static': 'lucideDatabase'
+      'static': 'lucideDatabase',
+      'dynamic': 'lucideZap',
+      'segment': 'lucideFilter'
     };
     return typeIcons[type as keyof typeof typeIcons] || 'lucideList';
   }
 
   getTypeDescription(type: string): string {
-    const typeDesc = this.listTypes.find(t => t.value === type);
-    return typeDesc?.description || '';
+    return this.typeDescriptions[type] || '';
   }
 }

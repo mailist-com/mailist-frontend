@@ -25,6 +25,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 
 import { AutomationService } from '../../../services/automation.service';
 import { Automation, AutomationStatus, AutomationType } from '../../../models/automation.model';
@@ -33,7 +34,7 @@ import { ToastService } from '../../../services/toast.service';
 @Component({
   selector: 'app-automation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule, CustomDropdown],
   providers: [provideIcons({
     lucideActivity,
     lucidePlay,
@@ -79,6 +80,32 @@ export class AutomationList implements OnInit, OnDestroy {
 
   // Expose Math to template
   Math = Math;
+
+  // Dropdown options
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'AUTOMATIONS.STATUS.ALL' },
+    { value: 'active', label: 'AUTOMATIONS.STATUS.ACTIVE' },
+    { value: 'paused', label: 'AUTOMATIONS.STATUS.PAUSED' },
+    { value: 'draft', label: 'AUTOMATIONS.STATUS.DRAFT' },
+    { value: 'inactive', label: 'AUTOMATIONS.STATUS.INACTIVE' }
+  ];
+
+  typeOptions: DropdownOption[] = [
+    { value: '', label: 'AUTOMATIONS.TYPE.ALL' },
+    { value: 'welcome_series', label: 'AUTOMATIONS.TYPE.WELCOME_SERIES' },
+    { value: 'drip_campaign', label: 'AUTOMATIONS.TYPE.DRIP_CAMPAIGN' },
+    { value: 'behavioral', label: 'AUTOMATIONS.TYPE.BEHAVIORAL' },
+    { value: 'date_based', label: 'AUTOMATIONS.TYPE.DATE_BASED' },
+    { value: 'tag_based', label: 'AUTOMATIONS.TYPE.TAG_BASED' },
+    { value: 'custom', label: 'AUTOMATIONS.TYPE.CUSTOM' }
+  ];
+
+  pageSizeOptions: DropdownOption[] = [
+    { value: 10, label: 'COMMON.PER_PAGE_10' },
+    { value: 20, label: 'COMMON.PER_PAGE_20' },
+    { value: 50, label: 'COMMON.PER_PAGE_50' },
+    { value: 100, label: 'COMMON.PER_PAGE_100' }
+  ];
 
   constructor(
     private automationService: AutomationService,

@@ -106,24 +106,24 @@
         </div>
 
         <!-- Status Filter -->
-        <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">{{ 'AUTOMATIONS.STATUS.ALL' | translate }}</option>
-          <option value="active">{{ 'AUTOMATIONS.STATUS.ACTIVE' | translate }}</option>
-          <option value="paused">{{ 'AUTOMATIONS.STATUS.PAUSED' | translate }}</option>
-          <option value="draft">{{ 'AUTOMATIONS.STATUS.DRAFT' | translate }}</option>
-          <option value="inactive">{{ 'AUTOMATIONS.STATUS.INACTIVE' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="applyFilters()"
+          [options]="statusOptions"
+          [placeholder]="'AUTOMATIONS.STATUS.ALL' | translate"
+          size="sm"
+          [searchable]="false"
+        ></app-custom-dropdown>
 
         <!-- Type Filter -->
-        <select [(ngModel)]="selectedType" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">{{ 'AUTOMATIONS.TYPE.ALL' | translate }}</option>
-          <option value="welcome_series">{{ 'AUTOMATIONS.TYPE.WELCOME_SERIES' | translate }}</option>
-          <option value="drip_campaign">{{ 'AUTOMATIONS.TYPE.DRIP_CAMPAIGN' | translate }}</option>
-          <option value="behavioral">{{ 'AUTOMATIONS.TYPE.BEHAVIORAL' | translate }}</option>
-          <option value="date_based">{{ 'AUTOMATIONS.TYPE.DATE_BASED' | translate }}</option>
-          <option value="tag_based">{{ 'AUTOMATIONS.TYPE.TAG_BASED' | translate }}</option>
-          <option value="custom">{{ 'AUTOMATIONS.TYPE.CUSTOM' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedType"
+          (ngModelChange)="applyFilters()"
+          [options]="typeOptions"
+          [placeholder]="'AUTOMATIONS.TYPE.ALL' | translate"
+          size="sm"
+          [searchable]="true"
+        ></app-custom-dropdown>
       </div>
     </div>
 
@@ -256,12 +256,14 @@
 
           <div class="flex items-center gap-2">
             <!-- Page Size Selector -->
-            <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
-              <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
-              <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
-              <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
-              <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
-            </select>
+            <app-custom-dropdown
+              [(ngModel)]="pageSize"
+              (ngModelChange)="onPageSizeChange(pageSize)"
+              [options]="pageSizeOptions"
+              [placeholder]="'COMMON.PER_PAGE_20' | translate"
+              size="sm"
+              [searchable]="false"
+            ></app-custom-dropdown>
 
             <!-- Pagination Buttons -->
             <div class="flex gap-1">

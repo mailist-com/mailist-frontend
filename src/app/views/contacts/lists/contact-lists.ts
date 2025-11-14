@@ -7,13 +7,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactListService } from '../../../services/contact-list.service';
 import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-lists',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
   templateUrl: './contact-lists.html'
 })
 export class ContactListsComponent implements OnInit {
@@ -28,6 +29,21 @@ export class ContactListsComponent implements OnInit {
   error: string | null = null;
   success: string | null = null;
   viewMode: 'grid' | 'list' = 'grid'; // View toggle: grid (cards) or list (table)
+
+  // Dropdown options
+  typeOptions: DropdownOption[] = [
+    { value: '', label: 'LISTS.TYPE.ALL' },
+    { value: 'static', label: 'LISTS.TYPE.STATIC' },
+    { value: 'dynamic', label: 'LISTS.TYPE.DYNAMIC' },
+    { value: 'segment', label: 'LISTS.TYPE.SEGMENT' }
+  ];
+
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'LISTS.STATUS.ALL' },
+    { value: 'active', label: 'LISTS.STATUS.ACTIVE' },
+    { value: 'archived', label: 'LISTS.STATUS.ARCHIVED' },
+    { value: 'draft', label: 'LISTS.STATUS.DRAFT' }
+  ];
 
   constructor(private contactListService: ContactListService) {}
 

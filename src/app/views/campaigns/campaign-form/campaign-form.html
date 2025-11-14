@@ -118,15 +118,13 @@
           <label class="block text-sm font-medium text-default-700 mb-2">
             {{ 'CAMPAIGNS.CAMPAIGN_TYPE' | translate }}
           </label>
-          <select
+          <app-custom-dropdown
             [(ngModel)]="campaign.type"
             name="type"
-            class="form-input w-full">
-            <option value="regular">{{ 'CAMPAIGNS.TYPE.REGULAR' | translate }}</option>
-            <option value="ab_test">{{ 'CAMPAIGNS.TYPE.AB_TEST' | translate }}</option>
-            <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
-            <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
-          </select>
+            [options]="campaignTypeOptions"
+            [placeholder]="'CAMPAIGNS.CAMPAIGN_TYPE'"
+            [searchable]="false">
+          </app-custom-dropdown>
         </div>
       </div>
     </div>

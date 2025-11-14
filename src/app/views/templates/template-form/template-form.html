@@ -66,29 +66,26 @@
               <label class="block text-sm font-medium text-default-700 mb-2">
                 {{ 'TEMPLATES.CATEGORY' | translate }} <span class="text-danger">*</span>
               </label>
-              <select
+              <app-custom-dropdown
                 [(ngModel)]="template.category"
                 name="category"
-                required
-                class="form-input w-full">
-                <option *ngFor="let cat of categories" [value]="cat.value">
-                  {{ cat.label }}
-                </option>
-              </select>
+                [options]="categoryOptions"
+                [placeholder]="'TEMPLATES.CATEGORY' | translate"
+                [searchable]="true">
+              </app-custom-dropdown>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-default-700 mb-2">
                 {{ 'TEMPLATES.STATUS' | translate }}
               </label>
-              <select
+              <app-custom-dropdown
                 [(ngModel)]="template.status"
                 name="status"
-                class="form-input w-full">
-                <option *ngFor="let status of statuses" [value]="status.value">
-                  {{ status.label }}
-                </option>
-              </select>
+                [options]="statusOptions"
+                [placeholder]="'TEMPLATES.STATUS' | translate"
+                [searchable]="false">
+              </app-custom-dropdown>
             </div>
           </div>
         </div>
@@ -216,17 +213,13 @@
               <label class="block text-sm font-medium text-default-700 mb-2">
                 {{ 'TEMPLATES.FONT_FAMILY' | translate }}
               </label>
-              <select
+              <app-custom-dropdown
                 [(ngModel)]="template.content!.design!.fontFamily"
                 name="fontFamily"
-                class="form-input w-full">
-                <option value="Arial, sans-serif">Arial</option>
-                <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Times New Roman', Times, serif">Times New Roman</option>
-                <option value="'Courier New', Courier, monospace">Courier New</option>
-                <option value="Verdana, Geneva, sans-serif">Verdana</option>
-              </select>
+                [options]="fontFamilyOptions"
+                [placeholder]="'TEMPLATES.FONT_FAMILY' | translate"
+                [searchable]="false">
+              </app-custom-dropdown>
             </div>
           </div>
         </div>

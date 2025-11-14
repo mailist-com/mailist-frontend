@@ -7,10 +7,11 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { TeamService } from '../../../services/team.service';
 import { TeamMember, TeamRole, InviteTeamMemberDTO } from '../../../models/team.model';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 
 @Component({
   selector: 'app-team-settings',
-  imports: [CommonModule, FormsModule, NgIcon, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, TranslateModule, CustomDropdown],
   templateUrl: './team.html',
   styleUrl: './team.css',
 })
@@ -25,6 +26,11 @@ export class TeamSettings implements OnInit, OnDestroy, AfterViewInit {
     lastName: '',
     role: 'USER' as TeamRole,
   };
+
+  roleOptions: DropdownOption[] = [
+    { value: 'USER', label: 'Użytkownik' },
+    { value: 'ADMIN', label: 'Administrator' },
+  ];
 
   alertMessage = '';
   alertType: 'success' | 'error' = 'success';

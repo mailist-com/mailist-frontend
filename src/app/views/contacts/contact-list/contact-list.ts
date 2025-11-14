@@ -7,6 +7,7 @@ import { Observable, BehaviorSubject, combineLatest, map, switchMap } from 'rxjs
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactService } from '../../../services/contact.service';
 import { ContactListService } from '../../../services/contact-list.service';
 import { Contact, ContactFilter } from '../../../models/contact.model';
@@ -15,7 +16,7 @@ import { ContactList } from '../../../models/contact-list.model';
 @Component({
   selector: 'app-contact-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
   templateUrl: './contact-list.html'
 })
 export class ContactListComponent implements OnInit {
@@ -32,6 +33,25 @@ export class ContactListComponent implements OnInit {
   selectedTags: string[] = [];
 
   availableTags = ['premium', 'developer', 'designer', 'angular', 'asp.net', 'senior'];
+
+  // Dropdown options
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'CONTACTS.ALL_STATUS' },
+    { value: 'active', label: 'CONTACTS.STATUS.ACTIVE' },
+    { value: 'unconfirmed', label: 'CONTACTS.STATUS.UNCONFIRMED' },
+    { value: 'unsubscribed', label: 'CONTACTS.STATUS.UNSUBSCRIBED' },
+    { value: 'bounced', label: 'CONTACTS.STATUS.BOUNCED' },
+    { value: 'blocked', label: 'CONTACTS.STATUS.BLOCKED' }
+  ];
+
+  listOptions: DropdownOption[] = [];
+
+  pageSizeOptions: DropdownOption[] = [
+    { value: 10, label: 'COMMON.PER_PAGE_10' },
+    { value: 20, label: 'COMMON.PER_PAGE_20' },
+    { value: 50, label: 'COMMON.PER_PAGE_50' },
+    { value: 100, label: 'COMMON.PER_PAGE_100' }
+  ];
 
   // Pagination properties
   currentPage = 0;
@@ -72,6 +92,14 @@ export class ContactListComponent implements OnInit {
 
   private loadLists() {
     this.lists$ = this.contactListService.getLists();
+
+    // Populate list options for dropdown
+    this.lists$.subscribe(lists => {
+      this.listOptions = [
+        { value: '', label: 'CONTACTS.ALL_LISTS' },
+        ...lists.map(list => ({ value: list.id, label: list.name }))
+      ];
+    });
   }
 
 // Pagination methods
