@@ -18,6 +18,7 @@ import {
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
+import { EmailEditor } from '../../../components/email-editor/email-editor';
 import { TemplateService } from '../../../services/template.service';
 import { ConfirmService } from '../../../services/confirm.service';
 import {
@@ -31,7 +32,7 @@ import { ToastService } from '../../../services/toast.service';
 @Component({
   selector: 'app-template-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown, EmailEditor],
   providers: [
     provideIcons({
       lucideLayoutTemplate,

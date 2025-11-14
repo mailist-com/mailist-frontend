@@ -1,0 +1,148 @@
+<div class="email-editor">
+  <!-- Toolbar -->
+  <div class="email-editor-toolbar">
+    <!-- Mode Toggle -->
+    <div class="toolbar-section border-r border-default-200 pr-3">
+      <button
+        type="button"
+        (click)="toggleMode()"
+        class="toolbar-btn"
+        [title]="isHtmlMode ? 'Tryb wizualny' : 'Tryb HTML'">
+        <ng-icon [name]="isHtmlMode ? 'lucideEye' : 'lucideCode'" class="size-4"></ng-icon>
+        <span class="text-xs ml-1">{{ isHtmlMode ? 'Wizualny' : 'HTML' }}</span>
+      </button>
+    </div>
+
+    <!-- Text Formatting (only in WYSIWYG mode) -->
+    <ng-container *ngIf="!isHtmlMode">
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="execCommand('bold')" class="toolbar-btn" title="Pogrubienie">
+          <ng-icon name="lucideBold" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="execCommand('italic')" class="toolbar-btn" title="Kursywa">
+          <ng-icon name="lucideItalic" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="execCommand('underline')" class="toolbar-btn" title="Podkreślenie">
+          <ng-icon name="lucideUnderline" class="size-4"></ng-icon>
+        </button>
+      </div>
+
+      <!-- Headings -->
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="insertHeading(1)" class="toolbar-btn" title="Nagłówek 1">
+          <ng-icon name="lucideHeading1" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="insertHeading(2)" class="toolbar-btn" title="Nagłówek 2">
+          <ng-icon name="lucideHeading2" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="insertParagraph()" class="toolbar-btn text-xs font-medium" title="Paragraf">
+          P
+        </button>
+      </div>
+
+      <!-- Lists -->
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="execCommand('insertUnorderedList')" class="toolbar-btn" title="Lista punktowana">
+          <ng-icon name="lucideList" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="execCommand('insertOrderedList')" class="toolbar-btn" title="Lista numerowana">
+          <ng-icon name="lucideListOrdered" class="size-4"></ng-icon>
+        </button>
+      </div>
+
+      <!-- Alignment -->
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="setAlignment('Left')" class="toolbar-btn" title="Wyrównaj do lewej">
+          <ng-icon name="lucideAlignLeft" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="setAlignment('Center')" class="toolbar-btn" title="Wyśrodkuj">
+          <ng-icon name="lucideAlignCenter" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="setAlignment('Right')" class="toolbar-btn" title="Wyrównaj do prawej">
+          <ng-icon name="lucideAlignRight" class="size-4"></ng-icon>
+        </button>
+      </div>
+
+      <!-- Insert Elements -->
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="insertLink()" class="toolbar-btn" title="Wstaw link">
+          <ng-icon name="lucideLink" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="insertImage()" class="toolbar-btn" title="Wstaw obraz">
+          <ng-icon name="lucideImage" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="insertHorizontalRule()" class="toolbar-btn" title="Linia pozioma">
+          <ng-icon name="lucideMinus" class="size-4"></ng-icon>
+        </button>
+      </div>
+
+      <!-- Email Blocks -->
+      <div class="toolbar-section border-r border-default-200 pr-3">
+        <button type="button" (click)="insertButton()" class="toolbar-btn text-xs font-medium" title="Przycisk CTA">
+          BTN
+        </button>
+        <button type="button" (click)="insertEmailBlock('header')" class="toolbar-btn text-xs font-medium" title="Nagłówek email">
+          HDR
+        </button>
+        <button type="button" (click)="insertEmailBlock('section')" class="toolbar-btn text-xs font-medium" title="Sekcja">
+          SEC
+        </button>
+        <button type="button" (click)="insertEmailBlock('footer')" class="toolbar-btn text-xs font-medium" title="Stopka">
+          FTR
+        </button>
+      </div>
+
+      <!-- History -->
+      <div class="toolbar-section">
+        <button type="button" (click)="undo()" class="toolbar-btn" title="Cofnij">
+          <ng-icon name="lucideUndo" class="size-4"></ng-icon>
+        </button>
+        <button type="button" (click)="redo()" class="toolbar-btn" title="Ponów">
+          <ng-icon name="lucideRedo" class="size-4"></ng-icon>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- HTML Mode Info -->
+    <div *ngIf="isHtmlMode" class="toolbar-section">
+      <span class="text-xs text-default-600 italic">Tryb edycji kodu HTML</span>
+    </div>
+  </div>
+
+  <!-- Editor Area -->
+  <div class="email-editor-content">
+    <!-- WYSIWYG Editor -->
+    <div
+      *ngIf="!isHtmlMode"
+      #wysiwygEditor
+      class="wysiwyg-editor"
+      contenteditable="true"
+      (input)="onWysiwygInput()"
+      (blur)="onTouched()"
+      [innerHTML]="htmlContent">
+    </div>
+
+    <!-- HTML Editor -->
+    <textarea
+      *ngIf="isHtmlMode"
+      [(ngModel)]="htmlContent"
+      (ngModelChange)="onHtmlChange()"
+      (blur)="onTouched()"
+      class="html-editor"
+      spellcheck="false">
+    </textarea>
+  </div>
+
+  <!-- Helper Text -->
+  <div class="email-editor-footer">
+    <p class="text-xs text-default-600">
+      <span class="text-info">💡</span>
+      <span *ngIf="!isHtmlMode">
+        Użyj przycisków powyżej do formatowania lub wstaw gotowe bloki email (BTN, HDR, SEC, FTR).
+      </span>
+      <span *ngIf="isHtmlMode">
+        Edytujesz kod HTML bezpośrednio. Przełącz na tryb wizualny aby zobaczyć podgląd.
+      </span>
+    </p>
+  </div>
+</div>
