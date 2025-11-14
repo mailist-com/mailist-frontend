@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { TeamService } from '../../../services/team.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { TeamMember, TeamRole, InviteTeamMemberDTO } from '../../../models/team.model';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 
@@ -36,7 +37,10 @@ export class TeamSettings implements OnInit, OnDestroy, AfterViewInit {
   alertType: 'success' | 'error' = 'success';
   showAlert = false;
 
-  constructor(private teamService: TeamService) {}
+  constructor(
+    private teamService: TeamService,
+    private confirmService: ConfirmService
+  ) {}
 
   ngOnInit() {
     this.loadMembers();
@@ -101,8 +105,15 @@ export class TeamSettings implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  removeMember(member: TeamMember) {
-    if (confirm(`Czy na pewno chcesz usunąć ${member.firstName} ${member.lastName}?`)) {
+  async removeMember(member: TeamMember): Promise<void> {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń członka zespołu',
+      `Czy na pewno chcesz usunąć ${member.firstName} ${member.lastName} z zespołu?`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.teamService.removeTeamMember(member.id).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.loadMembers();

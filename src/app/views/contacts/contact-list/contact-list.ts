@@ -10,6 +10,7 @@ import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactService } from '../../../services/contact.service';
 import { ContactListService } from '../../../services/contact-list.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { Contact, ContactFilter } from '../../../models/contact.model';
 import { ContactList } from '../../../models/contact-list.model';
 
@@ -64,7 +65,8 @@ export class ContactListComponent implements OnInit {
 
   constructor(
     private contactService: ContactService,
-    private contactListService: ContactListService
+    private contactListService: ContactListService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit() {
@@ -133,8 +135,15 @@ export class ContactListComponent implements OnInit {
     this.updateFilter();
   }
 
-  deleteContact(contact: Contact) {
-    if (confirm(`Are you sure you want to delete ${contact.firstName} ${contact.lastName}?`)) {
+  async deleteContact(contact: Contact) {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń kontakt',
+      `Czy na pewno chcesz usunąć ${contact.firstName} ${contact.lastName}? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.contactService.deleteContact(contact.id).subscribe({
         next: () => {
           this.loadLists();

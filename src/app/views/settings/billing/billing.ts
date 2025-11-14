@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { BillingService } from '../../../services/billing.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { BillingPlan, CurrentSubscription, BillingHistory } from '../../../models/billing.model';
 import { ToastService } from '../../../services/toast.service';
 
@@ -30,7 +31,8 @@ export class BillingSettings implements OnInit, OnDestroy {
 
   constructor(
     private billingService: BillingService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit() {
@@ -90,8 +92,15 @@ export class BillingSettings implements OnInit, OnDestroy {
     // Update is handled by ngModel
   }
 
-  changePlan(planId: string) {
-    if (confirm('Czy na pewno chcesz zmienić plan?')) {
+  async changePlan(planId: string): Promise<void> {
+    const confirmed = await this.confirmService.confirmWarning(
+      'Zmień plan',
+      'Czy na pewno chcesz zmienić plan? Zmiany wejdą w życie natychmiast.',
+      'Zmień plan',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.billingService.changePlan(planId).pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.toastService.success('Plan zmieniony pomyślnie');
         this.loadData();
@@ -99,8 +108,15 @@ export class BillingSettings implements OnInit, OnDestroy {
     }
   }
 
-  cancelSubscription() {
-    if (confirm('Czy na pewno chcesz anulować subskrypcję?')) {
+  async cancelSubscription(): Promise<void> {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Anuluj subskrypcję',
+      'Czy na pewno chcesz anulować subskrypcję? Stracisz dostęp do funkcji premium.',
+      'Anuluj subskrypcję',
+      'Wróć'
+    );
+
+    if (confirmed) {
       this.billingService.cancelSubscription().pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.toastService.success('Subskrypcja została anulowana');
         this.loadData();

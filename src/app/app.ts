@@ -8,11 +8,12 @@ import { TitleService } from './core/services/title.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalLoaderComponent } from './components/global-loader/global-loader';
 import { ToastNotification } from './components/toast-notification/toast-notification';
+import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, GlobalLoaderComponent, ToastNotification],
+  imports: [RouterOutlet, GlobalLoaderComponent, ToastNotification, ConfirmModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
    providers: [provideIcons({...LucideIcons,...tablerIcons, ...tablerIconsFill})],

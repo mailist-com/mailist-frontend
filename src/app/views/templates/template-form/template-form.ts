@@ -19,6 +19,7 @@ import {
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { TemplateService } from '../../../services/template.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import {
   Template,
   TemplateCategory,
@@ -110,7 +111,8 @@ export class TemplateForm implements OnInit, OnDestroy {
     private templateService: TemplateService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {

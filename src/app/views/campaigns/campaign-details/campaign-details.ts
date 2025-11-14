@@ -21,6 +21,7 @@ import {
 } from '@ng-icons/lucide';
 
 import { CampaignService } from '../../../services/campaign.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { Campaign, CampaignStatus } from '../../../models/campaign.model';
 
 @Component({
@@ -54,7 +55,8 @@ export class CampaignDetails implements OnInit, OnDestroy {
   constructor(
     private campaignService: CampaignService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -98,8 +100,16 @@ export class CampaignDetails implements OnInit, OnDestroy {
     }
   }
 
-  duplicateCampaign(): void {
-    if (this.campaign && confirm(`Czy na pewno chcesz zduplikować kampanię "${this.campaign.name}"?`)) {
+  async duplicateCampaign(): Promise<void> {
+    if (!this.campaign) return;
+
+    const confirmed = await this.confirmService.confirm(
+      'Duplikuj kampanię',
+      `Czy na pewno chcesz zduplikować kampanię "${this.campaign.name}"?`,
+      { confirmText: 'Duplikuj', cancelText: 'Anuluj', type: 'info' }
+    );
+
+    if (confirmed) {
       this.campaignService.duplicateCampaign(this.campaign.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -113,8 +123,17 @@ export class CampaignDetails implements OnInit, OnDestroy {
     }
   }
 
-  deleteCampaign(): void {
-    if (this.campaign && confirm(`Czy na pewno chcesz usunąć kampanię "${this.campaign.name}"?`)) {
+  async deleteCampaign(): Promise<void> {
+    if (!this.campaign) return;
+
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń kampanię',
+      `Czy na pewno chcesz usunąć kampanię "${this.campaign.name}"? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.campaignService.deleteCampaign(this.campaign.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -128,8 +147,17 @@ export class CampaignDetails implements OnInit, OnDestroy {
     }
   }
 
-  sendCampaign(): void {
-    if (this.campaign && confirm(`Czy na pewno chcesz wysłać kampanię "${this.campaign.name}"?`)) {
+  async sendCampaign(): Promise<void> {
+    if (!this.campaign) return;
+
+    const confirmed = await this.confirmService.confirmWarning(
+      'Wyślij kampanię',
+      `Czy na pewno chcesz wysłać kampanię "${this.campaign.name}"? Kampania zostanie wysłana do wszystkich odbiorców.`,
+      'Wyślij',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.campaignService.sendCampaign(this.campaign.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({

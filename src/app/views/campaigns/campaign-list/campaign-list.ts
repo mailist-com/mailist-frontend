@@ -29,6 +29,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { CampaignService } from '../../../services/campaign.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { Campaign, CampaignStatus, CampaignType } from '../../../models/campaign.model';
 
 @Component({
@@ -112,7 +113,8 @@ export class CampaignList implements OnInit, OnDestroy {
 
   constructor(
     private campaignService: CampaignService,
-    private router: Router
+    private router: Router,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -216,8 +218,15 @@ export class CampaignList implements OnInit, OnDestroy {
       });
   }
 
-  deleteCampaign(campaign: Campaign): void {
-    if (confirm(`Czy na pewno chcesz usunąć kampanię "${campaign.name}"?`)) {
+  async deleteCampaign(campaign: Campaign): Promise<void> {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń kampanię',
+      `Czy na pewno chcesz usunąć kampanię "${campaign.name}"? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.campaignService.deleteCampaign(campaign.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -232,8 +241,15 @@ export class CampaignList implements OnInit, OnDestroy {
     }
   }
 
-  sendCampaign(campaign: Campaign): void {
-    if (confirm(`Czy na pewno chcesz wysłać kampanię "${campaign.name}"?`)) {
+  async sendCampaign(campaign: Campaign): Promise<void> {
+    const confirmed = await this.confirmService.confirmWarning(
+      'Wyślij kampanię',
+      `Czy na pewno chcesz wysłać kampanię "${campaign.name}"? Kampania zostanie wysłana do wszystkich odbiorców.`,
+      'Wyślij',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.campaignService.sendCampaign(campaign.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({

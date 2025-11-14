@@ -1,0 +1,89 @@
+@for (dialog of dialogs(); track dialog.id) {
+  <!-- Modal Backdrop -->
+  <div
+    class="fixed inset-0 z-[9999] overflow-y-auto animate-fade-in"
+    (click)="onBackdropClick($event, dialog.id)"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'dialog-title-' + dialog.id"
+  >
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <!-- Backdrop overlay (subtle) -->
+      <div class="fixed inset-0 bg-default-900/20"></div>
+
+      <!-- Modal Card -->
+      <div
+        class="card text-left max-w-md w-full animate-slide-up relative"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="card-body p-6">
+          <!-- Header with Icon -->
+          <div class="flex items-start gap-3 mb-4">
+            <div
+              class="flex-shrink-0 rounded-lg p-2"
+              [ngClass]="{
+                'bg-danger/10': dialog.type === 'danger',
+                'bg-warning/10': dialog.type === 'warning',
+                'bg-primary/10': dialog.type === 'info',
+                'bg-success/10': dialog.type === 'success'
+              }"
+            >
+              <ng-icon
+                [name]="dialog.icon || 'lucideTriangleAlert'"
+                class="size-5"
+                [ngClass]="{
+                  'text-danger': dialog.type === 'danger',
+                  'text-warning': dialog.type === 'warning',
+                  'text-primary': dialog.type === 'info',
+                  'text-success': dialog.type === 'success'
+                }"
+              ></ng-icon>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <h3
+                [id]="'dialog-title-' + dialog.id"
+                class="text-base font-semibold text-default-900 mb-1"
+              >
+                {{ dialog.title }}
+              </h3>
+              <p class="text-sm text-default-600">
+                {{ dialog.message }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 mt-6">
+            <button
+              type="button"
+              (click)="onCancel(dialog)"
+              class="btn btn-sm flex-1 bg-default-100 text-default-600 hover:bg-default-200"
+            >
+              <ng-icon name="lucideX" class="size-4 me-1"></ng-icon>
+              {{ dialog.cancelText }}
+            </button>
+
+            <button
+              type="button"
+              (click)="onConfirm(dialog)"
+              class="btn btn-sm flex-1 text-white"
+              [ngClass]="{
+                'bg-danger hover:bg-danger/90': dialog.type === 'danger',
+                'bg-warning hover:bg-warning/90': dialog.type === 'warning',
+                'bg-primary hover:bg-primary/90': dialog.type === 'info',
+                'bg-success hover:bg-success/90': dialog.type === 'success'
+              }"
+            >
+              <ng-icon
+                [name]="dialog.type === 'danger' ? 'lucideTrash2' : 'lucideCheck'"
+                class="size-4 me-1"
+              ></ng-icon>
+              {{ dialog.confirmText }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -30,6 +30,7 @@ import { CustomDropdown, DropdownOption } from '../../../components/custom-dropd
 import { AutomationService } from '../../../services/automation.service';
 import { Automation, AutomationStatus, AutomationType } from '../../../models/automation.model';
 import { ToastService } from '../../../services/toast.service';
+import { ConfirmService } from '../../../services/confirm.service';
 
 @Component({
   selector: 'app-automation-list',
@@ -111,7 +112,8 @@ export class AutomationList implements OnInit, OnDestroy {
     private automationService: AutomationService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -228,8 +230,15 @@ export class AutomationList implements OnInit, OnDestroy {
       });
   }
 
-  deleteAutomation(automation: Automation): void {
-    if (confirm(`Czy na pewno chcesz usunąć automatyzację "${automation.name}"?`)) {
+  async deleteAutomation(automation: Automation): Promise<void> {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń automatyzację',
+      `Czy na pewno chcesz usunąć automatyzację "${automation.name}"? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.automationService.deleteAutomation(automation.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({

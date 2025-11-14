@@ -9,6 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { ContactListService } from '../../../services/contact-list.service';
 import { ContactService } from '../../../services/contact.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { ContactList } from '../../../models/contact-list.model';
 import { Contact, ContactFilter } from '../../../models/contact.model';
 
@@ -29,7 +30,8 @@ export class ListDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private contactListService: ContactListService,
-    private contactService: ContactService
+    private contactService: ContactService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit() {
@@ -85,8 +87,15 @@ export class ListDetailComponent implements OnInit {
     this.updateFilter();
   }
 
-  deleteContact(contact: Contact) {
-    if (confirm(`Are you sure you want to delete ${contact.firstName} ${contact.lastName}?`)) {
+  async deleteContact(contact: Contact) {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń kontakt',
+      `Czy na pewno chcesz usunąć ${contact.firstName} ${contact.lastName}? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.contactService.deleteContact(contact.id).subscribe();
     }
   }
