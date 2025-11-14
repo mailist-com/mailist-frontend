@@ -1,58 +1,57 @@
 <main *ngIf="contact$ | async as contact">
-  <app-page-title 
-    [title]="contact.firstName + ' ' + contact.lastName" 
+  <app-page-title
+    [title]="contact.firstName + ' ' + contact.lastName"
     [subtitle]="'CONTACTS.CONTACT_DETAILS' | translate" />
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Main Information -->
-    <div class="lg:col-span-2">
-      <div class="space-y-6">
-      <!-- Contact Info -->
-      <div class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.CONTACT_INFO' | translate }}</h6>
-          <div class="flex items-center gap-3">
-            <a [routerLink]="['/contacts']" class="btn btn-sm bg-default-100 text-default-600">
-              <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
-              {{ 'COMMON.BACK' | translate }}
-            </a>
-            <a [routerLink]="['/contacts/edit', contact.id]" class="btn btn-sm bg-primary text-white">
-              <div class="size-4 me-1"><ng-icon name="lucideFilePen"></ng-icon></div>
-              {{ 'COMMON.EDIT' | translate }}
-            </a>
-            <button (click)="deleteContact(contact)" class="btn btn-sm bg-danger text-white">
-              <div class="size-4 me-1"><ng-icon name="lucideTrash2"></ng-icon></div>
-              {{ 'COMMON.DELETE' | translate }}
-            </button>
-          </div>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <h6 class="card-title">{{ 'CONTACTS.CONTACT_INFO' | translate }}</h6>
+      <div class="flex items-center gap-3">
+        <a [routerLink]="['/contacts']" class="btn btn-sm bg-default-100 text-default-600">
+          <div class="size-4 me-1"><ng-icon name="lucideArrowLeft"></ng-icon></div>
+          {{ 'COMMON.BACK' | translate }}
+        </a>
+        <a [routerLink]="['/contacts/edit', contact.id]" class="btn btn-sm bg-primary text-white">
+          <div class="size-4 me-1"><ng-icon name="lucideFilePen"></ng-icon></div>
+          {{ 'COMMON.EDIT' | translate }}
+        </a>
+        <button (click)="deleteContact(contact)" class="btn btn-sm bg-danger text-white">
+          <div class="size-4 me-1"><ng-icon name="lucideTrash2"></ng-icon></div>
+          {{ 'COMMON.DELETE' | translate }}
+        </button>
+      </div>
+    </div>
 
-        <!-- Contact Header with Avatar -->
-        <div class="card-body border-b border-default-200">
-          <div class="flex items-center gap-4">
-            <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span class="text-2xl font-semibold text-primary">{{ getInitials(contact) }}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h5 class="text-xl font-semibold text-default-900 mb-1">{{ contact.firstName }} {{ contact.lastName }}</h5>
-              <p class="text-default-600 mb-2">{{ contact.email }}</p>
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="py-1 px-3 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg"
-                      [class]="getStatusClass(contact.status)">
-                  <div class="size-3.5"><ng-icon [name]="getStatusIcon(contact.status)"></ng-icon></div>
-                  {{ contact.status | titlecase }}
-                </span>
-                <span class="py-1 px-3 inline-flex items-center text-xs font-medium rounded-lg bg-default-100 text-default-600">
-                  {{ contact.subscriptionStatus | titlecase }}
-                </span>
+    <div class="card-body">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Information -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Contact Header with Avatar -->
+          <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <div class="flex items-center gap-4">
+              <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl font-semibold text-primary">{{ getInitials(contact) }}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h5 class="text-xl font-semibold text-default-900 mb-1">{{ contact.firstName }} {{ contact.lastName }}</h5>
+                <p class="text-default-600 mb-2">{{ contact.email }}</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="py-1 px-3 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg"
+                        [class]="getStatusClass(contact.status)">
+                    <div class="size-3.5"><ng-icon [name]="getStatusIcon(contact.status)"></ng-icon></div>
+                    {{ contact.status | titlecase }}
+                  </span>
+                  <span class="py-1 px-3 inline-flex items-center text-xs font-medium rounded-lg bg-default-100 text-default-600">
+                    {{ contact.subscriptionStatus | titlecase }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="card-body">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+
+          <!-- Contact Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
               <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide mb-4">{{ 'CONTACTS.CONTACT_DETAILS' | translate }}</h6>
               <div class="space-y-4">
                 <div *ngIf="contact.phone">
@@ -90,7 +89,7 @@
               </div>
             </div>
 
-            <div>
+            <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
               <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide mb-4">{{ 'CONTACTS.ACTIVITY_TIMELINE' | translate }}</h6>
               <div class="space-y-4">
                 <div>
@@ -119,159 +118,143 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Location -->
-      <div *ngIf="contact.location" class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.LOCATION_INFO' | translate }}</h6>
-        </div>
-        <div class="card-body">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div *ngIf="contact.location.country">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.COUNTRY' | translate }}</label>
-              <div class="flex items-center gap-2">
-                <div class="size-4 text-default-400"><ng-icon name="lucideMapPin"></ng-icon></div>
-                <span class="text-sm font-medium text-default-700">{{ contact.location.country }}</span>
+          <!-- Location -->
+          <div *ngIf="contact.location" class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide mb-4">{{ 'CONTACTS.LOCATION_INFO' | translate }}</h6>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div *ngIf="contact.location.country">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.COUNTRY' | translate }}</label>
+                <div class="flex items-center gap-2">
+                  <div class="size-4 text-default-400"><ng-icon name="lucideMapPin"></ng-icon></div>
+                  <span class="text-sm font-medium text-default-700">{{ contact.location.country }}</span>
+                </div>
+              </div>
+
+              <div *ngIf="contact.location.state">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.STATE' | translate }}</label>
+                <span class="text-sm font-medium text-default-700">{{ contact.location.state }}</span>
+              </div>
+
+              <div *ngIf="contact.location.city">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.CITY' | translate }}</label>
+                <span class="text-sm font-medium text-default-700">{{ contact.location.city }}</span>
+              </div>
+
+              <div *ngIf="contact.location.zipCode">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.ZIP_CODE' | translate }}</label>
+                <span class="text-sm font-medium text-default-700">{{ contact.location.zipCode }}</span>
+              </div>
+
+              <div *ngIf="contact.location.timezone">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.TIMEZONE' | translate }}</label>
+                <div class="flex items-center gap-2">
+                  <div class="size-4 text-default-400"><ng-icon name="lucideClock"></ng-icon></div>
+                  <span class="text-sm font-medium text-default-700">{{ contact.location.timezone }}</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div *ngIf="contact.location.state">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.STATE' | translate }}</label>
-              <span class="text-sm font-medium text-default-700">{{ contact.location.state }}</span>
-            </div>
-
-            <div *ngIf="contact.location.city">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.CITY' | translate }}</label>
-              <span class="text-sm font-medium text-default-700">{{ contact.location.city }}</span>
-            </div>
-
-            <div *ngIf="contact.location.zipCode">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.ZIP_CODE' | translate }}</label>
-              <span class="text-sm font-medium text-default-700">{{ contact.location.zipCode }}</span>
-            </div>
-
-            <div *ngIf="contact.location.timezone">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ 'CONTACTS.TIMEZONE' | translate }}</label>
-              <div class="flex items-center gap-2">
-                <div class="size-4 text-default-400"><ng-icon name="lucideClock"></ng-icon></div>
-                <span class="text-sm font-medium text-default-700">{{ contact.location.timezone }}</span>
+          <!-- Custom Fields -->
+          <div *ngIf="contact.customFields && contact.customFields.length > 0" class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide mb-4">{{ 'CONTACTS.CUSTOM_FIELDS' | translate }}</h6>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div *ngFor="let field of contact.customFields" class="p-4 bg-white border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ field.name }}</label>
+                <div class="font-semibold text-sm text-default-900 mb-1">{{ field.value }}</div>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded bg-default-200 text-default-600 capitalize">{{ field.type }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Custom Fields -->
-      <div *ngIf="contact.customFields && contact.customFields.length > 0" class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.CUSTOM_FIELDS' | translate }}</h6>
-        </div>
-        <div class="card-body">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div *ngFor="let field of contact.customFields" class="p-4 bg-default-50 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
-              <label class="text-xs font-medium text-default-500 uppercase tracking-wide mb-1 block">{{ field.name }}</label>
-              <div class="font-semibold text-sm text-default-900 mb-1">{{ field.value }}</div>
-              <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded bg-default-200 text-default-600 capitalize">{{ field.type }}</span>
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+          <!-- Lists -->
+          <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <div class="flex items-center justify-between mb-4">
+              <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide">{{ 'CONTACTS.CONTACT_LISTS' | translate }}</h6>
+              <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-primary/10 text-primary">{{ contact.lists.length }}</span>
+            </div>
+
+            <div *ngIf="contact.lists.length > 0" class="space-y-2">
+              <div *ngFor="let listId of contact.lists"
+                   class="flex items-center justify-between p-3 bg-white rounded-lg border border-default-200 hover:border-default-300 transition-colors group">
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-sm text-default-900 truncate">{{ getListName((lists$ | async) || [], listId) }}</div>
+                  <div class="text-xs text-default-500">{{ 'CONTACTS.SUB_STATUS.SUBSCRIBED' | translate }}</div>
+                </div>
+                <button (click)="removeFromList(contact, listId)"
+                        class="flex-shrink-0 btn size-8 bg-danger/10 text-danger hover:bg-danger hover:text-white transition-colors"
+                        title="Remove from list">
+                  <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="contact.lists.length === 0" class="text-center py-10">
+              <div class="size-12 mx-auto mb-3 text-default-300">
+                <ng-icon name="lucideList"></ng-icon>
+              </div>
+              <p class="text-sm text-default-500">{{ 'CONTACTS.NOT_SUBSCRIBED' | translate }}</p>
             </div>
           </div>
-        </div>
-      </div>
-      </div>
-    </div>
 
-    <!-- Sidebar -->
-    <div class="lg:col-span-1">
-      <div class="space-y-6">
-      <!-- Lists -->
-      <div class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.CONTACT_LISTS' | translate }}</h6>
-          <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-primary/10 text-primary">{{ contact.lists.length }}</span>
-        </div>
-        <div class="card-body">
-          <div *ngIf="contact.lists.length > 0" class="space-y-2">
-            <div *ngFor="let listId of contact.lists"
-                 class="flex items-center justify-between p-3 bg-default-50 rounded-lg border border-default-200 hover:border-default-300 transition-colors group">
-              <div class="flex-1 min-w-0">
-                <div class="font-medium text-sm text-default-900 truncate">{{ getListName((lists$ | async) || [], listId) }}</div>
-                <div class="text-xs text-default-500">{{ 'CONTACTS.SUB_STATUS.SUBSCRIBED' | translate }}</div>
+          <!-- Tags -->
+          <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <div class="flex items-center justify-between mb-4">
+              <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide">{{ 'CONTACTS.TAGS' | translate }}</h6>
+              <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-secondary/10 text-secondary">{{ contact.tags.length }}</span>
+            </div>
+
+            <div *ngIf="contact.tags.length > 0" class="flex flex-wrap gap-2">
+              <div *ngFor="let tag of contact.tags"
+                   class="py-1.5 px-3 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors group">
+                <span>{{ tag }}</span>
+                <button (click)="removeTag(contact, tag)"
+                        class="text-current opacity-60 hover:opacity-100 hover:text-danger transition-all"
+                        title="Remove tag">
+                  <div class="size-3.5"><ng-icon name="lucideX"></ng-icon></div>
+                </button>
               </div>
-              <button (click)="removeFromList(contact, listId)"
-                      class="flex-shrink-0 btn size-8 bg-danger/10 text-danger hover:bg-danger hover:text-white transition-colors"
-                      title="Remove from list">
-                <div class="size-4"><ng-icon name="lucideX"></ng-icon></div>
+            </div>
+
+            <div *ngIf="contact.tags.length === 0" class="text-center py-10">
+              <div class="size-12 mx-auto mb-3 text-default-300">
+                <ng-icon name="lucideTag"></ng-icon>
+              </div>
+              <p class="text-sm text-default-500">{{ 'CONTACTS.NO_TAGS' | translate }}</p>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="p-6 bg-default-50 border border-default-200 rounded-lg">
+            <h6 class="text-sm font-semibold text-default-900 uppercase tracking-wide mb-4">{{ 'CONTACTS.QUICK_ACTIONS' | translate }}</h6>
+            <div class="space-y-2">
+              <button class="btn bg-primary text-white hover:bg-primary-600 w-full justify-start transition-colors">
+                <div class="size-4 me-2"><ng-icon name="lucideMail"></ng-icon></div>
+                {{ 'CONTACTS.SEND_EMAIL' | translate }}
+              </button>
+
+              <button class="btn bg-default-100 text-default-600 hover:bg-default-200 w-full justify-start transition-colors">
+                <div class="size-4 me-2"><ng-icon name="lucideTag"></ng-icon></div>
+                {{ 'CONTACTS.ADD_TAG' | translate }}
+              </button>
+
+              <button class="btn bg-default-100 text-default-600 hover:bg-default-200 w-full justify-start transition-colors">
+                <div class="size-4 me-2"><ng-icon name="lucideList"></ng-icon></div>
+                {{ 'CONTACTS.ADD_TO_LIST' | translate }}
+              </button>
+
+              <button class="btn bg-transparent border border-dashed border-default-300 text-default-600 hover:border-primary hover:text-primary hover:bg-primary/5 w-full justify-start transition-colors">
+                <div class="size-4 me-2"><ng-icon name="lucideDownload"></ng-icon></div>
+                {{ 'CONTACTS.EXPORT_CONTACT' | translate }}
               </button>
             </div>
           </div>
-
-          <div *ngIf="contact.lists.length === 0" class="text-center py-10">
-            <div class="size-12 mx-auto mb-3 text-default-300">
-              <ng-icon name="lucideList"></ng-icon>
-            </div>
-            <p class="text-sm text-default-500">{{ 'CONTACTS.NOT_SUBSCRIBED' | translate }}</p>
-          </div>
         </div>
-      </div>
-
-      <!-- Tags -->
-      <div class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.TAGS' | translate }}</h6>
-          <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-secondary/10 text-secondary">{{ contact.tags.length }}</span>
-        </div>
-        <div class="card-body">
-          <div *ngIf="contact.tags.length > 0" class="flex flex-wrap gap-2">
-            <div *ngFor="let tag of contact.tags"
-                 class="py-1.5 px-3 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors group">
-              <span>{{ tag }}</span>
-              <button (click)="removeTag(contact, tag)"
-                      class="text-current opacity-60 hover:opacity-100 hover:text-danger transition-all"
-                      title="Remove tag">
-                <div class="size-3.5"><ng-icon name="lucideX"></ng-icon></div>
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="contact.tags.length === 0" class="text-center py-10">
-            <div class="size-12 mx-auto mb-3 text-default-300">
-              <ng-icon name="lucideTag"></ng-icon>
-            </div>
-            <p class="text-sm text-default-500">{{ 'CONTACTS.NO_TAGS' | translate }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="card">
-        <div class="card-header">
-          <h6 class="card-title">{{ 'CONTACTS.QUICK_ACTIONS' | translate }}</h6>
-        </div>
-        <div class="card-body space-y-2">
-          <button class="btn bg-primary text-white hover:bg-primary-600 w-full justify-start transition-colors">
-            <div class="size-4 me-2"><ng-icon name="lucideMail"></ng-icon></div>
-            {{ 'CONTACTS.SEND_EMAIL' | translate }}
-          </button>
-
-          <button class="btn bg-default-100 text-default-600 hover:bg-default-200 w-full justify-start transition-colors">
-            <div class="size-4 me-2"><ng-icon name="lucideTag"></ng-icon></div>
-            {{ 'CONTACTS.ADD_TAG' | translate }}
-          </button>
-
-          <button class="btn bg-default-100 text-default-600 hover:bg-default-200 w-full justify-start transition-colors">
-            <div class="size-4 me-2"><ng-icon name="lucideList"></ng-icon></div>
-            {{ 'CONTACTS.ADD_TO_LIST' | translate }}
-          </button>
-
-          <button class="btn bg-transparent border border-dashed border-default-300 text-default-600 hover:border-primary hover:text-primary hover:bg-primary/5 w-full justify-start transition-colors">
-            <div class="size-4 me-2"><ng-icon name="lucideDownload"></ng-icon></div>
-            {{ 'CONTACTS.EXPORT_CONTACT' | translate }}
-          </button>
-        </div>
-      </div>
       </div>
     </div>
   </div>
 </main>
-
