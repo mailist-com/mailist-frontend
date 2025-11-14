@@ -10,40 +10,77 @@
   <!-- Node Body - Display configured values -->
   <div class="node-body">
     @if (model.data) {
-      @if (model.data.emailSubject) {
+      <!-- SendEmail - Simple mode -->
+      @if (model.data.emailMode === 'simple' && model.data.emailSubject) {
         <div class="node-data-item">
           <span class="data-label">Temat:</span>
           <span class="data-value">{{ model.data.emailSubject }}</span>
         </div>
       }
-      @if (model.data.waitDuration) {
+
+      <!-- SendEmail - Template mode -->
+      @if (model.data.emailMode === 'template' && model.data.emailTemplateId) {
         <div class="node-data-item">
-          <span class="data-label">Czas:</span>
-          <span class="data-value">{{ model.data.waitDuration }} {{ model.data.waitUnit || 'dni' }}</span>
+          <span class="data-label">Szablon:</span>
+          <span class="data-value">{{ getTemplateName(model.data.emailTemplateId) }}</span>
         </div>
       }
+
+      <!-- Wait - Duration mode -->
+      @if (model.data.waitMode === 'duration' && model.data.waitDuration) {
+        <div class="node-data-item">
+          <span class="data-label">Czekaj:</span>
+          <span class="data-value">{{ model.data.waitDuration }} {{ getWaitUnitLabel(model.data.waitUnit) }}</span>
+        </div>
+      }
+
+      <!-- Wait - Until date mode -->
+      @if (model.data.waitMode === 'until' && model.data.waitUntilDate) {
+        <div class="node-data-item">
+          <span class="data-label">Czekaj do:</span>
+          <span class="data-value">{{ model.data.waitUntilDate }} {{ model.data.waitUntilTime }}</span>
+        </div>
+      }
+
+      <!-- Group -->
       @if (model.data.groupName) {
         <div class="node-data-item">
           <span class="data-label">Grupa:</span>
           <span class="data-value">{{ model.data.groupName }}</span>
         </div>
       }
+
+      <!-- Tag -->
       @if (model.data.tagName) {
         <div class="node-data-item">
           <span class="data-label">Tag:</span>
           <span class="data-value">{{ model.data.tagName }}</span>
         </div>
       }
+
+      <!-- Condition -->
+      @if (model.data.conditionField) {
+        <div class="node-data-item">
+          <span class="data-label">Pole:</span>
+          <span class="data-value">{{ getFieldLabel(model.data.conditionField) }}</span>
+        </div>
+        <div class="node-data-item">
+          <span class="data-label">Operator:</span>
+          <span class="data-value">{{ getOperatorLabel(model.data.conditionOperator) }}</span>
+        </div>
+        @if (model.data.conditionValue && model.data.conditionOperator !== 'exists' && model.data.conditionOperator !== 'not_exists') {
+          <div class="node-data-item">
+            <span class="data-label">Wartość:</span>
+            <span class="data-value">{{ model.data.conditionValue }}</span>
+          </div>
+        }
+      }
+
+      <!-- Custom field -->
       @if (model.data.fieldName) {
         <div class="node-data-item">
           <span class="data-label">Pole:</span>
           <span class="data-value">{{ model.data.fieldName }}</span>
-        </div>
-      }
-      @if (model.data.conditionField) {
-        <div class="node-data-item">
-          <span class="data-label">Warunek:</span>
-          <span class="data-value">{{ model.data.conditionField }} {{ model.data.conditionOperator }} {{ model.data.conditionValue }}</span>
         </div>
       }
     }

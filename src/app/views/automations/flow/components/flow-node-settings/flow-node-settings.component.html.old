@@ -30,26 +30,55 @@
     <!-- Send Email Settings -->
     @if (n.type === NodeType.SendEmail) {
       <div class="settings-section">
-        <label class="settings-label">Szablon email</label>
-        <select class="form-input form-input-sm" [ngModel]="emailTemplate()" (ngModelChange)="emailTemplate.set($event); updateNodeData()">
-          <option value="">Wybierz szablon...</option>
-          <option value="welcome">Email powitalny</option>
-          <option value="newsletter">Newsletter</option>
-          <option value="promotion">Promocja</option>
-        </select>
+        <label class="settings-label">Typ wiadomości</label>
+        <div class="toggle-group">
+          <button type="button"
+                  class="toggle-btn"
+                  [class.active]="emailMode() === 'simple'"
+                  (click)="emailMode.set('simple'); updateNodeData()">
+            Prosty formularz
+          </button>
+          <button type="button"
+                  class="toggle-btn"
+                  [class.active]="emailMode() === 'template'"
+                  (click)="emailMode.set('template'); updateNodeData()">
+            Szablon
+          </button>
+        </div>
       </div>
 
-      <div class="settings-section">
-        <label class="settings-label">Temat</label>
-        <input type="text" class="form-input form-input-sm" placeholder="Temat emaila..."
-               [ngModel]="emailSubject()" (ngModelChange)="emailSubject.set($event); updateNodeData()" />
-      </div>
+      @if (emailMode() === 'simple') {
+        <div class="settings-section">
+          <label class="settings-label">Temat</label>
+          <input type="text" class="form-input form-input-sm" placeholder="Temat emaila..."
+                 [ngModel]="emailSubject()" (ngModelChange)="emailSubject.set($event); updateNodeData()" />
+        </div>
 
-      <div class="settings-section">
-        <label class="settings-label">Treść</label>
-        <textarea class="form-textarea form-input-sm" rows="4" placeholder="Treść wiadomości..."
-                  [ngModel]="emailContent()" (ngModelChange)="emailContent.set($event); updateNodeData()"></textarea>
-      </div>
+        <div class="settings-section">
+          <label class="settings-label">Treść</label>
+          <textarea class="form-textarea form-input-sm" rows="6" placeholder="Treść wiadomości..."
+                    [ngModel]="emailContent()" (ngModelChange)="emailContent.set($event); updateNodeData()"></textarea>
+        </div>
+      }
+
+      @if (emailMode() === 'template') {
+        <div class="settings-section">
+          <label class="settings-label">Wybierz szablon</label>
+          <select class="form-input form-input-sm" [ngModel]="emailTemplateId()" (ngModelChange)="emailTemplateId.set($event); updateNodeData()">
+            <option value="">Wybierz szablon...</option>
+            @for (template of availableTemplates(); track template.id) {
+              <option [value]="template.id">{{ template.name }}</option>
+            }
+          </select>
+        </div>
+
+        @if (emailTemplateId()) {
+          <div class="settings-info">
+            <ng-icon name="lucideInfo"></ng-icon>
+            <span>Wybrany szablon: {{ getTemplateName(emailTemplateId()) }}</span>
+          </div>
+        }
+      }
 
       <div class="settings-info">
         <ng-icon name="lucideInfo"></ng-icon>
@@ -60,22 +89,63 @@
     <!-- Wait Settings -->
     @if (n.type === NodeType.Wait) {
       <div class="settings-section">
-        <label class="settings-label">Czas oczekiwania</label>
-        <div class="flex gap-2">
-          <input type="number" class="form-input form-input-sm flex-1" [ngModel]="waitDuration()" (ngModelChange)="waitDuration.set($event); updateNodeData()" min="1" />
-          <select class="form-input form-input-sm" [ngModel]="waitUnit()" (ngModelChange)="waitUnit.set($event); updateNodeData()">
-            <option value="minutes">Minut</option>
-            <option value="hours">Godzin</option>
-            <option value="days">Dni</option>
-            <option value="weeks">Tygodni</option>
-          </select>
+        <label class="settings-label">Rodzaj oczekiwania</label>
+        <div class="toggle-group">
+          <button type="button"
+                  class="toggle-btn"
+                  [class.active]="waitMode() === 'duration'"
+                  (click)="waitMode.set('duration'); updateNodeData()">
+            Przez określony czas
+          </button>
+          <button type="button"
+                  class="toggle-btn"
+                  [class.active]="waitMode() === 'until'"
+                  (click)="waitMode.set('until'); updateNodeData()">
+            Do określonej daty
+          </button>
         </div>
       </div>
 
-      <div class="settings-info">
-        <ng-icon name="lucideInfo"></ng-icon>
-        <span>Automatyzacja wstrzyma się na określony czas przed przejściem dalej.</span>
-      </div>
+      @if (waitMode() === 'duration') {
+        <div class="settings-section">
+          <label class="settings-label">Czas oczekiwania</label>
+          <div class="flex gap-2">
+            <input type="number" class="form-input form-input-sm flex-1" [ngModel]="waitDuration()" (ngModelChange)="waitDuration.set($event); updateNodeData()" min="1" />
+            <select class="form-input form-input-sm" [ngModel]="waitUnit()" (ngModelChange)="waitUnit.set($event); updateNodeData()">
+              <option value="minutes">Minut</option>
+              <option value="hours">Godzin</option>
+              <option value="days">Dni</option>
+              <option value="weeks">Tygodni</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-info">
+          <ng-icon name="lucideInfo"></ng-icon>
+          <span>Automatyzacja wstrzyma się na {{ waitDuration() }} {{ waitUnit() === 'minutes' ? 'minut' : waitUnit() === 'hours' ? 'godzin' : waitUnit() === 'days' ? 'dni' : 'tygodni' }} przed przejściem dalej.</span>
+        </div>
+      }
+
+      @if (waitMode() === 'until') {
+        <div class="settings-section">
+          <label class="settings-label">Data</label>
+          <input type="date" class="form-input form-input-sm"
+                 [ngModel]="waitUntilDate()"
+                 (ngModelChange)="waitUntilDate.set($event); updateNodeData()" />
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Godzina</label>
+          <input type="time" class="form-input form-input-sm"
+                 [ngModel]="waitUntilTime()"
+                 (ngModelChange)="waitUntilTime.set($event); updateNodeData()" />
+        </div>
+
+        <div class="settings-info">
+          <ng-icon name="lucideInfo"></ng-icon>
+          <span>Automatyzacja wstrzyma się do {{ waitUntilDate() }} o {{ waitUntilTime() }} przed przejściem dalej.</span>
+        </div>
+      }
     }
 
     <!-- Add to Group Settings -->
@@ -198,6 +268,49 @@
       <div class="settings-info">
         <ng-icon name="lucideInfo"></ng-icon>
         <span>Automatyzacja uruchomi się gdy subskrybent otworzy email.</span>
+      </div>
+    }
+
+    <!-- Condition Settings -->
+    @if (n.type === NodeType.Condition) {
+      <div class="settings-section">
+        <label class="settings-label">Pole do sprawdzenia</label>
+        <select class="form-input form-input-sm" [ngModel]="conditionField()" (ngModelChange)="conditionField.set($event); updateNodeData()">
+          <option value="">Wybierz pole...</option>
+          <option value="email">Email</option>
+          <option value="name">Imię</option>
+          <option value="surname">Nazwisko</option>
+          <option value="tags">Tagi</option>
+          <option value="groups">Grupy</option>
+          <option value="custom_field">Pole niestandardowe</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <label class="settings-label">Operator</label>
+        <select class="form-input form-input-sm" [ngModel]="conditionOperator()" (ngModelChange)="conditionOperator.set($event); updateNodeData()">
+          <option value="equals">Jest równe</option>
+          <option value="not_equals">Nie jest równe</option>
+          <option value="contains">Zawiera</option>
+          <option value="not_contains">Nie zawiera</option>
+          <option value="greater">Większe niż</option>
+          <option value="less">Mniejsze niż</option>
+          <option value="exists">Istnieje</option>
+          <option value="not_exists">Nie istnieje</option>
+        </select>
+      </div>
+
+      @if (conditionOperator() !== 'exists' && conditionOperator() !== 'not_exists') {
+        <div class="settings-section">
+          <label class="settings-label">Wartość</label>
+          <input type="text" class="form-input form-input-sm" placeholder="Wartość do porównania..."
+                 [ngModel]="conditionValue()" (ngModelChange)="conditionValue.set($event); updateNodeData()" />
+        </div>
+      }
+
+      <div class="settings-info">
+        <ng-icon name="lucideInfo"></ng-icon>
+        <span>Subskrybent przejdzie ścieżką "Tak" jeśli warunek zostanie spełniony, w przeciwnym razie "Nie".</span>
       </div>
     }
 

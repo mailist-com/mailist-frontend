@@ -1,4 +1,4 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, inject, signal } from '@angular/core';
 import { FFlowModule } from '@foblex/flow';
 import { NODE_PARAMS_MAP } from '../../constants/node-params-map';
 import { IFlowStateNode } from '../../models/i-flow-state-node';
@@ -7,6 +7,8 @@ import { FlowNodeFooterOutputsComponent } from './flow-node-footer-outputs/flow-
 import { NodeType } from '../../enums/node-type';
 import { FlowApiService } from '../../providers/flow-api.service';
 import { FlowState } from '../../flow-state';
+import { TemplateService } from '../../../../../services/template.service';
+import { Template } from '../../../../../models/template.model';
 
 @Component({
   selector: 'app-flow-node',
@@ -79,6 +81,15 @@ export class FlowNodeComponent {
 
   private readonly _apiService = inject(FlowApiService);
   private readonly _state = inject(FlowState);
+  private readonly _templateService = inject(TemplateService);
+
+  protected templates = signal<Template[]>([]);
+
+  constructor() {
+    this._templateService.getTemplates().subscribe(templates => {
+      this.templates.set(templates);
+    });
+  }
 
   protected deleteNode(): void {
     const currentFlowState = this._state.getSnapshot();
@@ -86,5 +97,46 @@ export class FlowNodeComponent {
       ...currentFlowState,
       selection: { nodes: [this.viewModel().id], connections: [], groups: [] }
     });
+  }
+
+  protected getTemplateName(templateId: string): string {
+    const template = this.templates().find(t => t.id === templateId);
+    return template?.name || 'Nieznany szablon';
+  }
+
+  protected getWaitUnitLabel(unit: string): string {
+    const labels: Record<string, string> = {
+      'minutes': 'minut',
+      'hours': 'godzin',
+      'days': 'dni',
+      'weeks': 'tygodni'
+    };
+    return labels[unit] || unit;
+  }
+
+  protected getFieldLabel(field: string): string {
+    const labels: Record<string, string> = {
+      'email': 'Email',
+      'name': 'Imię',
+      'surname': 'Nazwisko',
+      'tags': 'Tagi',
+      'groups': 'Grupy',
+      'custom_field': 'Pole niestandardowe'
+    };
+    return labels[field] || field;
+  }
+
+  protected getOperatorLabel(operator: string): string {
+    const labels: Record<string, string> = {
+      'equals': 'Jest równe',
+      'not_equals': 'Nie jest równe',
+      'contains': 'Zawiera',
+      'not_contains': 'Nie zawiera',
+      'greater': 'Większe niż',
+      'less': 'Mniejsze niż',
+      'exists': 'Istnieje',
+      'not_exists': 'Nie istnieje'
+    };
+    return labels[operator] || operator;
   }
 }
