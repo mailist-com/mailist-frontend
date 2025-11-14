@@ -20,11 +20,6 @@ export const CONTACTS_ROUTES: Routes = [
         data: { title: 'Edit Contact' }
       },
       {
-        path: 'view/:id',
-        loadComponent: () => import('./contact-detail/contact-detail').then(m => m.ContactDetail),
-        data: { title: 'Contact Details' }
-      },
-      {
         path: 'lists',
         loadComponent: () => import('./lists/contact-lists').then(m => m.ContactListsComponent),
         data: { title: 'Contact Lists' }
