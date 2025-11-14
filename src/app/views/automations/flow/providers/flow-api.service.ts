@@ -117,8 +117,26 @@ export class FlowApiService {
   }
 
   public createNode(event: FCreateNodeEvent): void {
+    const nodeType = event.data as NodeType;
+
+    // Check if trying to add a trigger
+    if (this.isTriggerNode(nodeType)) {
+      // Check if a trigger already exists
+      const currentState = this._state.getSnapshot();
+      const existingTrigger = Object.values(currentState.nodes).find(node =>
+        this.isTriggerNode(node.type)
+      );
+
+      if (existingTrigger) {
+        // Prevent adding a second trigger
+        console.warn('[FlowApiService] Cannot add more than one trigger to automation');
+        alert('Automatyzacja może mieć tylko jeden wyzwalacz. Usuń istniejący wyzwalacz, aby dodać nowy.');
+        return;
+      }
+    }
+
     // Use generic node creator that supports all node types
-    const node = createGenericNode(event.data as NodeType, event.rect);
+    const node = createGenericNode(nodeType, event.rect);
 
     this._state.create({
       nodes: {
@@ -129,6 +147,17 @@ export class FlowApiService {
         connections: []
       }
     }, 'createNode');
+  }
+
+  private isTriggerNode(nodeType: NodeType): boolean {
+    const triggerTypes = [
+      NodeType.SubscriberJoinsGroup,
+      NodeType.TagAdded,
+      NodeType.TagRemoved,
+      NodeType.EmailOpened,
+      NodeType.Unsubscribed
+    ];
+    return triggerTypes.includes(nodeType);
   }
 
   public createConnection(event: FCreateConnectionEvent): void {
