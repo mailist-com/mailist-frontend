@@ -115,15 +115,13 @@
         </div>
 
         <!-- Status Filter -->
-        <select
+        <app-custom-dropdown
           [(ngModel)]="selectedStatus"
-          class="form-input form-input-sm"
-        >
-          <option value="">Wszystkie statusy</option>
-          <option value="ACTIVE">Aktywny</option>
-          <option value="REVOKED">Odwołany</option>
-          <option value="EXPIRED">Wygasły</option>
-        </select>
+          [options]="statusOptions"
+          [size]="'sm'"
+          [searchable]="false"
+          [placeholder]="'Wszystkie statusy'"
+        ></app-custom-dropdown>
       </div>
     </div>
 

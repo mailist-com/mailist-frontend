@@ -2,14 +2,12 @@
     <div class="card-header">
         <h6 class="card-title">Email Data</h6>
         <div>
-            <select class="form-input form-input-sm">
-                <option selected>This Yearly</option>
-                <option>1 Weekly</option>
-                <option>1 Monthly</option>
-                <option>3 Monthly</option>
-                <option>6 Monthly</option>
-                <option>This Yearly</option>
-            </select>
+            <app-custom-dropdown
+                [options]="periodOptions"
+                [(ngModel)]="selectedPeriod"
+                size="sm"
+                [searchable]="false">
+            </app-custom-dropdown>
         </div>
     </div>
     <div class="card-body">

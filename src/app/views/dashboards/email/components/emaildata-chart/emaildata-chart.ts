@@ -1,14 +1,25 @@
 import { Component } from '@angular/core';
 import { ApexOptions } from 'ng-apexcharts';
 import { Apexchart } from "../../../../../components/apexchart/apexchart";
+import { CustomDropdown, DropdownOption } from '../../../../../components/custom-dropdown/custom-dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-emaildata-chart',
-  imports: [Apexchart],
+  imports: [Apexchart, CustomDropdown, FormsModule],
   templateUrl: './emaildata-chart.html',
   styles: ``
 })
 export class EmaildataChart {
+
+  periodOptions: DropdownOption[] = [
+    { value: 'yearly', label: 'This Yearly' },
+    { value: '6m', label: '6 Monthly' },
+    { value: '3m', label: '3 Monthly' },
+    { value: '1m', label: '1 Monthly' },
+    { value: '1w', label: '1 Weekly' }
+  ];
+  selectedPeriod = 'yearly';
 
   emailDataOptions: () => ApexOptions = () => ({
     series: [
