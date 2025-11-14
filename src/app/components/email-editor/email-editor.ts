@@ -20,8 +20,12 @@ import {
   lucideUndo,
   lucideRedo,
   lucideMinus,
+  lucideMousePointerClick,
+  lucideLayoutPanelTop,
+  lucideRectangleHorizontal,
+  lucideLayout,
 } from '@ng-icons/lucide';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-email-editor',
@@ -51,6 +55,10 @@ import { TranslateModule } from '@ngx-translate/core';
       lucideUndo,
       lucideRedo,
       lucideMinus,
+      lucideMousePointerClick,
+      lucideLayoutPanelTop,
+      lucideRectangleHorizontal,
+      lucideLayout,
     })
   ],
   templateUrl: './email-editor.html',
@@ -64,6 +72,8 @@ export class EmailEditor implements ControlValueAccessor, OnInit {
 
   private onChange: (value: string) => void = () => {};
   onTouched: () => void = () => {};
+
+  constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
     // Initialize
@@ -125,14 +135,14 @@ export class EmailEditor implements ControlValueAccessor, OnInit {
   }
 
   insertLink(): void {
-    const url = prompt('Wprowadź adres URL:');
+    const url = prompt(this.translateService.instant('TEMPLATES.EDITOR.ENTER_URL'));
     if (url) {
       this.execCommand('createLink', url);
     }
   }
 
   insertImage(): void {
-    const url = prompt('Wprowadź URL obrazu:');
+    const url = prompt(this.translateService.instant('TEMPLATES.EDITOR.ENTER_IMAGE_URL'));
     if (url) {
       this.execCommand('insertImage', url);
     }
