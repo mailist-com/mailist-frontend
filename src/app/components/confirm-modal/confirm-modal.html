@@ -1,0 +1,81 @@
+@for (dialog of dialogs(); track dialog.id) {
+  <!-- Backdrop -->
+  <div
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in"
+    (click)="onBackdropClick($event, dialog.id)"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'dialog-title-' + dialog.id"
+  >
+    <!-- Modal -->
+    <div
+      class="bg-white dark:bg-default-50 rounded-lg shadow-xl max-w-md w-full animate-slide-up"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="flex items-start gap-4 p-6 pb-4">
+        <!-- Icon -->
+        <div
+          class="flex-shrink-0 rounded-full p-3"
+          [ngClass]="{
+            'bg-red-100 dark:bg-red-900/20': dialog.type === 'danger',
+            'bg-yellow-100 dark:bg-yellow-900/20': dialog.type === 'warning',
+            'bg-blue-100 dark:bg-blue-900/20': dialog.type === 'info',
+            'bg-green-100 dark:bg-green-900/20': dialog.type === 'success'
+          }"
+        >
+          <ng-icon
+            [name]="dialog.icon || 'lucideAlertTriangle'"
+            size="24"
+            [ngClass]="{
+              'text-red-600 dark:text-red-400': dialog.type === 'danger',
+              'text-yellow-600 dark:text-yellow-400': dialog.type === 'warning',
+              'text-blue-600 dark:text-blue-400': dialog.type === 'info',
+              'text-green-600 dark:text-green-400': dialog.type === 'success'
+            }"
+          ></ng-icon>
+        </div>
+
+        <!-- Title and Message -->
+        <div class="flex-1 min-w-0">
+          <h3
+            [id]="'dialog-title-' + dialog.id"
+            class="text-lg font-semibold text-default-900 dark:text-default-100 mb-2"
+          >
+            {{ dialog.title }}
+          </h3>
+          <p class="text-sm text-default-600 dark:text-default-400">
+            {{ dialog.message }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-end gap-3 px-6 py-4 bg-default-50 dark:bg-default-100/5 rounded-b-lg">
+        <!-- Cancel Button -->
+        <button
+          type="button"
+          (click)="onCancel(dialog)"
+          class="px-4 py-2 text-sm font-medium rounded-md border border-default-300 dark:border-default-600 text-default-700 dark:text-default-300 bg-white dark:bg-default-100/10 hover:bg-default-50 dark:hover:bg-default-100/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+        >
+          {{ dialog.cancelText }}
+        </button>
+
+        <!-- Confirm Button -->
+        <button
+          type="button"
+          (click)="onConfirm(dialog)"
+          class="px-4 py-2 text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+          [ngClass]="{
+            'bg-red-600 hover:bg-red-700 focus:ring-red-500': dialog.type === 'danger',
+            'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500': dialog.type === 'warning',
+            'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500': dialog.type === 'info',
+            'bg-green-600 hover:bg-green-700 focus:ring-green-500': dialog.type === 'success'
+          }"
+        >
+          {{ dialog.confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

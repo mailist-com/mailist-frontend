@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { PageTitle } from '../../components/page-title/page-title';
 import { NotificationService } from '../../services/notification.service';
+import { ConfirmService } from '../../services/confirm.service';
 import { Notification, NotificationCategory } from '../../models/notification.model';
 
 @Component({
@@ -15,6 +16,7 @@ import { Notification, NotificationCategory } from '../../models/notification.mo
 })
 export class NotificationsListComponent implements OnInit {
   private notificationService = inject(NotificationService);
+  private confirmService = inject(ConfirmService);
 
   // Signals
   notifications = signal<Notification[]>([]);
@@ -138,13 +140,20 @@ export class NotificationsListComponent implements OnInit {
     });
   }
 
-  deleteNotification(notification: Notification, event?: Event): void {
+  async deleteNotification(notification: Notification, event?: Event): Promise<void> {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    if (confirm('Czy na pewno chcesz usunąć to powiadomienie?')) {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń powiadomienie',
+      'Czy na pewno chcesz usunąć to powiadomienie?',
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.notificationService.deleteNotification(notification.id).subscribe({
         next: () => {
           const updated = this.notifications().filter(n => n.id !== notification.id);

@@ -9,6 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactListService } from '../../../services/contact-list.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
@@ -45,7 +46,10 @@ export class ContactListsComponent implements OnInit {
     { value: 'draft', label: 'LISTS.STATUS.DRAFT' }
   ];
 
-  constructor(private contactListService: ContactListService) {}
+  constructor(
+    private contactListService: ContactListService,
+    private confirmService: ConfirmService
+  ) {}
 
   ngOnInit() {
     this.loadLists();
@@ -79,8 +83,15 @@ export class ContactListsComponent implements OnInit {
     // Implement filter logic
   }
 
-  deleteList(list: ContactList) {
-    if (confirm(`Are you sure you want to delete "${list.name}"? This action cannot be undone.`)) {
+  async deleteList(list: ContactList) {
+    const confirmed = await this.confirmService.confirmDanger(
+      'Usuń listę kontaktów',
+      `Czy na pewno chcesz usunąć listę "${list.name}"? Ta operacja jest nieodwracalna.`,
+      'Usuń',
+      'Anuluj'
+    );
+
+    if (confirmed) {
       this.error = null;
       this.success = null;
 
