@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, of, throwError } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, map, of, throwError, catchError, tap } from 'rxjs';
 import {
   Template,
   TemplateStats,
@@ -7,23 +8,86 @@ import {
   TemplateCategory,
   TemplateStatus,
 } from '../models/template.model';
+import { environment } from '../../environments/environment';
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class TemplateService {
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/email-templates`;
+
   private templatesSubject = new BehaviorSubject<Template[]>(
     this.getMockTemplates()
   );
   public templates$ = this.templatesSubject.asObservable();
 
-  constructor() {}
+  constructor() {
+    // Load templates from API on service initialization
+    this.refreshTemplates();
+  }
+
+  /**
+   * Refresh templates from API
+   */
+  refreshTemplates(): void {
+    this.http.get<ApiResponse<any[]>>(this.apiUrl)
+      .pipe(
+        map(response => response.data.map((item: any) => this.mapBackendToFrontend(item))),
+        catchError(error => {
+          console.warn('[TemplateService] Failed to load templates from API, using mock data', error);
+          return of(this.getMockTemplates());
+        })
+      )
+      .subscribe(templates => {
+        console.log('[TemplateService] Loaded templates:', templates.length);
+        this.templatesSubject.next(templates);
+      });
+  }
 
   /**
    * Get all templates
    */
   getTemplates(): Observable<Template[]> {
-    return of(this.templatesSubject.value);
+    return this.templates$;
+  }
+
+  /**
+   * Map backend template to frontend model
+   */
+  private mapBackendToFrontend(backendData: any): Template {
+    return {
+      id: backendData.id?.toString() || '',
+      name: backendData.name || '',
+      subject: backendData.subject || '',
+      previewText: backendData.previewText,
+      category: (backendData.category || 'other') as TemplateCategory,
+      tags: backendData.tags || [],
+      content: {
+        html: backendData.htmlContent || backendData.content?.html || '',
+        text: backendData.textContent || backendData.content?.text,
+        design: backendData.design || backendData.content?.design
+      },
+      status: (backendData.status || 'draft') as TemplateStatus,
+      thumbnailUrl: backendData.thumbnailUrl,
+      statistics: {
+        usageCount: backendData.usageCount || 0,
+        lastUsedAt: backendData.lastUsedAt ? new Date(backendData.lastUsedAt) : undefined,
+        campaignsCount: backendData.campaignsCount || 0,
+        avgOpenRate: backendData.avgOpenRate,
+        avgClickRate: backendData.avgClickRate
+      },
+      createdAt: backendData.createdAt ? new Date(backendData.createdAt) : new Date(),
+      updatedAt: backendData.updatedAt ? new Date(backendData.updatedAt) : new Date(),
+      createdBy: backendData.createdBy,
+      isDefault: backendData.isDefault || false
+    };
   }
 
   /**
