@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Observable } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
@@ -13,12 +12,13 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-detail',
+  standalone: true,
   imports: [CommonModule, RouterLink, NgIcon, PageTitle, TranslatePipe],
   templateUrl: './contact-detail.html'
 })
 export class ContactDetail implements OnInit {
-  contact$!: Observable<Contact | undefined>;
-  lists$!: Observable<ContactList[]>;
+  contact: Contact | null = null;
+  lists: ContactList[] = [];
   contactId!: string;
 
   constructor(
@@ -30,8 +30,33 @@ export class ContactDetail implements OnInit {
 
   ngOnInit() {
     this.contactId = this.route.snapshot.paramMap.get('id')!;
-    this.contact$ = this.contactService.getContact(this.contactId);
-    this.lists$ = this.contactListService.getLists();
+    this.loadContact();
+    this.loadLists();
+  }
+
+  private loadContact() {
+    this.contactService.getContact(this.contactId).subscribe({
+      next: (contact) => {
+        if (contact) {
+          this.contact = contact;
+        } else {
+          console.error('Contact not found');
+          this.router.navigate(['/contacts']);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading contact:', error);
+        this.router.navigate(['/contacts']);
+      }
+    });
+  }
+
+  private loadLists() {
+    this.contactListService.getLists().subscribe({
+      next: (lists) => {
+        this.lists = lists;
+      }
+    });
   }
 
   deleteContact(contact: Contact) {
@@ -68,20 +93,30 @@ export class ContactDetail implements OnInit {
     return statusIcons[status as keyof typeof statusIcons] || 'lucideCircle';
   }
 
-  getListName(lists: ContactList[], listId: string): string {
-    const list = lists.find(l => l.id === listId);
+  getListName(listId: string): string {
+    const list = this.lists.find(l => l.id === listId);
     return list ? list.name : `List ${listId.slice(-3)}`;
   }
 
   removeFromList(contact: Contact, listId: string) {
-    this.contactService.removeFromList(contact.id, listId).subscribe(() => {
-      this.contact$ = this.contactService.getContact(this.contactId);
+    this.contactService.removeFromList(contact.id, listId).subscribe({
+      next: () => {
+        this.loadContact();
+      },
+      error: (error) => {
+        console.error('Error removing from list:', error);
+      }
     });
   }
 
   removeTag(contact: Contact, tag: string) {
-    this.contactService.removeTagFromContact(contact.id, tag).subscribe(() => {
-      this.contact$ = this.contactService.getContact(this.contactId);
+    this.contactService.removeTagFromContact(contact.id, tag).subscribe({
+      next: () => {
+        this.loadContact();
+      },
+      error: (error) => {
+        console.error('Error removing tag:', error);
+      }
     });
   }
 }

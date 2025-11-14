@@ -1,5 +1,5 @@
 <main>
-  @if (contact$ | async; as contact) {
+  @if (contact) {
   <app-page-title
     [title]="contact.firstName + ' ' + contact.lastName"
     [subtitle]="'CONTACTS.CONTACT_DETAILS' | translate" />
@@ -183,7 +183,7 @@
               <div *ngFor="let listId of contact.lists"
                    class="flex items-center justify-between p-3 bg-white rounded-lg border border-default-200 hover:border-default-300 transition-colors group">
                 <div class="flex-1 min-w-0">
-                  <div class="font-medium text-sm text-default-900 truncate">{{ getListName((lists$ | async) || [], listId) }}</div>
+                  <div class="font-medium text-sm text-default-900 truncate">{{ getListName(listId) }}</div>
                   <div class="text-xs text-default-500">{{ 'CONTACTS.SUB_STATUS.SUBSCRIBED' | translate }}</div>
                 </div>
                 <button (click)="removeFromList(contact, listId)"
