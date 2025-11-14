@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   lucideLayoutTemplate,
   lucideArrowLeft,
@@ -112,7 +112,8 @@ export class TemplateForm implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,
-    private confirmService: ConfirmService
+    private confirmService: ConfirmService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -148,13 +149,13 @@ export class TemplateForm implements OnInit, OnDestroy {
               thumbnailUrl: template.thumbnailUrl,
             };
           } else {
-            this.toastService.error('Szablon nie został znaleziony');
+            this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_NOT_FOUND'));
             this.goBack();
           }
         },
         error: (error) => {
           console.error('Error loading template:', error);
-          this.toastService.error('Wystąpił błąd podczas ładowania szablonu');
+          this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_LOAD'));
           this.goBack();
         },
       });
@@ -163,17 +164,17 @@ export class TemplateForm implements OnInit, OnDestroy {
   saveTemplate(): void {
     // Basic validation
     if (!this.template.name?.trim()) {
-      this.toastService.warning('Nazwa szablonu jest wymagana');
+      this.toastService.warning(this.translateService.instant('TEMPLATES.VALIDATION_NAME_REQUIRED'));
       return;
     }
 
     if (!this.template.subject?.trim()) {
-      this.toastService.warning('Temat wiadomości jest wymagany');
+      this.toastService.warning(this.translateService.instant('TEMPLATES.VALIDATION_SUBJECT_REQUIRED'));
       return;
     }
 
     if (!this.template.content?.html?.trim()) {
-      this.toastService.warning('Treść HTML jest wymagana');
+      this.toastService.warning(this.translateService.instant('TEMPLATES.VALIDATION_CONTENT_REQUIRED'));
       return;
     }
 
@@ -201,7 +202,7 @@ export class TemplateForm implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error saving template:', error);
-        this.toastService.error('Wystąpił błąd podczas zapisywania szablonu');
+        this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_SAVE'));
         this.isSaving = false;
       },
     });
@@ -228,8 +229,18 @@ export class TemplateForm implements OnInit, OnDestroy {
   }
 
   cancel(): void {
-    if (confirm('Czy na pewno chcesz anulowa? Niezapisane zmiany zostan utracone.')) {
-      this.goBack();
-    }
+    this.confirmService.confirm(
+      this.translateService.instant('COMMON.CONFIRM'),
+      this.translateService.instant('TEMPLATES.CONFIRM_CANCEL'),
+      {
+        confirmText: this.translateService.instant('COMMON.YES'),
+        cancelText: this.translateService.instant('COMMON.NO'),
+        type: 'warning'
+      }
+    ).then(confirmed => {
+      if (confirmed) {
+        this.goBack();
+      }
+    });
   }
 }

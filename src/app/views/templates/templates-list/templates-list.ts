@@ -21,7 +21,7 @@ import {
   lucideChevronRight,
   lucideChevronsRight,
 } from '@ng-icons/lucide';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
 import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
@@ -32,6 +32,7 @@ import {
   TemplateStatus,
 } from '../../../models/template.model';
 import { ToastService } from '../../../services/toast.service';
+import { ConfirmService } from '../../../services/confirm.service';
 
 @Component({
   selector: 'app-templates-list',
@@ -117,7 +118,9 @@ export class TemplatesList implements OnInit, OnDestroy {
   constructor(
     private templateService: TemplateService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translateService: TranslateService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -201,47 +204,59 @@ export class TemplatesList implements OnInit, OnDestroy {
   }
 
   duplicateTemplate(template: Template): void {
-    if (
-      confirm(
-        `Czy na pewno chcesz zduplikować szablon "${template.name}"?`
-      )
-    ) {
-      this.templateService
-        .duplicateTemplate(template.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.loadTemplates();
-            this.loadStats();
-          },
-          error: (error) => {
-            console.error('Error duplicating template:', error);
-            this.toastService.error('Wystąpił błąd podczas duplikowania szablonu');
-          },
-        });
-    }
+    this.confirmService.confirm(
+      this.translateService.instant('COMMON.CONFIRM'),
+      this.translateService.instant('TEMPLATES.CONFIRM_DUPLICATE', { name: template.name }),
+      {
+        confirmText: this.translateService.instant('COMMON.DUPLICATE'),
+        cancelText: this.translateService.instant('COMMON.CANCEL'),
+        type: 'info'
+      }
+    ).then(confirmed => {
+      if (confirmed) {
+        this.templateService
+          .duplicateTemplate(template.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.loadTemplates();
+              this.loadStats();
+            },
+            error: (error) => {
+              console.error('Error duplicating template:', error);
+              this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_DUPLICATE'));
+            },
+          });
+      }
+    });
   }
 
   deleteTemplate(template: Template): void {
-    if (
-      confirm(
-        `Czy na pewno chcesz usunąć szablon "${template.name}"? Tej operacji nie można cofnąć.`
-      )
-    ) {
-      this.templateService
-        .deleteTemplate(template.id)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.loadTemplates();
-            this.loadStats();
-          },
-          error: (error) => {
-            console.error('Error deleting template:', error);
-            this.toastService.error('Wystąpił błąd podczas usuwania szablonu');
-          },
-        });
-    }
+    this.confirmService.confirm(
+      this.translateService.instant('COMMON.CONFIRM'),
+      this.translateService.instant('TEMPLATES.CONFIRM_DELETE', { name: template.name }),
+      {
+        confirmText: this.translateService.instant('COMMON.DELETE'),
+        cancelText: this.translateService.instant('COMMON.CANCEL'),
+        type: 'danger'
+      }
+    ).then(confirmed => {
+      if (confirmed) {
+        this.templateService
+          .deleteTemplate(template.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.loadTemplates();
+              this.loadStats();
+            },
+            error: (error) => {
+              console.error('Error deleting template:', error);
+              this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_DELETE'));
+            },
+          });
+      }
+    });
   }
 
   archiveTemplate(template: Template): void {
@@ -255,7 +270,7 @@ export class TemplatesList implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error archiving template:', error);
-          this.toastService.error('Wystąpił błąd podczas archiwizowania szablonu');
+          this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_ARCHIVE'));
         },
       });
   }
@@ -271,7 +286,7 @@ export class TemplatesList implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error activating template:', error);
-          this.toastService.error('Wystąpił błąd podczas aktywowania szablonu');
+          this.toastService.error(this.translateService.instant('TEMPLATES.ERROR_ACTIVATE'));
         },
       });
   }

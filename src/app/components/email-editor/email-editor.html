@@ -1,0 +1,199 @@
+<div class="email-editor">
+  <!-- Toolbar -->
+  <div class="email-editor-toolbar">
+    <!-- Mode Toggle -->
+    <div class="toolbar-group">
+      <button
+        type="button"
+        (click)="toggleMode()"
+        class="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20"
+        [title]="(isHtmlMode ? 'TEMPLATES.EDITOR.VISUAL_MODE' : 'TEMPLATES.EDITOR.HTML_MODE') | translate">
+        <div class="size-4">
+          <ng-icon [name]="isHtmlMode ? 'lucideEye' : 'lucideCode'"></ng-icon>
+        </div>
+        <span class="text-xs ml-1">{{ (isHtmlMode ? 'TEMPLATES.EDITOR.VISUAL_MODE' : 'TEMPLATES.EDITOR.HTML_MODE') | translate }}</span>
+      </button>
+    </div>
+
+    <!-- Text Formatting (only in WYSIWYG mode) -->
+    <ng-container *ngIf="!isHtmlMode">
+      <div class="toolbar-divider"></div>
+
+      <div class="toolbar-group">
+        <button type="button" (click)="execCommand('bold')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.BOLD' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideBold"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="execCommand('italic')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.ITALIC' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideItalic"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="execCommand('underline')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.UNDERLINE' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideUnderline"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- Headings -->
+      <div class="toolbar-group">
+        <button type="button" (click)="insertHeading(1)" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.HEADING_1' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideHeading1"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertHeading(2)" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.HEADING_2' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideHeading2"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- Lists -->
+      <div class="toolbar-group">
+        <button type="button" (click)="execCommand('insertUnorderedList')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.BULLET_LIST' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideList"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="execCommand('insertOrderedList')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.NUMBER_LIST' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideListOrdered"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- Alignment -->
+      <div class="toolbar-group">
+        <button type="button" (click)="setAlignment('Left')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.ALIGN_LEFT' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideAlignLeft"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="setAlignment('Center')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.ALIGN_CENTER' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideAlignCenter"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="setAlignment('Right')" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.ALIGN_RIGHT' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideAlignRight"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- Insert Elements -->
+      <div class="toolbar-group">
+        <button type="button" (click)="insertLink()" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.INSERT_LINK' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideLink"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertImage()" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.INSERT_IMAGE' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideImage"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertHorizontalRule()" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.HORIZONTAL_LINE' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideMinus"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- Email Blocks -->
+      <div class="toolbar-group">
+        <button type="button" (click)="insertButton()" class="btn btn-sm bg-info/10 text-info hover:bg-info/20" [title]="'TEMPLATES.EDITOR.BUTTON' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideMousePointerClick"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertEmailBlock('header')" class="btn btn-sm bg-success/10 text-success hover:bg-success/20" [title]="'TEMPLATES.EDITOR.HEADER' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideLayoutPanelTop"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertEmailBlock('section')" class="btn btn-sm bg-warning/10 text-warning hover:bg-warning/20" [title]="'TEMPLATES.EDITOR.SECTION' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideRectangleHorizontal"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="insertEmailBlock('footer')" class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" [title]="'TEMPLATES.EDITOR.FOOTER' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideLayout"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+      <div class="toolbar-divider"></div>
+
+      <!-- History -->
+      <div class="toolbar-group">
+        <button type="button" (click)="undo()" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.UNDO' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideUndo"></ng-icon>
+          </div>
+        </button>
+        <button type="button" (click)="redo()" class="btn btn-sm" [title]="'TEMPLATES.EDITOR.REDO' | translate">
+          <div class="size-4">
+            <ng-icon name="lucideRedo"></ng-icon>
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- HTML Mode Info -->
+    <div *ngIf="isHtmlMode" class="toolbar-group flex-1">
+      <span class="text-xs text-default-600 italic">{{ 'TEMPLATES.EDITOR.HELP_HTML' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Editor Area -->
+  <div class="email-editor-content">
+    <!-- WYSIWYG Editor -->
+    <div
+      *ngIf="!isHtmlMode"
+      #wysiwygEditor
+      class="wysiwyg-editor"
+      contenteditable="true"
+      (input)="onWysiwygInput()"
+      (blur)="onTouched()"
+      [innerHTML]="htmlContent">
+    </div>
+
+    <!-- HTML Editor -->
+    <textarea
+      *ngIf="isHtmlMode"
+      [(ngModel)]="htmlContent"
+      (ngModelChange)="onHtmlChange()"
+      (blur)="onTouched()"
+      class="html-editor"
+      spellcheck="false">
+    </textarea>
+  </div>
+
+  <!-- Helper Text -->
+  <div class="email-editor-footer">
+    <p class="text-xs text-default-600 flex items-start gap-2">
+      <span class="text-info">💡</span>
+      <span *ngIf="!isHtmlMode">
+        {{ 'TEMPLATES.EDITOR.HELP_WYSIWYG' | translate }}
+      </span>
+      <span *ngIf="isHtmlMode">
+        {{ 'TEMPLATES.VARIABLES_HINT' | translate }}
+      </span>
+    </p>
+  </div>
+</div>
