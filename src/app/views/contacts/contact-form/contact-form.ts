@@ -6,6 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ContactService } from '../../../services/contact.service';
 import { ContactListService } from '../../../services/contact-list.service';
 import { Contact, CustomField } from '../../../models/contact.model';
@@ -13,7 +14,7 @@ import { ContactList } from '../../../models/contact-list.model';
 
 @Component({
   selector: 'app-contact-form',
-  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
   templateUrl: './contact-form.html'
 })
 export class ContactForm implements OnInit {
@@ -22,6 +23,38 @@ export class ContactForm implements OnInit {
   isEditing = false;
   availableLists: ContactList[] = [];
   availableTags = ['premium', 'developer', 'designer', 'angular', 'asp.net', 'senior', 'customer', 'prospect'];
+
+  // Dropdown options
+  statusOptions: DropdownOption[] = [
+    { value: 'active', label: 'CONTACTS.STATUS.ACTIVE' },
+    { value: 'unconfirmed', label: 'CONTACTS.STATUS.UNCONFIRMED' },
+    { value: 'unsubscribed', label: 'CONTACTS.STATUS.UNSUBSCRIBED' },
+    { value: 'bounced', label: 'CONTACTS.STATUS.BOUNCED' },
+    { value: 'blocked', label: 'CONTACTS.STATUS.BLOCKED' }
+  ];
+
+  subscriptionStatusOptions: DropdownOption[] = [
+    { value: 'subscribed', label: 'CONTACTS.SUB_STATUS.SUBSCRIBED' },
+    { value: 'unsubscribed', label: 'CONTACTS.SUB_STATUS.UNSUBSCRIBED' },
+    { value: 'pending', label: 'CONTACTS.SUB_STATUS.PENDING' }
+  ];
+
+  timezoneOptions: DropdownOption[] = [
+    { value: 'UTC', label: 'CONTACTS.TIMEZONES.UTC' },
+    { value: 'Europe/Warsaw', label: 'CONTACTS.TIMEZONES.EUROPE_WARSAW' },
+    { value: 'America/New_York', label: 'CONTACTS.TIMEZONES.AMERICA_NEW_YORK' },
+    { value: 'America/Los_Angeles', label: 'CONTACTS.TIMEZONES.AMERICA_LOS_ANGELES' },
+    { value: 'Asia/Tokyo', label: 'CONTACTS.TIMEZONES.ASIA_TOKYO' }
+  ];
+
+  fieldTypeOptions: DropdownOption[] = [
+    { value: 'text', label: 'CONTACTS.FIELD_TYPES.TEXT' },
+    { value: 'number', label: 'CONTACTS.FIELD_TYPES.NUMBER' },
+    { value: 'date', label: 'CONTACTS.FIELD_TYPES.DATE' },
+    { value: 'boolean', label: 'CONTACTS.FIELD_TYPES.BOOLEAN' },
+    { value: 'url', label: 'CONTACTS.FIELD_TYPES.URL' },
+    { value: 'email', label: 'CONTACTS.FIELD_TYPES.EMAIL' }
+  ];
 
   constructor(
     private fb: FormBuilder,

@@ -90,20 +90,24 @@
         </div>
 
         <!-- Status Filter -->
-        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()" class="form-input form-input-sm">
-          <option value="">{{ 'CONTACTS.ALL_STATUS' | translate }}</option>
-          <option value="active">{{ 'CONTACTS.STATUS.ACTIVE' | translate }}</option>
-          <option value="unconfirmed">{{ 'CONTACTS.STATUS.UNCONFIRMED' | translate }}</option>
-          <option value="unsubscribed">{{ 'CONTACTS.STATUS.UNSUBSCRIBED' | translate }}</option>
-          <option value="bounced">{{ 'CONTACTS.STATUS.BOUNCED' | translate }}</option>
-          <option value="blocked">{{ 'CONTACTS.STATUS.BLOCKED' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onFilterChange()"
+          [options]="statusOptions"
+          [placeholder]="'CONTACTS.ALL_STATUS'"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
 
         <!-- List Filter -->
-        <select [(ngModel)]="selectedList" (change)="onFilterChange()" class="form-input form-input-sm">
-          <option value="">{{ 'CONTACTS.ALL_LISTS' | translate }}</option>
-          <option *ngFor="let list of lists$ | async" [value]="list.id">{{ list.name }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedList"
+          (ngModelChange)="onFilterChange()"
+          [options]="listOptions"
+          [placeholder]="'CONTACTS.ALL_LISTS'"
+          size="sm"
+          [searchable]="true">
+        </app-custom-dropdown>
       </div>
 
     </div>
@@ -252,12 +256,14 @@
 
           <div class="flex items-center gap-2">
             <!-- Page Size Selector -->
-            <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
-              <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
-              <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
-              <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
-              <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
-            </select>
+            <app-custom-dropdown
+              [(ngModel)]="pageSize"
+              (ngModelChange)="onPageSizeChange($event)"
+              [options]="pageSizeOptions"
+              [placeholder]="'COMMON.PER_PAGE_20'"
+              size="sm"
+              [searchable]="false">
+            </app-custom-dropdown>
 
             <!-- Pagination Buttons -->
             <div class="flex gap-1">

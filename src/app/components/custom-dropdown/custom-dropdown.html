@@ -1,0 +1,93 @@
+<div class="relative" #dropdownElement>
+  <!-- Dropdown Button -->
+  <button
+    type="button"
+    [class]="buttonClasses"
+    (click)="toggle()"
+    [disabled]="disabled"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-haspopup]="true"
+  >
+    <span class="truncate">
+      @if (selectedOption(); as selected) {
+        {{ selected.label | translate }}
+      } @else {
+        <span class="text-default-500">{{ placeholder | translate }}</span>
+      }
+    </span>
+
+    <div class="flex items-center gap-1 ml-2">
+      @if (allowClear && selectedValue() !== null && !disabled) {
+        <button
+          type="button"
+          (click)="clear($event)"
+          class="p-0.5 hover:bg-default-100 rounded-full transition-colors"
+          aria-label="Clear selection"
+        >
+          <div class="size-3.5">
+            <ng-icon name="lucideX"></ng-icon>
+          </div>
+        </button>
+      }
+
+      <div class="size-4 transition-transform" [class.rotate-180]="isOpen()">
+        <ng-icon name="lucideChevronDown"></ng-icon>
+      </div>
+    </div>
+  </button>
+
+  <!-- Dropdown Menu -->
+  @if (isOpen()) {
+    <div [class]="dropdownClasses">
+      <!-- Search Input -->
+      @if (searchable) {
+        <div class="p-2 border-b border-default-200">
+          <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-default-400">
+              <ng-icon name="lucideSearch"></ng-icon>
+            </div>
+            <input
+              #searchInput
+              type="text"
+              [(ngModel)]="searchTerm"
+              class="w-full pl-9 pr-3 py-2 text-sm border border-default-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="Search..."
+              (click)="$event.stopPropagation()"
+            />
+          </div>
+        </div>
+      }
+
+      <!-- Options List -->
+      <div class="py-1">
+        @if (filteredOptions().length === 0) {
+          <div class="px-4 py-3 text-sm text-default-500 text-center">
+            {{ 'COMMON.NO_OPTIONS' | translate }}
+          </div>
+        } @else {
+          @for (option of filteredOptions(); track option.value) {
+            <button
+              type="button"
+              class="w-full px-4 py-2 text-left text-sm transition-colors flex items-center justify-between"
+              [class.bg-primary]="selectedValue() === option.value"
+              [class.text-white]="selectedValue() === option.value"
+              [class.text-default-700]="selectedValue() !== option.value"
+              [class.hover:bg-default-100]="selectedValue() !== option.value && !option.disabled"
+              [class.opacity-50]="option.disabled"
+              [class.cursor-not-allowed]="option.disabled"
+              (click)="selectOption(option)"
+              [disabled]="option.disabled"
+            >
+              <span class="truncate">{{ option.label | translate }}</span>
+              @if (selectedValue() === option.value) {
+                <div class="size-4 ml-2 flex-shrink-0">
+                  <ng-icon name="lucideCheck"></ng-icon>
+                </div>
+              }
+            </button>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -24,6 +24,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { TemplateService } from '../../../services/template.service';
 import {
   Template,
@@ -35,7 +36,7 @@ import { ToastService } from '../../../services/toast.service';
 @Component({
   selector: 'app-templates-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule, CustomDropdown],
   providers: [
     provideIcons({
       lucideLayoutTemplate,
@@ -82,6 +83,33 @@ export class TemplatesList implements OnInit, OnDestroy {
   pageSize = 20;
   totalPages = 0;
   totalElements = 0;
+
+  // Dropdown options
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'TEMPLATES.STATUS.ALL' },
+    { value: 'active', label: 'TEMPLATES.STATUS.ACTIVE' },
+    { value: 'draft', label: 'TEMPLATES.STATUS.DRAFT' },
+    { value: 'archived', label: 'TEMPLATES.STATUS.ARCHIVED' }
+  ];
+
+  categoryOptions: DropdownOption[] = [
+    { value: '', label: 'TEMPLATES.CATEGORY.ALL' },
+    { value: 'promotional', label: 'TEMPLATES.CATEGORY.PROMOTIONAL' },
+    { value: 'newsletter', label: 'TEMPLATES.CATEGORY.NEWSLETTER' },
+    { value: 'welcome', label: 'TEMPLATES.CATEGORY.WELCOME' },
+    { value: 'transactional', label: 'TEMPLATES.CATEGORY.TRANSACTIONAL' },
+    { value: 'announcement', label: 'TEMPLATES.CATEGORY.ANNOUNCEMENT' },
+    { value: 'event', label: 'TEMPLATES.CATEGORY.EVENT' },
+    { value: 'survey', label: 'TEMPLATES.CATEGORY.SURVEY' },
+    { value: 'other', label: 'TEMPLATES.CATEGORY.OTHER' }
+  ];
+
+  pageSizeOptions: DropdownOption[] = [
+    { value: 10, label: 'COMMON.PER_PAGE_10' },
+    { value: 20, label: 'COMMON.PER_PAGE_20' },
+    { value: 50, label: 'COMMON.PER_PAGE_50' },
+    { value: 100, label: 'COMMON.PER_PAGE_100' }
+  ];
 
   // Expose Math to template
   Math = Math;

@@ -2,16 +2,12 @@
     <div class="card-header">
         <h6 class="card-title">Pages Interaction</h6>
 
-        <button>
-            <select class="bg-default-200 text-default-600 form-input form-input-sm">
-                <option selected="">This Yearly</option>
-                <option>1 Weekly</option>
-                <option>1 Monthly</option>
-                <option>3 Monthly</option>
-                <option>6 Monthly</option>
-                <option>This Yearly</option>
-            </select>
-        </button>
+        <app-custom-dropdown
+            [options]="periodOptions"
+            [(ngModel)]="selectedPeriod"
+            size="sm"
+            [searchable]="false">
+        </app-custom-dropdown>
     </div>
 
     <div class="card-body">

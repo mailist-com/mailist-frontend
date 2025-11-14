@@ -27,13 +27,14 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { CampaignService } from '../../../services/campaign.service';
 import { Campaign, CampaignStatus, CampaignType } from '../../../models/campaign.model';
 
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule, CustomDropdown],
   providers: [provideIcons({
     lucideActivity,
     lucideSend,
@@ -66,6 +67,32 @@ export class CampaignList implements OnInit, OnDestroy {
   searchTerm = '';
   selectedStatus = '';
   selectedType = '';
+
+  // Dropdown options
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'CAMPAIGNS.ALL_STATUSES' },
+    { value: 'draft', label: 'CAMPAIGNS.STATUS.DRAFT' },
+    { value: 'scheduled', label: 'CAMPAIGNS.STATUS.SCHEDULED' },
+    { value: 'sending', label: 'CAMPAIGNS.STATUS.SENDING' },
+    { value: 'sent', label: 'CAMPAIGNS.STATUS.SENT' },
+    { value: 'paused', label: 'CAMPAIGNS.STATUS.PAUSED' },
+    { value: 'cancelled', label: 'CAMPAIGNS.STATUS.CANCELLED' }
+  ];
+
+  typeOptions: DropdownOption[] = [
+    { value: '', label: 'CAMPAIGNS.ALL_TYPES' },
+    { value: 'regular', label: 'CAMPAIGNS.TYPE.REGULAR' },
+    { value: 'ab_test', label: 'CAMPAIGNS.TYPE.AB_TEST' },
+    { value: 'rss', label: 'CAMPAIGNS.TYPE.RSS' },
+    { value: 'automated', label: 'CAMPAIGNS.TYPE.AUTOMATED' }
+  ];
+
+  pageSizeOptions: DropdownOption[] = [
+    { value: 10, label: 'COMMON.PER_PAGE_10' },
+    { value: 20, label: 'COMMON.PER_PAGE_20' },
+    { value: 50, label: 'COMMON.PER_PAGE_50' },
+    { value: 100, label: 'COMMON.PER_PAGE_100' }
+  ];
 
   stats = {
     total: 0,

@@ -6,6 +6,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { ApiKeyService } from '../../../services/api-key.service';
 import {
   ApiKey,
@@ -21,7 +22,7 @@ import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-integrations',
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule, CustomDropdown],
   templateUrl: './integrations.html',
   styleUrl: './integrations.css',
 })
@@ -38,6 +39,12 @@ export class Integrations implements OnInit, OnDestroy, AfterViewInit {
   // Filters
   searchTerm = '';
   selectedStatus: ApiKeyStatus | '' = '';
+  statusOptions: DropdownOption[] = [
+    { value: '', label: 'Wszystkie statusy' },
+    { value: 'ACTIVE', label: 'Aktywny' },
+    { value: 'REVOKED', label: 'Odwołany' },
+    { value: 'EXPIRED', label: 'Wygasły' },
+  ];
 
   // Create form
   newKeyName = '';

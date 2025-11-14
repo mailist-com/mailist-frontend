@@ -3,14 +3,12 @@
         <h6 class="card-title">Platform Perspective</h6>
 
         <div class="flex">
-            <select class="form-input form-input-sm border-default-400 bg-transparent border-dashed">
-                <option selected="">This Yearly</option>
-                <option>1 Weekly</option>
-                <option>1 Monthly</option>
-                <option>3 Monthly</option>
-                <option>6 Monthly</option>
-                <option>This Yearly</option>
-            </select>
+            <app-custom-dropdown
+                [options]="periodOptions"
+                [(ngModel)]="selectedPeriod"
+                size="sm"
+                [searchable]="false">
+            </app-custom-dropdown>
         </div>
     </div>
 

@@ -2,10 +2,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Apexchart } from "../../../../../components/apexchart/apexchart";
 import { ApexOptions } from 'ng-apexcharts';
 import { DashboardService } from '../../../../../services/dashboard.service';
+import { CustomDropdown, DropdownOption } from '../../../../../components/custom-dropdown/custom-dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-growth-chart',
-  imports: [Apexchart],
+  imports: [Apexchart, CustomDropdown, FormsModule],
   templateUrl: './growth-chart.html',
   styles: ``
 })
@@ -15,6 +17,13 @@ export class GrowthChart implements OnInit {
   loading = true;
   error: string | null = null;
   private _chartData?: ApexOptions;
+
+  periodOptions: DropdownOption[] = [
+    { value: '12m', label: 'Ostatnie 12 miesięcy' },
+    { value: '6m', label: 'Ostatnie 6 miesięcy' },
+    { value: '30d', label: 'Ostatnie 30 dni' }
+  ];
+  selectedPeriod = '12m';
 
   ngOnInit() {
     this.loadGrowthData();

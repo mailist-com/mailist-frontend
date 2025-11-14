@@ -8,24 +8,33 @@ import { lucideArrowLeft, lucideArrowRight, lucideSave, lucideCheck, lucideInfo,
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { CampaignService } from '../../../services/campaign.service';
 import { Campaign } from '../../../models/campaign.model';
 
 @Component({
   selector: 'app-campaign-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslateModule, CustomDropdown],
   providers: [provideIcons({ lucideArrowLeft, lucideArrowRight, lucideSave, lucideCheck, lucideInfo, lucideTriangleAlert })],
   templateUrl: './campaign-form.html',
   styleUrl: './campaign-form.css'
 })
 export class CampaignForm implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   campaignId: string | null = null;
   isEditMode = false;
   currentStep = 1;
   totalSteps = 5;
+
+  // Dropdown options
+  campaignTypeOptions: DropdownOption[] = [
+    { value: 'regular', label: 'CAMPAIGNS.TYPE.REGULAR' },
+    { value: 'ab_test', label: 'CAMPAIGNS.TYPE.AB_TEST' },
+    { value: 'rss', label: 'CAMPAIGNS.TYPE.RSS' },
+    { value: 'automated', label: 'CAMPAIGNS.TYPE.AUTOMATED' }
+  ];
 
   // Form data
   campaign: Partial<Campaign> = {

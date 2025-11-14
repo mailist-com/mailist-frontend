@@ -107,31 +107,24 @@
         </div>
 
         <!-- Status Filter -->
-        <select
+        <app-custom-dropdown
           [(ngModel)]="selectedStatus"
-          (change)="applyFilters()"
-          class="form-input form-input-sm">
-          <option value="">{{ 'TEMPLATES.STATUS.ALL' | translate }}</option>
-          <option value="active">{{ 'TEMPLATES.STATUS.ACTIVE' | translate }}</option>
-          <option value="draft">{{ 'TEMPLATES.STATUS.DRAFT' | translate }}</option>
-          <option value="archived">{{ 'TEMPLATES.STATUS.ARCHIVED' | translate }}</option>
-        </select>
+          (ngModelChange)="applyFilters()"
+          [options]="statusOptions"
+          [placeholder]="'TEMPLATES.STATUS.ALL'"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
 
         <!-- Category Filter -->
-        <select
+        <app-custom-dropdown
           [(ngModel)]="selectedCategory"
-          (change)="applyFilters()"
-          class="form-input form-input-sm">
-          <option value="">{{ 'TEMPLATES.CATEGORY.ALL' | translate }}</option>
-          <option value="promotional">{{ 'TEMPLATES.CATEGORY.PROMOTIONAL' | translate }}</option>
-          <option value="newsletter">{{ 'TEMPLATES.CATEGORY.NEWSLETTER' | translate }}</option>
-          <option value="welcome">{{ 'TEMPLATES.CATEGORY.WELCOME' | translate }}</option>
-          <option value="transactional">{{ 'TEMPLATES.CATEGORY.TRANSACTIONAL' | translate }}</option>
-          <option value="announcement">{{ 'TEMPLATES.CATEGORY.ANNOUNCEMENT' | translate }}</option>
-          <option value="event">{{ 'TEMPLATES.CATEGORY.EVENT' | translate }}</option>
-          <option value="survey">{{ 'TEMPLATES.CATEGORY.SURVEY' | translate }}</option>
-          <option value="other">{{ 'TEMPLATES.CATEGORY.OTHER' | translate }}</option>
-        </select>
+          (ngModelChange)="applyFilters()"
+          [options]="categoryOptions"
+          [placeholder]="'TEMPLATES.CATEGORY.ALL'"
+          size="sm"
+          [searchable]="true">
+        </app-custom-dropdown>
       </div>
     </div>
 
@@ -366,12 +359,14 @@
 
         <div class="flex items-center gap-2">
           <!-- Page Size Selector -->
-          <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
-            <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
-            <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
-            <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
-            <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
-          </select>
+          <app-custom-dropdown
+            [(ngModel)]="pageSize"
+            (ngModelChange)="onPageSizeChange($event)"
+            [options]="pageSizeOptions"
+            [placeholder]="'COMMON.PER_PAGE_20'"
+            size="sm"
+            [searchable]="false">
+          </app-custom-dropdown>
 
           <!-- Pagination Buttons -->
           <div class="flex gap-1">

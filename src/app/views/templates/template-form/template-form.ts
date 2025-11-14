@@ -17,6 +17,7 @@ import {
 } from '@ng-icons/lucide';
 
 import { PageTitle } from '../../../components/page-title/page-title';
+import { CustomDropdown, DropdownOption } from '../../../components/custom-dropdown/custom-dropdown';
 import { TemplateService } from '../../../services/template.service';
 import {
   Template,
@@ -29,7 +30,7 @@ import { ToastService } from '../../../services/toast.service';
 @Component({
   selector: 'app-template-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslatePipe],
+  imports: [CommonModule, FormsModule, NgIcon, PageTitle, TranslatePipe, CustomDropdown],
   providers: [
     provideIcons({
       lucideLayoutTemplate,
@@ -78,22 +79,31 @@ export class TemplateForm implements OnInit, OnDestroy {
   // Preview mode
   showPreview = false;
 
-  // Available options
-  categories: Array<{ value: TemplateCategory; label: string }> = [
-    { value: 'promotional', label: 'Promocyjny' },
-    { value: 'newsletter', label: 'Newsletter' },
-    { value: 'welcome', label: 'Powitalny' },
-    { value: 'transactional', label: 'Transakcyjny' },
-    { value: 'announcement', label: 'Ogłoszenie' },
-    { value: 'event', label: 'Wydarzenie' },
-    { value: 'survey', label: 'Ankieta' },
-    { value: 'other', label: 'Inne' },
+  // Dropdown options
+  categoryOptions: DropdownOption[] = [
+    { value: 'promotional', label: 'TEMPLATES.CATEGORY.PROMOTIONAL' },
+    { value: 'newsletter', label: 'TEMPLATES.CATEGORY.NEWSLETTER' },
+    { value: 'welcome', label: 'TEMPLATES.CATEGORY.WELCOME' },
+    { value: 'transactional', label: 'TEMPLATES.CATEGORY.TRANSACTIONAL' },
+    { value: 'announcement', label: 'TEMPLATES.CATEGORY.ANNOUNCEMENT' },
+    { value: 'event', label: 'TEMPLATES.CATEGORY.EVENT' },
+    { value: 'survey', label: 'TEMPLATES.CATEGORY.SURVEY' },
+    { value: 'other', label: 'TEMPLATES.CATEGORY.OTHER' },
   ];
 
-  statuses: Array<{ value: TemplateStatus; label: string }> = [
-    { value: 'draft', label: 'Szkic' },
-    { value: 'active', label: 'Aktywny' },
-    { value: 'archived', label: 'Zarchiwizowany' },
+  statusOptions: DropdownOption[] = [
+    { value: 'draft', label: 'TEMPLATES.STATUS.DRAFT' },
+    { value: 'active', label: 'TEMPLATES.STATUS.ACTIVE' },
+    { value: 'archived', label: 'TEMPLATES.STATUS.ARCHIVED' },
+  ];
+
+  fontFamilyOptions: DropdownOption[] = [
+    { value: 'Arial, sans-serif', label: 'Arial' },
+    { value: "'Helvetica Neue', Helvetica, Arial, sans-serif", label: 'Helvetica' },
+    { value: 'Georgia, serif', label: 'Georgia' },
+    { value: "'Times New Roman', Times, serif", label: 'Times New Roman' },
+    { value: "'Courier New', Courier, monospace", label: 'Courier New' },
+    { value: 'Verdana, Geneva, sans-serif', label: 'Verdana' },
   ];
 
   constructor(

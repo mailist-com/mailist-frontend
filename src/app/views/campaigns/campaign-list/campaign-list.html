@@ -100,23 +100,24 @@
         </div>
 
         <!-- Status Filter -->
-        <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">{{ 'CAMPAIGNS.ALL_STATUSES' | translate }}</option>
-          <option value="draft">{{ 'CAMPAIGNS.DRAFT' | translate }}</option>
-          <option value="scheduled">{{ 'CAMPAIGNS.SCHEDULED' | translate }}</option>
-          <option value="sending">{{ 'CAMPAIGNS.SENDING' | translate }}</option>
-          <option value="sent">{{ 'CAMPAIGNS.SENT' | translate }}</option>
-          <option value="paused">{{ 'CAMPAIGNS.PAUSED' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="applyFilters()"
+          [options]="statusOptions"
+          [placeholder]="'CAMPAIGNS.ALL_STATUSES' | translate"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
 
         <!-- Type Filter -->
-        <select [(ngModel)]="selectedType" (change)="applyFilters()" class="form-input form-input-sm">
-          <option value="">{{ 'CAMPAIGNS.ALL_TYPES' | translate }}</option>
-          <option value="regular">{{ 'CAMPAIGNS.TYPE.REGULAR' | translate }}</option>
-          <option value="ab_test">{{ 'CAMPAIGNS.TYPE.AB_TEST' | translate }}</option>
-          <option value="rss">{{ 'CAMPAIGNS.TYPE.RSS' | translate }}</option>
-          <option value="automated">{{ 'CAMPAIGNS.TYPE.AUTOMATED' | translate }}</option>
-        </select>
+        <app-custom-dropdown
+          [(ngModel)]="selectedType"
+          (ngModelChange)="applyFilters()"
+          [options]="typeOptions"
+          [placeholder]="'CAMPAIGNS.ALL_TYPES' | translate"
+          size="sm"
+          [searchable]="false">
+        </app-custom-dropdown>
       </div>
     </div>
 
@@ -284,12 +285,14 @@
 
           <div class="flex items-center gap-2">
             <!-- Page Size Selector -->
-            <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)" class="form-input form-input-sm">
-              <option [value]="10">{{ 'COMMON.PER_PAGE_10' | translate }}</option>
-              <option [value]="20">{{ 'COMMON.PER_PAGE_20' | translate }}</option>
-              <option [value]="50">{{ 'COMMON.PER_PAGE_50' | translate }}</option>
-              <option [value]="100">{{ 'COMMON.PER_PAGE_100' | translate }}</option>
-            </select>
+            <app-custom-dropdown
+              [(ngModel)]="pageSize"
+              (ngModelChange)="onPageSizeChange($event)"
+              [options]="pageSizeOptions"
+              [placeholder]="'COMMON.PER_PAGE_20' | translate"
+              size="sm"
+              [searchable]="false">
+            </app-custom-dropdown>
 
             <!-- Pagination Buttons -->
             <div class="flex gap-1">
