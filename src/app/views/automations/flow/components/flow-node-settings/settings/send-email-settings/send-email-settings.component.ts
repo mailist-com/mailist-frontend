@@ -12,6 +12,7 @@ import { INodeSettings } from '../i-node-settings.interface';
   standalone: true,
   imports: [FormsModule, NgIcon, CommonModule],
   providers: [provideIcons({ lucideInfo })],
+  styleUrls: ['../../flow-node-settings.component.scss'],
   template: `
     <div class="settings-section">
       <label class="settings-label">Typ wiadomości</label>
