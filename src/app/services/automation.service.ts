@@ -194,7 +194,7 @@ export class AutomationService {
       'purchase_made': 'PURCHASE_MADE',
       'automation_completed': 'AUTOMATION_COMPLETED'
     };
-    return mapping[frontendType || 'contact_tagged'] || 'TAG_ADDED';
+    return mapping[frontendType || 'contact_subscribed'] || 'CONTACT_CREATED';
   }
 
   /**

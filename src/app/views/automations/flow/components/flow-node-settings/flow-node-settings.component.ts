@@ -113,42 +113,6 @@ export class FlowNodeSettingsComponent {
       if (this.tagName()) data.tagName = this.tagName();
     }
 
-    if (nodeType === NodeType.UpdateField || nodeType === NodeType.FieldUpdated) {
-      if (this.fieldName()) data.fieldName = this.fieldName();
-      if (this.fieldValue()) data.fieldValue = this.fieldValue();
-    }
-
-    if (nodeType === NodeType.SendWebhook) {
-      if (this.webhookUrl()) data.webhookUrl = this.webhookUrl();
-    }
-
-    if (nodeType === NodeType.Condition || nodeType === NodeType.IfElse) {
-      if (this.conditionField()) data.conditionField = this.conditionField();
-      data.conditionOperator = this.conditionOperator();
-      if (this.conditionValue()) data.conditionValue = this.conditionValue();
-    }
-
-    if (nodeType === NodeType.Split) {
-      data.splitPercentageA = this.splitPercentageA();
-      data.splitPercentageB = this.splitPercentageB();
-    }
-
-    if (nodeType === NodeType.DateBased) {
-      if (this.dateField()) data.dateField = this.dateField();
-    }
-
-    if (nodeType === NodeType.LinkClicked) {
-      if (this.linkUrl()) data.linkUrl = this.linkUrl();
-    }
-
-    if (nodeType === NodeType.FormSubmitted) {
-      if (this.formId()) data.formId = this.formId();
-    }
-
-    if (nodeType === NodeType.SendNotification) {
-      if (this.notificationMessage()) data.notificationMessage = this.notificationMessage();
-    }
-
     this._state.update({
       nodes: {
         [currentNode.id]: {

@@ -8,24 +8,6 @@ export const NODE_PARAMS_MAP = {
     color: '#8b5cf6',
     category: 'Wyzwalacze',
   },
-  [NodeType.FormSubmitted]: {
-    name: 'Formularz wysłany',
-    icon: 'lucideFileText',
-    color: '#8b5cf6',
-    category: 'Wyzwalacze',
-  },
-  [NodeType.LinkClicked]: {
-    name: 'Link kliknięty',
-    icon: 'lucideMousePointerClick',
-    color: '#8b5cf6',
-    category: 'Wyzwalacze',
-  },
-  [NodeType.FieldUpdated]: {
-    name: 'Pole zaktualizowane',
-    icon: 'lucidePencil',
-    color: '#8b5cf6',
-    category: 'Wyzwalacze',
-  },
   [NodeType.TagAdded]: {
     name: 'Tag dodany',
     icon: 'lucideTag',
@@ -47,12 +29,6 @@ export const NODE_PARAMS_MAP = {
   [NodeType.Unsubscribed]: {
     name: 'Wypisanie z listy',
     icon: 'lucideUserMinus',
-    color: '#8b5cf6',
-    category: 'Wyzwalacze',
-  },
-  [NodeType.DateBased]: {
-    name: 'Data/Rocznica',
-    icon: 'lucideCalendar',
     color: '#8b5cf6',
     category: 'Wyzwalacze',
   },
@@ -94,24 +70,6 @@ export const NODE_PARAMS_MAP = {
     color: '#10b981',
     category: 'Akcje',
   },
-  [NodeType.UpdateField]: {
-    name: 'Zaktualizuj pole',
-    icon: 'lucidePencil',
-    color: '#10b981',
-    category: 'Akcje',
-  },
-  [NodeType.SendWebhook]: {
-    name: 'Wyślij webhook',
-    icon: 'lucideWebhook',
-    color: '#10b981',
-    category: 'Akcje',
-  },
-  [NodeType.SendNotification]: {
-    name: 'Wyślij powiadomienie',
-    icon: 'lucideBell',
-    color: '#10b981',
-    category: 'Akcje',
-  },
 
   // Conditions
   [NodeType.Condition]: {
@@ -119,25 +77,5 @@ export const NODE_PARAMS_MAP = {
     icon: 'lucideGitBranch',
     color: '#3b82f6',
     category: 'Warunki',
-  },
-  [NodeType.IfElse]: {
-    name: 'Jeśli/W przeciwnym razie',
-    icon: 'lucideGitBranch',
-    color: '#3b82f6',
-    category: 'Warunki',
-  },
-  [NodeType.Split]: {
-    name: 'Test A/B',
-    icon: 'lucideShuffle',
-    color: '#3b82f6',
-    category: 'Warunki',
-  },
-
-  // Goals
-  [NodeType.Goal]: {
-    name: 'Cel',
-    icon: 'lucideTarget',
-    color: '#ec4899',
-    category: 'Cele',
   },
 };

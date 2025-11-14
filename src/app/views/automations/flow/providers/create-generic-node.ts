@@ -35,21 +35,15 @@ export function createGenericNode(nodeType: NodeType, position: IPoint): IFlowSt
 function isTriggerNode(nodeType: NodeType): boolean {
   return [
     NodeType.SubscriberJoinsGroup,
-    NodeType.FormSubmitted,
-    NodeType.LinkClicked,
-    NodeType.FieldUpdated,
     NodeType.TagAdded,
     NodeType.TagRemoved,
     NodeType.EmailOpened,
     NodeType.Unsubscribed,
-    NodeType.DateBased,
   ].includes(nodeType);
 }
 
 function isConditionalNode(nodeType: NodeType): boolean {
   return [
     NodeType.Condition,
-    NodeType.IfElse,
-    NodeType.Split,
   ].includes(nodeType);
 }
